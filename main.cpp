@@ -5,6 +5,9 @@
 #include <set>
 #include <stdio.h>
 
+#include "CustomAgent/PathFinder.hpp"
+#include "CustomAgent/Annotator.hpp"
+
 using namespace std;
 using namespace lux;
 int main()
@@ -50,7 +53,7 @@ int main()
         if (unit.getCargoSpaceLeft() > 0)
         {
           // if the unit is a worker and we have space in cargo, lets find the nearest resource tile and try to mine it
-          Cell *closestResourceTile;
+          Cell *closestResourceTile = nullptr;
           float closestDist = 9999999;
           for (auto it = resourceTiles.begin(); it != resourceTiles.end(); it++)
           {
@@ -66,6 +69,12 @@ int main()
           }
           if (closestResourceTile != nullptr)
           {
+            std::vector<DIRECTIONS> path = {};
+            Position target = Position{0, 0};
+            bool foundPath = PathFinder::FindPath(gameMap, unit.pos, target, path);
+
+            Annotator::TracePath(unit.pos, path, actions);
+
             auto dir = unit.pos.directionTo(closestResourceTile->pos);
             actions.push_back(unit.move(dir));
           }
@@ -79,7 +88,7 @@ int main()
             auto &city = city_iter->second;
 
             float closestDist = 999999;
-            CityTile *closestCityTile;
+            CityTile *closestCityTile = nullptr;
             for (auto &citytile : city.citytiles)
             {
               float dist = citytile.pos.distanceTo(unit.pos);

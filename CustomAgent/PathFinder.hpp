@@ -41,7 +41,7 @@ class PathfinderCellComparer
 public:
     constexpr bool operator()(const PathfinderCell* lhs, const PathfinderCell* rhs) const 
     {
-        return lhs->FScore < rhs->FScore;
+        return lhs->FScore > rhs->FScore;
     }
 };
 
@@ -65,17 +65,24 @@ public:
 
         CustomPriorityQueue<PathfinderCell*, std::vector<PathfinderCell*>, PathfinderCellComparer> openQueue = {};
 
-        openQueue.push(&allCells[PositionToArrayIndex(startPosition, map)]);
+        int cellIndex = 0;
+
+        PathfinderCell* startCell = &allCells[PositionToArrayIndex(startPosition, map)];
+        startCell->GScore = 0;
+        startCell->FScore = ComputeHeuristic(startPosition, targetPosition);
+        openQueue.push(startCell);
 
         while (!openQueue.empty())
         {
+
             PathfinderCell& currentCell = *openQueue.top();
             openQueue.pop();
+
+            cellIndex++;
 
             if (currentCell.Cell->pos == targetPosition)
             {
                 ReconstructPath(currentCell, o_pathToTarget);
-                // Somehow return path
                 return true;
             }
 
@@ -94,13 +101,14 @@ public:
                 {
                     continue;
                 }
+
                 
                 neighbouringCell.ComeFromDirection = Utils::GetOppositeDirection(dir);
                 neighbouringCell.ComeFromCell = &currentCell;
                 neighbouringCell.GScore = gScoreAttempt;
                 neighbouringCell.FScore = gScoreAttempt + ComputeHeuristic(neighbouringPosition, targetPosition);
 
-                if (openQueue.Contains(&neighbouringCell))
+                if (!openQueue.Contains(&neighbouringCell))
                 {
                     openQueue.push(&neighbouringCell);
                 }
@@ -139,7 +147,7 @@ private:
             o_pathToTarget.push_back(Utils::GetOppositeDirection(cell.ComeFromDirection));
             cell = *cell.ComeFromCell;
         }
-        std::reverse(o_pathToTarget.begin(), o_pathToTarget.end());
+        //std::reverse(o_pathToTarget.begin(), o_pathToTarget.end());
     }
 
 };
