@@ -5,6 +5,9 @@
 #include <set>
 #include <stdio.h>
 
+#include "CustomAgent/PathFinder.hpp"
+#include "CustomAgent/Annotator.hpp"
+
 using namespace std;
 using namespace lux;
 int main()
@@ -66,6 +69,12 @@ int main()
           }
           if (closestResourceTile != nullptr)
           {
+            std::vector<DIRECTIONS> path = {};
+            Position target = Position{0, 0};
+            bool foundPath = PathFinder::FindPath(gameMap, unit.pos, target, path);
+
+            Annotator::TracePath(unit.pos, path, actions);
+
             auto dir = unit.pos.directionTo(closestResourceTile->pos);
             actions.push_back(unit.move(dir));
           }
