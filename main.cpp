@@ -52,7 +52,7 @@ int main()
         if (unit.getCargoSpaceLeft() > 0)
         {
           // if the unit is a worker and we have space in cargo, lets find the nearest resource tile and try to mine it
-          Cell *closestResourceTile;
+          Cell *closestResourceTile = nullptr;
           float closestDist = 9999999;
           for (auto it = resourceTiles.begin(); it != resourceTiles.end(); it++)
           {
@@ -99,7 +99,7 @@ int main()
             auto &city = city_iter->second;
 
             float closestDist = 999999;
-            CityTile *closestCityTile;
+            CityTile *closestCityTile = nullptr;
             for (auto &citytile : city.citytiles)
             {
               float dist = citytile.pos.distanceTo(unit.pos);
