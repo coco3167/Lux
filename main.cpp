@@ -69,14 +69,14 @@ int main()
           if (closestResourceTile != nullptr)
           {
             std::vector<DIRECTIONS> path = {};
-            bool foundPath = PathFinder::FindPath(gameMap, unit.pos, closestResourceTile->pos, path, actions);
-
-            Position previousPosition = unit.pos;
-            Position nextPosition = unit.pos;
+            Position target = Position{0, 0};
+            bool foundPath = PathFinder::FindPath(gameMap, unit.pos, target, path, actions);
 
             actions.push_back(Annotate::sidetext(foundPath ? "Path Found" : "Path not found"));
             actions.push_back(Annotate::sidetext(Utils::FormatString("Path Length : %i", path.size())));
-            actions.push_back(Annotate::sidetext(Utils::FormatString("Searched Cells : %i", searchedCells)));
+
+            Position previousPosition = unit.pos;
+            Position nextPosition = unit.pos;
 
             int debugCount = path.size() - 1;
             for (int iDir = 0; iDir < debugCount; ++iDir)

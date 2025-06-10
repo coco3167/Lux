@@ -41,7 +41,7 @@ class PathfinderCellComparer
 public:
     constexpr bool operator()(const PathfinderCell* lhs, const PathfinderCell* rhs) const 
     {
-        return lhs->FScore < rhs->FScore;
+        return lhs->FScore > rhs->FScore;
     }
 };
 
@@ -65,16 +65,25 @@ public:
 
         CustomPriorityQueue<PathfinderCell*, std::vector<PathfinderCell*>, PathfinderCellComparer> openQueue = {};
 
+        int cellIndex = 0;
+
         PathfinderCell* startCell = &allCells[PositionToArrayIndex(startPosition, map)];
         startCell->GScore = 0;
         startCell->FScore = ComputeHeuristic(startPosition, targetPosition);
         openQueue.push(startCell);
+
+        actions.push_back(Annotate::circle(startPosition.x, startPosition.y));
+        actions.push_back(Annotate::x(targetPosition.x, targetPosition.y));
 
         while (!openQueue.empty())
         {
 
             PathfinderCell& currentCell = *openQueue.top();
             openQueue.pop();
+
+            // actions.push_back(Annotate::text(currentCell.Cell->pos.x, currentCell.Cell->pos.y, Utils::FormatString("%i    ", (int)currentCell.GScore)));
+            actions.push_back(Annotate::text(currentCell.Cell->pos.x, currentCell.Cell->pos.y, Utils::FormatString("%i|%i", (int)currentCell.GScore, (int)currentCell.FScore)));
+            cellIndex++;
 
             if (currentCell.Cell->pos == targetPosition)
             {
