@@ -13,14 +13,14 @@ class Utils
         return value < 0.0f ? -value : value;
     }
 
-    static bool IsInMap(const lux::Position& position, const lux::GameMap& map)
+    static bool IsInMap(const Position& position, const GameMap& map)
     {
         return 
             0 <= position.x && position.x < map.width &&
             0 <= position.y && position.y < map.height;
     }
 
-    static DIRECTIONS GetOppositeDirection(DIRECTIONS dir)
+    static DIRECTIONS GetOppositeDirection(const DIRECTIONS dir)
     {
         switch (dir)
         {

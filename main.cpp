@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 #include "CustomAgent/PathFinder.hpp"
+#include "CustomAgent/Annotator.hpp"
 
 using namespace std;
 using namespace lux;
@@ -70,21 +71,9 @@ int main()
           {
             std::vector<DIRECTIONS> path = {};
             Position target = Position{0, 0};
-            bool foundPath = PathFinder::FindPath(gameMap, unit.pos, target, path, actions);
+            bool foundPath = PathFinder::FindPath(gameMap, unit.pos, target, path);
 
-            actions.push_back(Annotate::sidetext(foundPath ? "Path Found" : "Path not found"));
-            actions.push_back(Annotate::sidetext(Utils::FormatString("Path Length : %i", path.size())));
-
-            Position previousPosition = unit.pos;
-            Position nextPosition = unit.pos;
-
-            int debugCount = path.size() - 1;
-            for (int iDir = 0; iDir < debugCount; ++iDir)
-            {
-              nextPosition = nextPosition.translate(path[iDir], 1);
-              actions.push_back(Annotate::line(previousPosition.x, previousPosition.y, nextPosition.x, nextPosition.y));
-              previousPosition = nextPosition;
-            }
+            Annotator::TracePath(unit.pos, path, actions);
 
             auto dir = unit.pos.directionTo(closestResourceTile->pos);
             actions.push_back(unit.move(dir));

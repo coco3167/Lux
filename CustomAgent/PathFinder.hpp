@@ -48,7 +48,7 @@ public:
 class PathFinder
 {
 public:
-    static bool FindPath(const GameMap& map, Position& startPosition, Position& targetPosition, std::vector<DIRECTIONS>& o_pathToTarget, std::vector<string>& actions)
+    static bool FindPath(const GameMap& map, Position& startPosition, Position& targetPosition, std::vector<DIRECTIONS>& o_pathToTarget)
     {
         int cellsCount = map.height * map.width;
         std::vector<PathfinderCell> allCells = {};
@@ -72,17 +72,12 @@ public:
         startCell->FScore = ComputeHeuristic(startPosition, targetPosition);
         openQueue.push(startCell);
 
-        actions.push_back(Annotate::circle(startPosition.x, startPosition.y));
-        actions.push_back(Annotate::x(targetPosition.x, targetPosition.y));
-
         while (!openQueue.empty())
         {
 
             PathfinderCell& currentCell = *openQueue.top();
             openQueue.pop();
 
-            // actions.push_back(Annotate::text(currentCell.Cell->pos.x, currentCell.Cell->pos.y, Utils::FormatString("%i    ", (int)currentCell.GScore)));
-            actions.push_back(Annotate::text(currentCell.Cell->pos.x, currentCell.Cell->pos.y, Utils::FormatString("%i|%i", (int)currentCell.GScore, (int)currentCell.FScore)));
             cellIndex++;
 
             if (currentCell.Cell->pos == targetPosition)
