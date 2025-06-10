@@ -65,7 +65,10 @@ public:
 
         CustomPriorityQueue<PathfinderCell*, std::vector<PathfinderCell*>, PathfinderCellComparer> openQueue = {};
 
-        openQueue.push(&allCells[PositionToArrayIndex(startPosition, map)]);
+        PathfinderCell* startCell = &allCells[PositionToArrayIndex(startPosition, map)];
+        startCell->GScore = 0;
+        startCell->FScore = ComputeHeuristic(startPosition, targetPosition);
+        openQueue.push(startCell);
 
         while (!openQueue.empty())
         {
