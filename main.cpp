@@ -5,6 +5,8 @@
 #include <set>
 #include <stdio.h>
 
+#include "CustomAgent/PathFinder.hpp"
+
 using namespace std;
 using namespace lux;
 int main()
@@ -66,6 +68,24 @@ int main()
           }
           if (closestResourceTile != nullptr)
           {
+            std::vector<DIRECTIONS> path = {};
+            bool foundPath = PathFinder::FindPath(gameMap, unit.pos, closestResourceTile->pos, path, actions);
+
+            Position previousPosition = unit.pos;
+            Position nextPosition = unit.pos;
+
+            actions.push_back(Annotate::sidetext(foundPath ? "Path Found" : "Path not found"));
+            actions.push_back(Annotate::sidetext(Utils::FormatString("Path Length : %i", path.size())));
+            actions.push_back(Annotate::sidetext(Utils::FormatString("Searched Cells : %i", searchedCells)));
+
+            int debugCount = path.size() - 1;
+            for (int iDir = 0; iDir < debugCount; ++iDir)
+            {
+              nextPosition = nextPosition.translate(path[iDir], 1);
+              actions.push_back(Annotate::line(previousPosition.x, previousPosition.y, nextPosition.x, nextPosition.y));
+              previousPosition = nextPosition;
+            }
+
             auto dir = unit.pos.directionTo(closestResourceTile->pos);
             actions.push_back(unit.move(dir));
           }

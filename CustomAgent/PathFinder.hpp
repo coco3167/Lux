@@ -48,7 +48,7 @@ public:
 class PathFinder
 {
 public:
-    static bool FindPath(const GameMap& map, Position& startPosition, Position& targetPosition, std::vector<DIRECTIONS>& o_pathToTarget)
+    static bool FindPath(const GameMap& map, Position& startPosition, Position& targetPosition, std::vector<DIRECTIONS>& o_pathToTarget, std::vector<string>& actions)
     {
         int cellsCount = map.height * map.width;
         std::vector<PathfinderCell> allCells = {};
@@ -69,13 +69,13 @@ public:
 
         while (!openQueue.empty())
         {
+
             PathfinderCell& currentCell = *openQueue.top();
             openQueue.pop();
 
             if (currentCell.Cell->pos == targetPosition)
             {
                 ReconstructPath(currentCell, o_pathToTarget);
-                // Somehow return path
                 return true;
             }
 
@@ -94,13 +94,14 @@ public:
                 {
                     continue;
                 }
+
                 
                 neighbouringCell.ComeFromDirection = Utils::GetOppositeDirection(dir);
                 neighbouringCell.ComeFromCell = &currentCell;
                 neighbouringCell.GScore = gScoreAttempt;
                 neighbouringCell.FScore = gScoreAttempt + ComputeHeuristic(neighbouringPosition, targetPosition);
 
-                if (openQueue.Contains(&neighbouringCell))
+                if (!openQueue.Contains(&neighbouringCell))
                 {
                     openQueue.push(&neighbouringCell);
                 }
@@ -139,7 +140,7 @@ private:
             o_pathToTarget.push_back(Utils::GetOppositeDirection(cell.ComeFromDirection));
             cell = *cell.ComeFromCell;
         }
-        std::reverse(o_pathToTarget.begin(), o_pathToTarget.end());
+        //std::reverse(o_pathToTarget.begin(), o_pathToTarget.end());
     }
 
 };
