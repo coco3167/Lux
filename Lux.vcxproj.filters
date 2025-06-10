@@ -59,5 +59,8 @@
     <ClInclude Include="CustomAgent\Utils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CustomAgent\Annotator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
