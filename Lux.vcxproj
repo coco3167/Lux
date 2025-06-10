@@ -209,6 +209,9 @@
     <Folder Include=".git\refs\tags\" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CustomAgent\CustomPriorityQueue.hpp" />
+    <ClInclude Include="CustomAgent\PathFinder.hpp" />
+    <ClInclude Include="CustomAgent\Utils.hpp" />
     <ClInclude Include="lux\annotate.hpp" />
     <ClInclude Include="lux\city.hpp" />
     <ClInclude Include="lux\constants.hpp" />
