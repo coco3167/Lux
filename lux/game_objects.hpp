@@ -128,8 +128,8 @@ namespace lux
         // TODO Collect resources for a city
         void CollectResources(City city);
 
-        // TODO build city at a place
-        void BuildCityTile(Cell cell);
+        // TODO build city at the best place
+        void BuildCityTile();
     };
 
     class Player

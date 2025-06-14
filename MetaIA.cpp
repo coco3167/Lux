@@ -114,9 +114,9 @@ void MetaIA::BuildCities()
 {
     for (lux::Unit unit : m_units)
     {
-        if(unit.IsAvailable())
+        if(unit.IsAvailable() && unit.isWorker())
         {
-            unit.BuildCityTile(FindBestCityTileCell());
+            unit.BuildCityTile();
         }
     }
 }
@@ -132,10 +132,6 @@ void MetaIA::Research()
     }
 }
 
-lux::Cell MetaIA::FindBestCityTileCell()
-{
-    // TODO find the best cell for building cityTile (keep it stored as a no go cell while a worker is doing it)
-}
 
 // Other
 void MetaIA::Update(int turn)

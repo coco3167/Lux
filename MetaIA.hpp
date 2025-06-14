@@ -13,7 +13,7 @@ class MetaIA
      *  - Attack (go annoy the ennemy, not necessary)
      */
 private:
-    const int RESOURCE_PER_UNIT = 10;
+    constexpr int RESOURCE_PER_UNIT = 10;
 
     int m_turn = 0;
     
@@ -31,7 +31,6 @@ private:
     void BuildUnits();
     void BuildCities();
     void Research();
-    lux::Cell FindBestCityTileCell();
     
 public:
     void Update(int turn);
