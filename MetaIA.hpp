@@ -13,17 +13,25 @@ class MetaIA
      *  - Attack (go annoy the ennemy, not necessary)
      */
 private:
+    const int RESOURCE_PER_UNIT = 10;
+
+    int m_turn = 0;
+    
     // Survive
     std::vector<lux::City> m_cities;
     std::vector<lux::Unit> m_units;
 
-    std::vector<const lux::City&> GetNeedingCity(int turn) const;
-    std::vector<const lux::Unit&> GetNeedingUnits(int turn) const;
+    std::vector<const lux::City&> GetNeedingCity() const;
+    std::vector<const lux::Unit&> GetNeedingUnits() const;
 
     //Expand
-    
-    
-    bool CanBuildUnit() const;
+    int NBUnitsToBuild() const;
+    void MakeUnitsCollectResourcesForCity(const lux::City& city);
+    void MakeUnitsCollectResourcesForThemselves(lux::Unit& unit);
+    void BuildUnits();
+    void BuildCities();
+    void Research();
+    lux::Cell FindBestCityTileCell();
     
 public:
     void Update(int turn);

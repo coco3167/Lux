@@ -29,7 +29,7 @@ namespace lux
         int type;
         int cooldown;
         Cargo cargo;
-
+        
         Unit(){};
         Unit(int teamid, int type, const string &unitid, int x, int y, int cooldown, int wood, int coal, int uranium)
         : pos(x, y)
@@ -115,6 +115,21 @@ namespace lux
         {
             return "p " + id;
         }
+
+        // TODO checks if the unit needs more resources at the current turn
+        bool NeedResources(int turn) const;
+
+        // TODO checks if the unit can do smthing
+        bool IsAvailable() const;
+
+        // TODO Collect resources for themselves
+        void CollectResources();
+        
+        // TODO Collect resources for a city
+        void CollectResources(City city);
+
+        // TODO build city at a place
+        void BuildCityTile(Cell cell);
     };
 
     class Player
