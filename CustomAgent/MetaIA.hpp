@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include <vector>
 
-#include "lux/city.hpp"
-#include "lux/game_objects.hpp"
+#include "../lux/city.hpp"
+#include "../lux/game_objects.hpp"
 
 class MetaIA
 {

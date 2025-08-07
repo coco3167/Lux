@@ -154,9 +154,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CustomAgent\MetaIA.cpp" />
     <ClCompile Include="lux\define.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MetaIA.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
@@ -214,6 +214,7 @@
     <ClInclude Include="CustomAgent\CustomPriorityQueue.hpp" />
     <ClInclude Include="CustomAgent\PathFinder.hpp" />
     <ClInclude Include="CustomAgent\Utils.hpp" />
+    <ClInclude Include="CustomAgent\MetaIA.hpp" />
     <ClInclude Include="lux\annotate.hpp" />
     <ClInclude Include="lux\city.hpp" />
     <ClInclude Include="lux\constants.hpp" />
@@ -223,7 +224,6 @@
     <ClInclude Include="lux\map.hpp" />
     <ClInclude Include="lux\nlohmann\json.hpp" />
     <ClInclude Include="lux\position.hpp" />
-    <ClInclude Include="MetaIA.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
