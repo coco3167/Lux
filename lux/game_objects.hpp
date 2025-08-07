@@ -115,21 +115,6 @@ namespace lux
         {
             return "p " + id;
         }
-
-        // TODO checks if the unit needs more resources at the current turn
-        bool NeedResources(int turn) const;
-
-        // TODO checks if the unit can do smthing
-        bool IsAvailable() const;
-
-        // TODO Collect resources for themselves
-        void CollectResources();
-        
-        // TODO Collect resources for a city
-        void CollectResources(City city);
-
-        // TODO build city at the best place
-        void BuildCityTile();
     };
 
     class Player

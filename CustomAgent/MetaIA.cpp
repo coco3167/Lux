@@ -1,12 +1,12 @@
 ﻿#include "MetaIA.hpp"
 
 // Survive
-std::vector<const lux::City&> MetaIA::GetNeedingCity() const
+std::vector<CityAI&> MetaIA::GetNeedingCity() const
 {
     // return all city tiles that need to be given resources
-    std::vector<const lux::City&> needyCity;
+    std::vector<CityAI&> needyCity;
     
-    for (const lux::City& city : m_cities)
+    for (const CityAI& city : m_cityAIs)
     {
         if(city.NeedResources(m_turn))
         {
@@ -16,37 +16,37 @@ std::vector<const lux::City&> MetaIA::GetNeedingCity() const
     return needyCity;
 }
 
-std::vector<const lux::Unit&> MetaIA::GetNeedingUnits() const
+std::vector<UnitAI&> MetaIA::GetNeedingUnits() const
 {
     // return all Units that need resources
-    std::vector<const lux::Unit&> needyUnits;
+    std::vector<UnitAI&> needyUnits;
     
-    for (const lux::Unit& unit : m_units)
+    for (const UnitAI& unitAI : m_unitAIs)
     {
-        if(unit.NeedResources(m_turn))
+        if(unitAI.NeedResources(m_turn))
         {
-            needyUnits.emplace_back(unit);
+            needyUnits.emplace_back(unitAI);
         }
     }
     return needyUnits;
 }
 
-void MetaIA::MakeUnitsCollectResourcesForCity(const lux::City& city)
+void MetaIA::MakeUnitsCollectResourcesForCity(CityAI& city)
 {
     int unitsNeeded = city.ResourcesQuantityNeeded(m_turn) / RESOURCE_PER_UNIT;
     int loop = 0;
     while (unitsNeeded > 0)
     {
-        if(loop >= static_cast<int>(m_units.size()))
+        if(loop >= static_cast<int>(m_unitAIs.size()))
         {
             break;
         }
             
-        lux::Unit unit = m_units[loop];
+        UnitAI& unitAI = m_unitAIs[loop];
 
-        if(unit.IsAvailable())
+        if(unitAI.IsAvailable())
         {
-            unit.CollectResources(city);
+            unitAI.CollectResources(city);
             unitsNeeded--;
         }
 
@@ -54,7 +54,7 @@ void MetaIA::MakeUnitsCollectResourcesForCity(const lux::City& city)
     }
 }
 
-void MetaIA::MakeUnitsCollectResourcesForThemselves(lux::Unit& unit)
+void MetaIA::MakeUnitsCollectResourcesForThemselves(UnitAI& unit)
 {
     if(unit.IsAvailable())
     {
@@ -68,12 +68,12 @@ int MetaIA::NBUnitsToBuild() const
 {
     size_t cityTilesNb = 0;
 
-    for (const lux::City& city : m_cities)
+    for (const CityAI& cityAI : m_cityAIs)
     {
-        cityTilesNb += city.citytiles.size();
+        cityTilesNb += cityAI.City.citytiles.size();
     }
 
-    return static_cast<int>(cityTilesNb - m_units.size());
+    return static_cast<int>(cityTilesNb - m_unitAIs.size());
 }
 
 void MetaIA::BuildUnits()
@@ -82,20 +82,20 @@ void MetaIA::BuildUnits()
     if(unitNbToBuild > 0)
     {
         // Map ordered by city score (maybe inverse the >)
-        std::map<lux::City&, int, std::function<bool(int, int)>> citiesScore([](int a, int b) { return a > b; });
+        std::map<CityAI&, int, std::function<bool(int, int)>> citiesScore([](int a, int b) { return a > b; });
 
         // Finds a suitable city to build unit on
-        for (lux::City city : m_cities)
+        for (CityAI& cityAI : m_cityAIs)
         {
-            citiesScore.emplace(city, city.UnitBuildScore());
+            citiesScore.emplace(cityAI, cityAI.UnitBuildScore());
         }
 
-        for (auto cityScorePair : citiesScore)
+        for (std::pair<CityAI&, int> cityScorePair : citiesScore)
         {
             if(unitNbToBuild <= 0)
                 break;
             
-            lux::City& chosenCity = cityScorePair.first;
+            CityAI& chosenCity = cityScorePair.first;
 
             while (chosenCity.IsAvailable())
             {
@@ -112,22 +112,22 @@ void MetaIA::BuildUnits()
 
 void MetaIA::BuildCities()
 {
-    for (lux::Unit unit : m_units)
+    for (UnitAI& unitAI : m_unitAIs)
     {
-        if(unit.IsAvailable() && unit.isWorker())
+        if(unitAI.IsAvailable() && unitAI.Unit.isWorker())
         {
-            unit.BuildCityTile();
+            unitAI.BuildCityTile();
         }
     }
 }
 
 void MetaIA::Research()
 {
-    for (lux::City city : m_cities)
+    for (CityAI& cityAI : m_cityAIs)
     {
-        if(city.IsAvailable())
+        if(cityAI.IsAvailable())
         {
-            city.Research();
+            cityAI.Research();
         }
     }
 }
@@ -139,12 +139,12 @@ void MetaIA::Update(int turn)
     m_turn = turn;
     
 // Survive
-    for (const lux::City& city : GetNeedingCity())
+    for (CityAI& city : GetNeedingCity())
     {
         MakeUnitsCollectResourcesForCity(city);
     }
 
-    for (lux::Unit unit : GetNeedingUnits())
+    for (UnitAI& unit : GetNeedingUnits())
     {
         MakeUnitsCollectResourcesForThemselves(unit);
     }
