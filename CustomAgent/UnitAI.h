@@ -6,6 +6,7 @@
 class UnitAI
 {
 public:
+    static const int FUEL_NEEDED_FOR_THE_NIGHT = 40;
     lux::Unit& Unit;
 
 public:
