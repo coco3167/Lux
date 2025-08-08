@@ -1,13 +1,13 @@
 #pragma once
 #include "../lux/game_objects.hpp"
 
-class CityAI
+class CityTileAI
 {
 public:
-    lux::City& City;
+    lux::CityTile& CityTile;
 
 public:
-    CityAI(lux::City& city);
+    CityTileAI(lux::CityTile& city);
 
     // TODO checks if the city needs more resources at the current turn
     bool NeedResources(int turn) const;

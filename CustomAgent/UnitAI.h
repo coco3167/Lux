@@ -1,7 +1,7 @@
 #pragma once
 #include "../lux/game_objects.hpp"
 
-#include "CityAI.h"
+#include "CityTileAI.h"
 
 class UnitAI
 {
@@ -21,7 +21,7 @@ public:
     void CollectResources();
 
     // TODO Collect resources for a city
-    void CollectResources(CityAI& city);
+    void CollectResources(CityTileAI& city);
 
     // TODO build city at the best place
     void BuildCityTile();

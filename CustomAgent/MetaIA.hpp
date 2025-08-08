@@ -4,7 +4,7 @@
 #include "../lux/city.hpp"
 #include "../lux/game_objects.hpp"
 
-#include "CityAI.h"
+#include "CityTileAI.h"
 #include "UnitAI.h"
 
 class MetaIA
@@ -21,15 +21,15 @@ private:
     int m_turn = 0;
     
     // Survive
-    std::vector<CityAI> m_cityAIs;
+    std::vector<CityTileAI> m_cityTileAIs;
     std::vector<UnitAI> m_unitAIs;
 
-    std::vector<CityAI&> GetNeedingCity();
+    std::vector<CityTileAI&> GetNeedingCity();
     std::vector<UnitAI&> GetNeedingUnits();
 
     //Expand
     int NBUnitsToBuild() const;
-    void MakeUnitsCollectResourcesForCity(CityAI& city);
+    void MakeUnitsCollectResourcesForCity(CityTileAI& city);
     void MakeUnitsCollectResourcesForThemselves(UnitAI& unit);
     void BuildUnits();
     void BuildCities();

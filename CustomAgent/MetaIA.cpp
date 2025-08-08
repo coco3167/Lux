@@ -1,12 +1,12 @@
 ﻿#include "MetaIA.hpp"
 
 // Survive
-std::vector<CityAI&> MetaIA::GetNeedingCity()
+std::vector<CityTileAI&> MetaIA::GetNeedingCity()
 {
     // return all city tiles that need to be given resources
-    std::vector<CityAI&> needyCity;
+    std::vector<CityTileAI&> needyCity;
     
-    for (CityAI& city : m_cityAIs)
+    for (CityTileAI& city : m_cityTileAIs)
     {
         if(city.NeedResources(m_turn))
         {
@@ -31,7 +31,7 @@ std::vector<UnitAI&> MetaIA::GetNeedingUnits()
     return needyUnits;
 }
 
-void MetaIA::MakeUnitsCollectResourcesForCity(CityAI& city)
+void MetaIA::MakeUnitsCollectResourcesForCity(CityTileAI& city)
 {
     int unitsNeeded = city.ResourcesQuantityNeeded(m_turn) / RESOURCE_PER_UNIT;
     int loop = 0;
@@ -66,14 +66,14 @@ void MetaIA::MakeUnitsCollectResourcesForThemselves(UnitAI& unit)
 // Expand
 int MetaIA::NBUnitsToBuild() const
 {
-    size_t cityTilesNb = 0;
+    /*size_t cityTilesNb = 0;
 
-    for (const CityAI& cityAI : m_cityAIs)
+    for (const CityTileAI& cityAI : m_cityTileAIs)
     {
         cityTilesNb += cityAI.City.citytiles.size();
-    }
+    }*/
 
-    return static_cast<int>(cityTilesNb - m_unitAIs.size());
+    return static_cast<int>(m_cityTileAIs.size() - m_unitAIs.size());
 }
 
 void MetaIA::BuildUnits()
@@ -82,20 +82,20 @@ void MetaIA::BuildUnits()
     if(unitNbToBuild > 0)
     {
         // Map ordered by city score (maybe inverse the >)
-        std::map<CityAI&, int, std::function<bool(int, int)>> citiesScore([](int a, int b) { return a > b; });
+        std::map<CityTileAI&, int, std::function<bool(int, int)>> citiesScore([](int a, int b) { return a > b; });
 
         // Finds a suitable city to build unit on
-        for (CityAI& cityAI : m_cityAIs)
+        for (CityTileAI& cityAI : m_cityTileAIs)
         {
             citiesScore.emplace(cityAI, cityAI.UnitBuildScore());
         }
 
-        for (std::pair<CityAI&, int> cityScorePair : citiesScore)
+        for (std::pair<CityTileAI&, int> cityScorePair : citiesScore)
         {
             if(unitNbToBuild <= 0)
                 break;
             
-            CityAI& chosenCity = cityScorePair.first;
+            CityTileAI& chosenCity = cityScorePair.first;
 
             while (chosenCity.IsAvailable())
             {
@@ -123,7 +123,7 @@ void MetaIA::BuildCities()
 
 void MetaIA::Research()
 {
-    for (CityAI& cityAI : m_cityAIs)
+    for (CityTileAI& cityAI : m_cityTileAIs)
     {
         if(cityAI.IsAvailable())
         {
@@ -139,7 +139,7 @@ void MetaIA::Update(int turn)
     m_turn = turn;
     
 // Survive
-    for (CityAI& city : GetNeedingCity())
+    for (CityTileAI& city : GetNeedingCity())
     {
         MakeUnitsCollectResourcesForCity(city);
     }
