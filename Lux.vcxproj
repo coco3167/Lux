@@ -154,9 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CustomAgent\CityAI.cpp" />
-    <ClCompile Include="CustomAgent\MetaIA.cpp" />
-    <ClCompile Include="CustomAgent\UnitAI.cpp" />
+    <ClCompile Include="CartAI.cpp" />
     <ClCompile Include="lux\define.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -212,13 +210,11 @@
     <Folder Include=".git\refs\tags\" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CartAI.hpp" />
     <ClInclude Include="CustomAgent\Annotator.hpp" />
-    <ClInclude Include="CustomAgent\CityAI.h" />
     <ClInclude Include="CustomAgent\CustomPriorityQueue.hpp" />
     <ClInclude Include="CustomAgent\PathFinder.hpp" />
-    <ClInclude Include="CustomAgent\UnitAI.h" />
     <ClInclude Include="CustomAgent\Utils.hpp" />
-    <ClInclude Include="CustomAgent\MetaIA.hpp" />
     <ClInclude Include="lux\annotate.hpp" />
     <ClInclude Include="lux\city.hpp" />
     <ClInclude Include="lux\constants.hpp" />
