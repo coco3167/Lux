@@ -16,6 +16,8 @@ namespace lux
         Position pos;
         int cooldown;
 
+        bool isAvailable;
+
         CityTile(){};
         CityTile(int teamid, const string &cityid, int x, int y, int cooldown)
         : cityid(cityid)
@@ -57,7 +59,7 @@ namespace lux
         float fuel;
         vector<CityTile> citytiles{};
         float lightUpkeep;
-
+        
         City(){};
         City(int teamid, const string &cityid, float fuel, float lightUpkeep)
         : cityid(cityid)

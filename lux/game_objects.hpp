@@ -29,7 +29,7 @@ namespace lux
         int type;
         int cooldown;
         Cargo cargo;
-
+        
         Unit(){};
         Unit(int teamid, int type, const string &unitid, int x, int y, int cooldown, int wood, int coal, int uranium)
         : pos(x, y)
