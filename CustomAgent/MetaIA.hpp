@@ -24,8 +24,8 @@ private:
     std::vector<CityAI> m_cityAIs;
     std::vector<UnitAI> m_unitAIs;
 
-    std::vector<CityAI&> GetNeedingCity() const;
-    std::vector<UnitAI&> GetNeedingUnits() const;
+    std::vector<CityAI&> GetNeedingCity();
+    std::vector<UnitAI&> GetNeedingUnits();
 
     //Expand
     int NBUnitsToBuild() const;
