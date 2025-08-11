@@ -19,7 +19,7 @@ void UnitAI::CollectResources()
 {
 }
 
-void UnitAI::CollectResources(CityTileAI& city)
+void UnitAI::CollectResources(CityAI& city)
 {
 }
 

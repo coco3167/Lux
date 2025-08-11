@@ -9,14 +9,8 @@ public:
 public:
     CityTileAI(lux::CityTile& city);
 
-    // TODO checks if the city needs more resources at the current turn
-    bool NeedResources(int turn) const;
-
     // TODO checks if has available cityTiles
     bool IsAvailable() const;
-
-    // TODO gets how much resources the unit needs
-    int ResourcesQuantityNeeded(int turn) const;
 
     // TODO returns how much the city wants to build a unit
     int UnitBuildScore() const;

@@ -1,12 +1,12 @@
 ﻿#include "MetaIA.hpp"
 
 // Survive
-std::vector<CityTileAI&> MetaIA::GetNeedingCity()
+std::vector<CityAI&> MetaIA::GetNeedingCity()
 {
     // return all city tiles that need to be given resources
-    std::vector<CityTileAI&> needyCity;
+    std::vector<CityAI&> needyCity;
     
-    for (CityTileAI& city : m_cityTileAIs)
+    for (CityAI& city : m_cityAIs)
     {
         if(city.NeedResources(m_turn))
         {
@@ -31,7 +31,7 @@ std::vector<UnitAI&> MetaIA::GetNeedingUnits()
     return needyUnits;
 }
 
-void MetaIA::MakeUnitsCollectResourcesForCity(CityTileAI& city)
+void MetaIA::MakeUnitsCollectResourcesForCity(CityAI& city)
 {
     int unitsNeeded = city.ResourcesQuantityNeeded(m_turn) / RESOURCE_PER_UNIT;
     int loop = 0;
@@ -139,7 +139,7 @@ void MetaIA::Update(int turn)
     m_turn = turn;
     
 // Survive
-    for (CityTileAI& city : GetNeedingCity())
+    for (CityAI& city : GetNeedingCity())
     {
         MakeUnitsCollectResourcesForCity(city);
     }

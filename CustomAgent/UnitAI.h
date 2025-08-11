@@ -3,6 +3,8 @@
 
 #include "CityTileAI.h"
 
+class CityAI;
+
 class UnitAI
 {
 public:
@@ -21,7 +23,7 @@ public:
     void CollectResources();
 
     // TODO Collect resources for a city
-    void CollectResources(CityTileAI& city);
+    void CollectResources(CityAI& city);
 
     // TODO build city at the best place
     void BuildCityTile();

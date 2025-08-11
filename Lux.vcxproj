@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CustomAgent\CityAI.cpp" />
     <ClCompile Include="CustomAgent\CityTileAI.cpp" />
     <ClCompile Include="CustomAgent\MetaIA.cpp" />
     <ClCompile Include="CustomAgent\UnitAI.cpp" />
@@ -213,6 +214,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CustomAgent\Annotator.hpp" />
+    <ClInclude Include="CustomAgent\CityAI.h" />
     <ClInclude Include="CustomAgent\CityTileAI.h" />
     <ClInclude Include="CustomAgent\CustomPriorityQueue.hpp" />
     <ClInclude Include="CustomAgent\PathFinder.hpp" />

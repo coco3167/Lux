@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <vector>
 
+#include "CityAI.h"
 #include "../lux/city.hpp"
 #include "../lux/game_objects.hpp"
 
@@ -21,15 +22,16 @@ private:
     int m_turn = 0;
     
     // Survive
+    std::vector<CityAI> m_cityAIs;
     std::vector<CityTileAI> m_cityTileAIs;
     std::vector<UnitAI> m_unitAIs;
 
-    std::vector<CityTileAI&> GetNeedingCity();
+    std::vector<CityAI&> GetNeedingCity();
     std::vector<UnitAI&> GetNeedingUnits();
 
     //Expand
     int NBUnitsToBuild() const;
-    void MakeUnitsCollectResourcesForCity(CityTileAI& city);
+    void MakeUnitsCollectResourcesForCity(CityAI& city);
     void MakeUnitsCollectResourcesForThemselves(UnitAI& unit);
     void BuildUnits();
     void BuildCities();
