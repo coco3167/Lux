@@ -26,3 +26,8 @@ void UnitAI::CollectResources(CityAI& city)
 void UnitAI::BuildCityTile()
 {
 }
+
+bool UnitAI::IsCart() const
+{
+	return Unit.isCart();
+}

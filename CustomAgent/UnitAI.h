@@ -27,5 +27,7 @@ public:
 
     // TODO build city at the best place
     void BuildCityTile();
+
+    bool IsCart() const;
 };
 

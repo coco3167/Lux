@@ -77,7 +77,7 @@ int MetaIA::NBUnitsToBuild() const
 }
 
 void MetaIA::BuildUnits()
-{
+{    
     int unitNbToBuild = NBUnitsToBuild();
     if(unitNbToBuild > 0)
     {
@@ -97,14 +97,10 @@ void MetaIA::BuildUnits()
             
             CityTileAI& chosenCity = cityScorePair.first;
 
-            while (chosenCity.IsAvailable())
+            if (chosenCity.IsAvailable())
             {
-                chosenCity.BuildUnit();
+                m_stringResult.append(chosenCity.BuildUnit(m_unitAIs));
                 unitNbToBuild--;
-                if(unitNbToBuild <= 0)
-                {
-                    break;
-                }
             }
         }
     }
@@ -127,15 +123,16 @@ void MetaIA::Research()
     {
         if(cityAI.IsAvailable())
         {
-            cityAI.Research();
+            m_stringResult.append(cityAI.Research());
         }
     }
 }
 
 
 // Other
-void MetaIA::Update(int turn)
+std::string MetaIA::Update(int turn)
 {
+    m_stringResult.clear();
     m_turn = turn;
     
 // Survive
@@ -154,4 +151,6 @@ void MetaIA::Update(int turn)
     BuildUnits();
     Research();
     BuildCities();
+
+    return m_stringResult;
 }

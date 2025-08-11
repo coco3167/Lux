@@ -20,6 +20,7 @@ private:
     constexpr int RESOURCE_PER_UNIT = 10;
 
     int m_turn = 0;
+    std::string m_stringResult = "";
     
     // Survive
     std::vector<CityAI> m_cityAIs;
@@ -38,5 +39,5 @@ private:
     void Research();
     
 public:
-    void Update(int turn);
+    std::string Update(int turn);
 };

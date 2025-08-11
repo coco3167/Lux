@@ -3,12 +3,12 @@
 
 class CityAI
 {
+private:
+    std::unordered_map<lux::Position, lux::CityTile> m_unorderedCityTilePositions;
+    
 public:
     lux::City& City;
-
-    // TODO checks if the city needs more resources at the current turn
-    bool NeedResources(int turn) const;
-
-    // TODO gets how much resources the unit needs
-    int ResourcesQuantityNeeded(int turn) const;
+    
+    bool NeedResources(int turn);
+    float ResourcesQuantityNeeded(int turn);
 };
