@@ -10,9 +10,33 @@ bool CityTileAI::IsAvailable() const
 	return CityTile.isAvailable;
 }
 
-int CityTileAI::UnitBuildScore() const
+// Score decrements with distance, MAX_SCORE being the score at 1 distance
+int CityTileAI::UnitBuildScore(const lux::GameMap& gameMap) const
 {
-	return 0;
+	int score = MAX_SCORE;
+	int distance = 1;
+	
+	while (score > 0)
+	{
+		for (lux::DIRECTIONS direction : lux::ALL_DIRECTIONS)
+		{
+			lux::Position positionToTest = CityTile.pos.translate(direction, distance);
+			if(positionToTest.x >= 0 && positionToTest.x < gameMap.width && positionToTest.y >= 0 && positionToTest.y <gameMap.height)
+			{
+				const lux::Cell* cellToTest = gameMap.getCellByPos(positionToTest);
+				if(!cellToTest->hasResource())
+				{
+					break;
+				}
+
+				// TODO maybe use the type and amount of resource for the BuildScore
+				return score;
+			}
+		}
+		score--;
+		distance++;
+	}
+	return score;
 }
 
 std::string CityTileAI::BuildUnit(const std::vector<UnitAI>& units) const

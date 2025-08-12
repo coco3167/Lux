@@ -76,7 +76,7 @@ int MetaIA::NBUnitsToBuild() const
     return static_cast<int>(m_cityTileAIs.size() - m_unitAIs.size());
 }
 
-void MetaIA::BuildUnits()
+void MetaIA::BuildUnits(const lux::GameMap& gameMap)
 {    
     int unitNbToBuild = NBUnitsToBuild();
     if(unitNbToBuild > 0)
@@ -87,7 +87,7 @@ void MetaIA::BuildUnits()
         // Finds a suitable city to build unit on
         for (CityTileAI& cityAI : m_cityTileAIs)
         {
-            citiesScore.emplace(cityAI, cityAI.UnitBuildScore());
+            citiesScore.emplace(cityAI, cityAI.UnitBuildScore(gameMap));
         }
 
         for (std::pair<CityTileAI&, int> cityScorePair : citiesScore)
@@ -130,7 +130,7 @@ void MetaIA::Research()
 
 
 // Other
-std::string MetaIA::Update(int turn)
+std::string MetaIA::Update(int turn, const lux::GameMap& gameMap)
 {
     m_stringResult.clear();
     m_turn = turn;
@@ -148,7 +148,7 @@ std::string MetaIA::Update(int turn)
 
     
 // Expand
-    BuildUnits();
+    BuildUnits(gameMap);
     Research();
     BuildCities();
 

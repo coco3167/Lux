@@ -34,10 +34,10 @@ private:
     int NBUnitsToBuild() const;
     void MakeUnitsCollectResourcesForCity(CityAI& city);
     void MakeUnitsCollectResourcesForThemselves(UnitAI& unit);
-    void BuildUnits();
+    void BuildUnits(const lux::GameMap& gameMap);
     void BuildCities();
     void Research();
     
 public:
-    std::string Update(int turn);
+    std::string Update(int turn, const lux::GameMap& gameMap);
 };
