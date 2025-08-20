@@ -1,15 +1,26 @@
 #pragma once
 #include "../lux/game_objects.hpp"
 
+#include "StateMachine/StateMachine.h"
+#include "WorkerStateMachine.h"
+
 #include "CityAI.h"
 
-class UnitAI
+class WorkerAI
 {
-public:
-    lux::Unit& Unit;
+    typedef WorkerSM::WorkerSMInfos SMInfos;
 
 public:
-    UnitAI(lux::Unit& unit);
+    lux::Unit& Worker;
+
+private:
+    StateMachine<WorkerSM::WorkerSMInfos> m_stateMachine;
+    WorkerSM::WorkerSMInfos m_smInfos;
+
+public:
+    WorkerAI(lux::Unit& worker, GameDatas gameDatas);
+
+    void Update();
 
     // TODO checks if the unit needs more resources at the current turn
     bool NeedResources(int turn) const;
@@ -21,9 +32,12 @@ public:
     void CollectResources();
 
     // TODO Collect resources for a city
-    void CollectResources(CityAI& city);
+    void CollectResources(CityAI& cityAI);
 
     // TODO build city at the best place
     void BuildCityTile();
+
+
+    std::unique_ptr<SMState<WorkerSM::WorkerSMInfos>> GetStartingState();
 };
 
