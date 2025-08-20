@@ -1,17 +1,20 @@
 #include "lux/kit.hpp"
 #include "lux/define.cpp"
+
+#include "lux/game_objects.hpp"
+#include "lux/map.hpp"
+
 #include <string.h>
 #include <vector>
 #include <set>
 #include <stdio.h>
 
-#include "CustomAgent/PathFinder.hpp"
-#include "CustomAgent/Annotator.hpp"
 #include "CustomAgent/GameDatas.h"
 #include "CustomAgent/MetaAI.hpp"
 
 using namespace std;
 using namespace lux;
+
 int main()
 {
   kit::Agent gameState = kit::Agent();
@@ -19,7 +22,8 @@ int main()
   gameState.initialize();
 
   Player& player = gameState.players[gameState.id];
-  GameDatas gameDatas{ gameState.map,  player};
+  GameMap& map = gameState.map;
+  GameDatas gameDatas{ map,  player};
 
   int turn = 0;
 

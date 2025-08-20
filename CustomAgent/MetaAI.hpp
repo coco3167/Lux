@@ -51,8 +51,8 @@ private:
     void GiveOrders();
     void UpdateSubAIs();
 
-    std::vector<CityAI&> GetNeedingCity() const;
-    std::vector<WorkerAI&> GetNeedingUnits() const;
+    std::vector<CityAI*> GetNeedingCity();
+    std::vector<WorkerAI*> GetNeedingUnits();
 
     //Expand
     int NBUnitsToBuild() const;
@@ -63,17 +63,17 @@ private:
     void Research();
 
     template<typename TSubAI, typename TManagedObject>
-    void ManageSubAILife(std::vector<TSubAI>& existingAIs, std::vector<TManagedObject&>& existingObjects)
+    void ManageSubAILife(std::vector<TSubAI>& existingAIs, std::vector<TManagedObject*>& existingObjects)
     {
-        std::unordered_map<TManagedObject&, AILifeState> aiLifeStates = {};
+        std::unordered_map<TManagedObject*, AILifeState> aiLifeStates = {};
         aiLifeStates.reserve(existingAIs.size());
 
         for (int i = 0; i < existingAIs.size(); ++i)
         {
-            aiLifeStates.insert({ existingAIs[i].ManagedObject, AILifeState{i, false} });
+            aiLifeStates.insert({ &existingAIs[i].ManagedObject, AILifeState{i, false} });
         }
 
-        for (TManagedObject& object : existingObjects)
+        for (TManagedObject* object : existingObjects)
         {
             auto objectIterator = aiLifeStates.find(object);
 
@@ -100,5 +100,8 @@ private:
     }
 
     template<typename TSubAI, typename TManagedObject>
-    void EmplaceSubAI(std::vector<TSubAI>& targetVector, TManagedObject& managedObject);
+    void EmplaceSubAI(std::vector<TSubAI>& targetVector, TManagedObject& managedObject)
+    {
+
+    }
 };

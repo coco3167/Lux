@@ -1,5 +1,7 @@
 ﻿#include "MetaAI.hpp"
 
+#include <algorithm>
+
 MetaAI::MetaAI(GameDatas& gameDatas):
     m_gameDatas(gameDatas)
 {
@@ -20,29 +22,29 @@ void MetaAI::ManageAILives()
 {
     Player& player = m_gameDatas.Owner;
 
-    std::vector<const City&> cities = {};
+    std::vector<const City*> cities = {};
     cities.reserve(player.cities.size());
 
     for (const std::pair<string, City>& pair : player.cities) 
     {
-        cities.push_back(player.cities.at(pair.first));
+        cities.push_back(&player.cities.at(pair.first));
     }
 
-    std::vector<const Unit&> workers = {};
+    std::vector<const Unit*> workers = {};
     workers.reserve(player.units.size());
 
-    std::vector<const Unit&> carts = {};
+    std::vector<const Unit*> carts = {};
     carts.reserve(player.units.size());
 
     for (const Unit& unit : player.units) 
     {
         if (unit.isWorker()) 
         {
-            workers.push_back(unit);
+            workers.push_back(&unit);
         }
         else 
         {
-            carts.push_back(unit);
+            carts.push_back(&unit);
         }
     }
 
@@ -55,14 +57,14 @@ void MetaAI::GiveOrders()
 {
     // Survive
 
-    for (CityAI& city : GetNeedingCity())
+    for (CityAI* city : GetNeedingCity())
     {
-        MakeUnitsCollectResourcesForCity(city);
+        MakeUnitsCollectResourcesForCity(*city);
     }
 
-    for (WorkerAI& unit : GetNeedingUnits())
+    for (WorkerAI* unit : GetNeedingUnits())
     {
-        MakeUnitsCollectResourcesForThemselves(unit);
+        MakeUnitsCollectResourcesForThemselves(*unit);
     }
 
 
@@ -81,33 +83,33 @@ void MetaAI::UpdateSubAIs()
 }
 
 // Survive
-std::vector<CityAI&> MetaAI::GetNeedingCity() const
+std::vector<CityAI*> MetaAI::GetNeedingCity()
 {
     // return all city tiles that need to be given resources
-    std::vector<CityAI&> needyCity;
+    std::vector<CityAI*> needyCity;
     needyCity.reserve(m_cityAIs.size());
     
-    for (const CityAI& city : m_cityAIs)
+    for (CityAI& city : m_cityAIs)
     {
         if(city.NeedResources(m_turn))
         {
-            needyCity.emplace_back(city);
+            needyCity.emplace_back(&city);
         }
     }
     return needyCity;
 }
 
-std::vector<WorkerAI&> MetaAI::GetNeedingUnits() const
+std::vector<WorkerAI*> MetaAI::GetNeedingUnits()
 {
     // return all Units that need resources
-    std::vector<WorkerAI&> needyUnits;
+    std::vector<WorkerAI*> needyUnits;
     needyUnits.reserve(m_workerAIs.size());
     
-    for (const WorkerAI& worker : m_workerAIs)
+    for (WorkerAI& worker : m_workerAIs)
     {
         if(worker.NeedResources(m_turn))
         {
-            needyUnits.emplace_back(worker);
+            needyUnits.emplace_back(&worker);
         }
     }
     return needyUnits;
@@ -166,25 +168,31 @@ void MetaAI::BuildUnits()
     int unitNbToBuild = NBUnitsToBuild();
     if(unitNbToBuild > 0)
     {
-        // Map ordered by city score (maybe inverse the >)
-        std::map<CityAI&, int, std::function<bool(int, int)>> citiesScore([](int a, int b) { return a > b; });
+        std::vector<CityAI*> sortedCities{};
+        sortedCities.reserve(m_cityAIs.size());
 
         // Finds a suitable city to build unit on
         for (CityAI& cityAI : m_cityAIs)
         {
-            citiesScore.emplace(cityAI, cityAI.UnitBuildScore());
+            sortedCities.push_back(&cityAI);
         }
 
-        for (std::pair<CityAI&, int> cityScorePair : citiesScore)
+        std::sort(sortedCities.begin(), sortedCities.end(),
+            [](CityAI* a, CityAI* b)
+            {
+                return a->UnitBuildScore() < b->UnitBuildScore();
+            });
+
+        for (CityAI* chosenCity : sortedCities)
         {
             if(unitNbToBuild <= 0)
-                break;
-            
-            CityAI& chosenCity = cityScorePair.first;
-
-            while (chosenCity.IsAvailable())
             {
-                chosenCity.BuildUnit();
+                break;
+            }
+
+            while (chosenCity->IsAvailable())
+            {
+                chosenCity->BuildUnit();
                 unitNbToBuild--;
                 if(unitNbToBuild <= 0)
                 {
@@ -215,7 +223,7 @@ void MetaAI::Research()
             cityAI.Research();
         }
     }
-}        
+}
 
 template<>
 void MetaAI::EmplaceSubAI<WorkerAI, Unit>(std::vector<WorkerAI>& targetVector, Unit& managedObject)

@@ -5,8 +5,6 @@
 #include <string>
 #include <stdexcept>
 
-#include "PathFinder.hpp"
-
 using namespace lux;
 class Utils
 {
