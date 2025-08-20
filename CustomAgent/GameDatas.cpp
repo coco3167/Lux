@@ -4,12 +4,29 @@
 
 #include "PathFinder.hpp"
 
-GameDatas::GameDatas(GameMap& map, std::vector<string>& actions, Player &owner) :
+GameDatas::GameDatas(GameMap& map, Player &owner) :
     Map(map),
-    Actions(actions),
+    m_actions(nullptr),
     Owner(owner),
     m_cityTilesDesirability(map.height * map.width)
 {
+}
+
+void GameDatas::Update(std::vector<string>* actions)
+{
+    m_actions = actions;
+    FillResourceTiles();
+    FillCityTilesDesirability();
+}
+
+void GameDatas::AddAction(string&& action)
+{
+    if (!m_actions) 
+    {
+        return;
+    }
+
+    m_actions->push_back(std::move(action));
 }
 
 Cell *GameDatas::GetClosestResourceCell(Position startPosition) const
@@ -63,12 +80,6 @@ float GameDatas::GetDistanceDesirabilityFactor(Position startPosition, Position 
     int pathLength = path.size();
 
     return static_cast<float>(std::max(-std::log(pathLength) / 2.0f, 0.0));
-}
-
-void GameDatas::Update()
-{
-    FillResourceTiles();
-    FillCityTilesDesirability();
 }
 
 void GameDatas::FillResourceTiles()

@@ -9,24 +9,26 @@ using namespace lux;
 class GameDatas
 {
 public:
-	std::vector<string>& Actions;
 	GameMap& Map;
 	Player& Owner;
 
 private:
+	std::vector<string>* m_actions;
 
 	std::vector<Cell*> m_resourceTiles = std::vector<Cell*>();
 	std::vector<float> m_cityTilesDesirability = std::vector<float>();
 
 public:
-	GameDatas(GameMap& map, std::vector<string>& actions, Player& owner);
+	GameDatas(GameMap& map, Player& owner);
+
+	void Update(std::vector<string>* actions);
+	void AddAction(string&& action);
 
 	Cell* GetClosestResourceCell(Position startPosition) const;
 	
 	Cell* GetBestCityBuildingCell(Position startPosition) const;
 	float GetDistanceDesirabilityFactor(Position startPosition, Position targetPosition) const;
 
-	void Update();
 
 private:
 	void FillResourceTiles();
