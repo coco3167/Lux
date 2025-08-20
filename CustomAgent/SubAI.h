@@ -1,11 +1,13 @@
 #pragma once
+#include <utility>
+
 template<typename TObject>
 class SubAI
 {
 public:
-	TObject& ManagedObject;
+	TObject* ManagedObject;
 
-	SubAI(TObject& managedObject) :
+	SubAI(TObject* managedObject) :
 		ManagedObject(managedObject)
 	{
 

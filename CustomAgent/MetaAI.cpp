@@ -157,7 +157,7 @@ int MetaAI::NBUnitsToBuild() const
 
     for (const CityAI& cityAI : m_cityAIs)
     {
-        cityTilesNb += cityAI.ManagedObject.citytiles.size();
+        cityTilesNb += cityAI.ManagedObject->citytiles.size();
     }
 
     return static_cast<int>(cityTilesNb - m_workerAIs.size());
@@ -207,7 +207,7 @@ void MetaAI::BuildCities()
 {
     for (WorkerAI& workerAI : m_workerAIs)
     {
-        if(workerAI.IsAvailable() && workerAI.ManagedObject.isWorker())
+        if(workerAI.IsAvailable() && workerAI.ManagedObject->isWorker())
         {
             workerAI.BuildCityTile();
         }
@@ -226,13 +226,13 @@ void MetaAI::Research()
 }
 
 template<>
-void MetaAI::EmplaceSubAI<WorkerAI, Unit>(std::vector<WorkerAI>& targetVector, Unit& managedObject)
+void MetaAI::EmplaceSubAI<WorkerAI, Unit>(std::vector<WorkerAI>& targetVector, Unit* managedObject)
 {
     targetVector.emplace_back(managedObject, m_gameDatas);
 }
 
 template<>
-void MetaAI::EmplaceSubAI<CityAI, City>(std::vector<CityAI>& targetVector, City& managedObject)
+void MetaAI::EmplaceSubAI<CityAI, City>(std::vector<CityAI>& targetVector, City* managedObject)
 {
     targetVector.emplace_back(managedObject);
 }

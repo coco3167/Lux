@@ -70,7 +70,7 @@ private:
 
         for (int i = 0; i < existingAIs.size(); ++i)
         {
-            aiLifeStates.insert({ &existingAIs[i].ManagedObject, AILifeState{i, false} });
+            aiLifeStates.insert({ existingAIs[i].ManagedObject, AILifeState{i, false} });
         }
 
         for (TManagedObject* object : existingObjects)
@@ -95,12 +95,13 @@ private:
                 continue;
             }
 
-            existingAIs.erase(existingAIs.begin() + lifeState.second.Index - deletedItemsCount++);
+            existingAIs.erase(existingAIs.begin() + lifeState.second.Index - deletedItemsCount);
+            deletedItemsCount++;
         }
     }
 
     template<typename TSubAI, typename TManagedObject>
-    void EmplaceSubAI(std::vector<TSubAI>& targetVector, TManagedObject& managedObject)
+    void EmplaceSubAI(std::vector<TSubAI>& targetVector, TManagedObject* managedObject)
     {
 
     }
