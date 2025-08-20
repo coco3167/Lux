@@ -53,7 +53,9 @@ public:
     static bool FindPath(const GameMap& map, const Position& startPosition, const Position& targetPosition, const Player& curentPlayer, std::vector<DIRECTIONS>& o_pathToTarget)
     {
         const size_t cellsCount = static_cast<size_t>(map.height * map.width);
-        std::vector<PathfinderCell> allCells { cellsCount };
+        std::vector<PathfinderCell> allCells{};
+        allCells.reserve(cellsCount);
+
 
         for (int x = 0; x < map.width; ++x)
         {    
@@ -198,5 +200,4 @@ private:
         }
         //std::reverse(o_pathToTarget.begin(), o_pathToTarget.end());
     }
-
 };
