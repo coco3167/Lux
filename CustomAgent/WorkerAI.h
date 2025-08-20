@@ -1,4 +1,6 @@
 #pragma once
+#include "SubAI.h"
+
 #include "../lux/game_objects.hpp"
 
 #include "StateMachine/StateMachine.h"
@@ -6,12 +8,9 @@
 
 #include "CityAI.h"
 
-class WorkerAI
+class WorkerAI : public SubAI<lux::Unit>
 {
     typedef WorkerSM::WorkerSMInfos SMInfos;
-
-public:
-    lux::Unit& Worker;
 
 private:
     StateMachine<WorkerSM::WorkerSMInfos> m_stateMachine;

@@ -1,7 +1,7 @@
 #include "WorkerAI.h"
 
 WorkerAI::WorkerAI(lux::Unit& worker, GameDatas gameDatas) :
-	Worker(worker),
+	SubAI(worker),
 	m_stateMachine(std::move(GetStartingState())),
 	m_smInfos(worker, gameDatas)
 {
@@ -30,7 +30,7 @@ void WorkerAI::CollectResources()
 void WorkerAI::CollectResources(CityAI& cityAI)
 {
 	m_smInfos.CurrentObjective = WorkerSM::Objective::CollectRessourceForCity;
-	m_smInfos.SuppliedCity = &cityAI.City;
+	m_smInfos.SuppliedCity = &cityAI.ManagedObject;
 }
 
 void WorkerAI::BuildCityTile()

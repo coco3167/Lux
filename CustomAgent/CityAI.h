@@ -1,10 +1,10 @@
 #pragma once
+#include "SubAI.h"
+
 #include "../lux/game_objects.hpp"
 
-class CityAI
+class CityAI : public SubAI<lux::City>
 {
-public:
-    lux::City& City;
 
 public:
     CityAI(lux::City& city);
