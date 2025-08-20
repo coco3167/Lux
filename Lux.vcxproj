@@ -158,6 +158,7 @@
     <ClCompile Include="CustomAgent\GameDatas.cpp" />
     <ClCompile Include="CustomAgent\MetaAI.cpp" />
     <ClCompile Include="CustomAgent\WorkerAI.cpp" />
+    <ClCompile Include="CustomAgent\WorkerStateMachine.cpp" />
     <ClCompile Include="lux\define.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
