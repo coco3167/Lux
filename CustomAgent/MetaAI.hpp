@@ -11,11 +11,11 @@
 class MetaAI
 {
     /*
-     *  Goals one after the other
-     *  - Survive (keep units and city alive through each night)
-     *  - Expand (more cities, more units, roads, research)
-     *  - Attack (go annoy the ennemy, not necessary)
-     */
+    *  Goals one after the other
+    *  - Survive (keep units and city alive through each night)
+    *  - Expand (more cities, more units, roads, research)
+    *  - Attack (go annoy the ennemy, not necessary)
+    */
 private:
     struct AILifeState
     {
@@ -100,20 +100,5 @@ private:
     }
 
     template<typename TSubAI, typename TManagedObject>
-    void EmplaceSubAI(std::vector<TSubAI>& targetVector, TManagedObject& managedObject)
-    {
-    }
-
-    template<>
-    void EmplaceSubAI<WorkerAI, Unit>(std::vector<WorkerAI>& targetVector, Unit& managedObject)
-    {
-        targetVector.emplace_back(managedObject, m_gameDatas);
-    }
-
-    template<>
-    void EmplaceSubAI<CityAI, City>(std::vector<CityAI>& targetVector, City& managedObject)
-    {
-        targetVector.emplace_back(managedObject);
-    }
-
+    void EmplaceSubAI(std::vector<TSubAI>& targetVector, TManagedObject& managedObject);
 };

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <limits>
 #include <queue>
 #include <vector>
@@ -50,7 +52,7 @@ class PathFinder
 public:
     static bool FindPath(const GameMap& map, const Position& startPosition, const Position& targetPosition, const Player& curentPlayer, std::vector<DIRECTIONS>& o_pathToTarget)
     {
-        const int cellsCount = map.height * map.width;
+        const size_t cellsCount = static_cast<size_t>(map.height * map.width);
         std::vector<PathfinderCell> allCells { cellsCount };
 
         for (int x = 0; x < map.width; ++x)
@@ -115,6 +117,28 @@ public:
         }
 
         return false;
+    }
+
+    static const CityTile* GetClosestCityTile(const Position& position, const City* city, GameMap& map, Player& player) 
+    {
+        std::vector<DIRECTIONS> path = {};
+        path.reserve(10);
+
+        size_t shortestPathLengh = 999999;
+        const CityTile* closestCityTile = nullptr;
+
+        for (const CityTile& tile : city->citytiles) 
+        {
+            PathFinder::FindPath(map, position, tile.pos, player, path);
+            if (path.size() < shortestPathLengh) 
+            {
+                shortestPathLengh = path.size();
+                closestCityTile = &tile;
+            }
+            path.clear();
+        }
+
+        return closestCityTile;
     }
 
 private:

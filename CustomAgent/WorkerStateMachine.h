@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+
 #include "StateMachine/SMState.h"
 #include "PathFinder.hpp"
 #include "GameDatas.h"
@@ -42,6 +44,11 @@ namespace WorkerSM
 		}
 	};
 
+	class DefaultState;
+	class MovingState;
+	class BuildingCityState;
+	class CollectingRessourcesState;
+
 	class DefaultState : public SMState<WorkerSMInfos>
 	{
 	public:
@@ -61,11 +68,11 @@ namespace WorkerSM
 				case Objective::CollectRessourceForSelf:
 				case Objective::CollectRessourceForCity:
 					Cell* targetCell = stateInfos.Datas.GetClosestResourceCell(stateInfos.ControlledWorker.pos);
-					return std::make_unique<MovingState>(stateInfos, targetCell->pos);
+					return std::unique_ptr<MovingState>(new MovingState(stateInfos, targetCell->pos));
 
 				case Objective::BuildCity:
 					Cell* cityBuildTile = stateInfos.Datas.GetBestCityBuildingCell(stateInfos.ControlledWorker.pos);
-					return std::make_unique<MovingState>(stateInfos, cityBuildTile->pos);
+					return std::unique_ptr<MovingState>(new MovingState(stateInfos, cityBuildTile->pos));
 
 			}
 		}
@@ -114,11 +121,11 @@ namespace WorkerSM
 			switch (stateInfos.CurrentObjective) 
 			{
 				case Objective::BuildCity:
-					return std::make_unique<BuildingCityState>();
+					return std::unique_ptr<BuildingCityState>(new BuildingCityState());
 
 				case Objective::CollectRessourceForSelf:
 				case Objective::CollectRessourceForCity:
-					return std::make_unique<CollectingRessourcesState>();
+					return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
 
 			}
 		}
@@ -136,7 +143,7 @@ namespace WorkerSM
 
 			stateInfos.Datas.AddAction(std::move(unit.buildCity()));
 
-			return std::make_unique<DefaultState>(stateInfos);
+			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
 		}
 	};
 
@@ -159,11 +166,11 @@ namespace WorkerSM
 			switch (stateInfos.CurrentObjective)
 			{
 			case Objective::CollectRessourceForSelf:
-				return std::make_unique<DefaultState>(stateInfos);
+				return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
 
 			case Objective::CollectRessourceForCity:
-				const CityTile* closestTile = Utils::GetClosestCityTile(stateInfos.ControlledWorker.pos, stateInfos.SuppliedCity, stateInfos.Datas.Map, stateInfos.Datas.Owner);
-				return std::make_unique<MovingState>(stateInfos, closestTile->pos);
+				const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker.pos, stateInfos.SuppliedCity, stateInfos.Datas.Map, stateInfos.Datas.Owner);
+				return std::unique_ptr<MovingState>(new MovingState(stateInfos, closestTile->pos));
 			}
 		}
 	};

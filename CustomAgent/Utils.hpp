@@ -1,8 +1,11 @@
+#pragma once
 
 #include "../lux/constants.hpp"
 #include <memory>
 #include <string>
 #include <stdexcept>
+
+#include "PathFinder.hpp"
 
 using namespace lux;
 class Utils
@@ -55,27 +58,5 @@ class Utils
         std::unique_ptr<char[]> buf( new char[ size ] );
         std::snprintf( buf.get(), size, format.c_str(), args ... );
         return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
-    }
-
-    static const CityTile* GetClosestCityTile(const Position& position, const City* city, GameMap& map, Player& player) 
-    {
-        std::vector<DIRECTIONS> path = {};
-        path.reserve(10);
-
-        size_t shortestPathLengh = 999999;
-        const CityTile* closestCityTile = nullptr;
-
-        for (const CityTile& tile : city->citytiles) 
-        {
-            PathFinder::FindPath(map, position, tile.pos, player, path);
-            if (path.size() < shortestPathLengh) 
-            {
-                shortestPathLengh = path.size();
-                closestCityTile = &tile;
-            }
-            path.clear();
-        }
-
-        return closestCityTile;
     }
 };
