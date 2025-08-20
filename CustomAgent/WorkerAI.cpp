@@ -1,9 +1,9 @@
 #include "WorkerAI.h"
 
-WorkerAI::WorkerAI(lux::Unit& worker, GameDatas gameDatas) :
+WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
     SubAI(worker),
-    m_stateMachine(std::move(GetStartingState())),
-    m_smInfos(worker, gameDatas)
+    m_smInfos(worker, gameDatas),
+    m_stateMachine(std::move(GetStartingState()))
 {
 }
 
@@ -30,7 +30,7 @@ void WorkerAI::CollectResources()
 void WorkerAI::CollectResources(CityAI& cityAI)
 {
     m_smInfos.CurrentObjective = WorkerSM::Objective::CollectRessourceForCity;
-    m_smInfos.SuppliedCity = &cityAI.ManagedObject;
+    m_smInfos.SuppliedCity = cityAI.ManagedObject;
 }
 
 void WorkerAI::BuildCityTile()
@@ -40,5 +40,5 @@ void WorkerAI::BuildCityTile()
 
 std::unique_ptr<SMState<WorkerSM::WorkerSMInfos>> WorkerAI::GetStartingState()
 {
-    return std::make_unique<WorkerSM::DefaultState>();
+    return std::unique_ptr<WorkerSM::DefaultState>(new WorkerSM::DefaultState(m_smInfos));
 }

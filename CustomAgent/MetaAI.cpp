@@ -228,7 +228,7 @@ void MetaAI::Research()
 template<>
 void MetaAI::EmplaceSubAI<WorkerAI, Unit>(std::vector<WorkerAI>& targetVector, Unit* managedObject)
 {
-    targetVector.emplace_back(managedObject, m_gameDatas);
+    targetVector.emplace_back(managedObject, &m_gameDatas);
 }
 
 template<>

@@ -17,7 +17,7 @@ private:
     WorkerSM::WorkerSMInfos m_smInfos;
 
 public:
-    WorkerAI(lux::Unit& worker, GameDatas gameDatas);
+    WorkerAI(lux::Unit* worker, GameDatas* gameDatas);
 
     void Update();
 

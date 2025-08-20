@@ -8,6 +8,7 @@
 
 #include "../lux/map.hpp"
 #include "../lux/constants.hpp"
+#include "../lux/game_objects.hpp"
 
 #include "Utils.hpp"
 #include "CustomPriorityQueue.hpp"

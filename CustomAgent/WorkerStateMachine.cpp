@@ -16,12 +16,17 @@ namespace WorkerSM
 
 		case Objective::CollectRessourceForSelf:
 		case Objective::CollectRessourceForCity:
-			Cell* targetCell = stateInfos.Datas.GetClosestResourceCell(stateInfos.ControlledWorker.pos);
+		{
+			Cell* targetCell = stateInfos.Datas->GetClosestResourceCell(stateInfos.ControlledWorker->pos);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, targetCell->pos));
+			
+		}
 
 		case Objective::BuildCity:
-			Cell* cityBuildTile = stateInfos.Datas.GetBestCityBuildingCell(stateInfos.ControlledWorker.pos);
+		{
+			Cell* cityBuildTile = stateInfos.Datas->GetBestCityBuildingCell(stateInfos.ControlledWorker->pos);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, cityBuildTile->pos));
+		}
 
 		}
 	}
@@ -33,15 +38,15 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> MovingState::UpdateState(WorkerSMInfos& stateInfos)
 	{
-		Unit& unit = stateInfos.ControlledWorker;
+		Unit* unit = stateInfos.ControlledWorker;
 
-		if (unit.pos == stateInfos.TargetPosition)
+		if (unit->pos == stateInfos.TargetPosition)
 		{
 			return std::move(NextState(stateInfos));
 		}
 
 
-		if (!unit.canAct())
+		if (!unit->canAct())
 		{
 			return nullptr;
 		}
@@ -49,14 +54,14 @@ namespace WorkerSM
 		std::vector<DIRECTIONS> pathToTarget{};
 		pathToTarget.reserve(10);
 
-		bool pathFound = PathFinder::FindPath(stateInfos.Datas.Map, unit.pos, stateInfos.TargetPosition, stateInfos.Datas.Owner, pathToTarget);
+		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, pathToTarget);
 
 		if (!pathFound)
 		{
 			return nullptr;
 		}
 
-		stateInfos.Datas.AddAction(std::move(unit.move(pathToTarget[0])));
+		stateInfos.Datas->AddAction(std::move(unit->move(pathToTarget[0])));
 
 		return nullptr;
 	}
@@ -77,22 +82,22 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> BuildingCityState::UpdateState(WorkerSMInfos& stateInfos)
 	{
-		Unit& unit = stateInfos.ControlledWorker;
-		if (!unit.canAct())
+		Unit* unit = stateInfos.ControlledWorker;
+		if (!unit->canAct())
 		{
 			return nullptr;
 		}
 
-		stateInfos.Datas.AddAction(std::move(unit.buildCity()));
+		stateInfos.Datas->AddAction(std::move(unit->buildCity()));
 
 		return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
 	}
 
 	std::unique_ptr<SMState<WorkerSMInfos>> CollectingRessourcesState::UpdateState(WorkerSMInfos& stateInfos)
 	{
-		Unit& unit = stateInfos.ControlledWorker;
+		Unit* unit = stateInfos.ControlledWorker;
 
-		if (unit.getCargoSpaceLeft() == 0)
+		if (unit->getCargoSpaceLeft() == 0)
 		{
 			return std::move(NextState(stateInfos));
 		}
@@ -108,7 +113,7 @@ namespace WorkerSM
 			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
 
 		case Objective::CollectRessourceForCity:
-			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker.pos, stateInfos.SuppliedCity, stateInfos.Datas.Map, stateInfos.Datas.Owner);
+			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->pos, stateInfos.SuppliedCity, stateInfos.Datas->Map, stateInfos.Datas->Owner);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, closestTile->pos));
 		}
 	}

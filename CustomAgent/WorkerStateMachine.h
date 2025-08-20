@@ -24,8 +24,8 @@ namespace WorkerSM
 
 	struct WorkerSMInfos 
 	{
-		GameDatas& Datas;
-		Unit& ControlledWorker;
+		GameDatas* Datas;
+		Unit* ControlledWorker;
 		Objective CurrentObjective;
 
 		City* SuppliedCity;
@@ -33,7 +33,7 @@ namespace WorkerSM
 		Position TargetPosition;
 
 
-		WorkerSMInfos(Unit& worker, GameDatas& datas) :
+		WorkerSMInfos(Unit* worker, GameDatas* datas) :
 			ControlledWorker(worker),
 			Datas(datas),
 			CurrentObjective(Objective::None),

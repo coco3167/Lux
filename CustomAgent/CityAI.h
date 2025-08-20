@@ -7,7 +7,7 @@ class CityAI : public SubAI<lux::City>
 {
 
 public:
-    CityAI(lux::City& city);
+    CityAI(lux::City* city);
 
     // TODO checks if the city needs more resources at the current turn
     bool NeedResources(int turn) const;
