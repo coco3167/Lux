@@ -155,8 +155,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CustomAgent\CityAI.cpp" />
-    <ClCompile Include="CustomAgent\MetaIA.cpp" />
-    <ClCompile Include="CustomAgent\UnitAI.cpp" />
+    <ClCompile Include="CustomAgent\GameDatas.cpp" />
+    <ClCompile Include="CustomAgent\MetaAI.cpp" />
+    <ClCompile Include="CustomAgent\WorkerAI.cpp" />
     <ClCompile Include="lux\define.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -213,12 +214,17 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CustomAgent\Annotator.hpp" />
+    <ClInclude Include="CustomAgent\SubAI.h" />
     <ClInclude Include="CustomAgent\CityAI.h" />
     <ClInclude Include="CustomAgent\CustomPriorityQueue.hpp" />
+    <ClInclude Include="CustomAgent\GameDatas.h" />
     <ClInclude Include="CustomAgent\PathFinder.hpp" />
-    <ClInclude Include="CustomAgent\UnitAI.h" />
+    <ClInclude Include="CustomAgent\StateMachine\StateMachine.h" />
+    <ClInclude Include="CustomAgent\StateMachine\SMState.h" />
+    <ClInclude Include="CustomAgent\WorkerAI.h" />
+    <ClInclude Include="CustomAgent\WorkerStateMachine.h" />
     <ClInclude Include="CustomAgent\Utils.hpp" />
-    <ClInclude Include="CustomAgent\MetaIA.hpp" />
+    <ClInclude Include="CustomAgent\MetaAI.hpp" />
     <ClInclude Include="lux\annotate.hpp" />
     <ClInclude Include="lux\city.hpp" />
     <ClInclude Include="lux\constants.hpp" />

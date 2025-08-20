@@ -8,7 +8,7 @@
 #include "SubAI.h"
 #include "WorkerAI.h"
 
-class MetaIA
+class MetaAI
 {
     /*
      *  Goals one after the other
@@ -41,7 +41,7 @@ private:
     std::vector<WorkerAI> m_cartAIs;
 
 public:
-    MetaIA(GameDatas& gameDatas);
+    MetaAI(GameDatas& gameDatas);
 
     void Update(int turn);
 

@@ -1,15 +1,15 @@
-﻿#include "MetaIA.hpp"
+﻿#include "MetaAI.hpp"
 
 
 
-MetaIA::MetaIA(GameDatas& gameDatas):
+MetaAI::MetaAI(GameDatas& gameDatas):
     m_gameDatas(gameDatas)
 {
 
 }
 
 // Other
-void MetaIA::Update(const int turn)
+void MetaAI::Update(const int turn)
 {
     m_turn = turn;
 
@@ -18,7 +18,7 @@ void MetaIA::Update(const int turn)
     UpdateSubAIs();
 }
 
-void MetaIA::ManageAILives()
+void MetaAI::ManageAILives()
 {
     Player& player = m_gameDatas.Owner;
 
@@ -53,7 +53,7 @@ void MetaIA::ManageAILives()
     ManageSubAILife(m_cityAIs, cities);
 }
 
-void MetaIA::GiveOrders()
+void MetaAI::GiveOrders()
 {
     // Survive
 
@@ -74,7 +74,7 @@ void MetaIA::GiveOrders()
     BuildCities();
 }
 
-void MetaIA::UpdateSubAIs()
+void MetaAI::UpdateSubAIs()
 {
     for (WorkerAI& worker : m_workerAIs) 
     {
@@ -83,7 +83,7 @@ void MetaIA::UpdateSubAIs()
 }
 
 // Survive
-std::vector<CityAI&> MetaIA::GetNeedingCity() const
+std::vector<CityAI&> MetaAI::GetNeedingCity() const
 {
     // return all city tiles that need to be given resources
     std::vector<CityAI&> needyCity;
@@ -99,7 +99,7 @@ std::vector<CityAI&> MetaIA::GetNeedingCity() const
     return needyCity;
 }
 
-std::vector<WorkerAI&> MetaIA::GetNeedingUnits() const
+std::vector<WorkerAI&> MetaAI::GetNeedingUnits() const
 {
     // return all Units that need resources
     std::vector<WorkerAI&> needyUnits;
@@ -115,7 +115,7 @@ std::vector<WorkerAI&> MetaIA::GetNeedingUnits() const
     return needyUnits;
 }
 
-void MetaIA::MakeUnitsCollectResourcesForCity(CityAI& city)
+void MetaAI::MakeUnitsCollectResourcesForCity(CityAI& city)
 {
     int unitsNeeded = city.ResourcesQuantityNeeded(m_turn) / RESOURCE_PER_UNIT;
     int loop = 0;
@@ -141,7 +141,7 @@ void MetaIA::MakeUnitsCollectResourcesForCity(CityAI& city)
     }
 }
 
-void MetaIA::MakeUnitsCollectResourcesForThemselves(WorkerAI& unit)
+void MetaAI::MakeUnitsCollectResourcesForThemselves(WorkerAI& unit)
 {
     if(unit.IsAvailable())
     {
@@ -151,7 +151,7 @@ void MetaIA::MakeUnitsCollectResourcesForThemselves(WorkerAI& unit)
 
 
 // Expand
-int MetaIA::NBUnitsToBuild() const
+int MetaAI::NBUnitsToBuild() const
 {
     size_t cityTilesNb = 0;
 
@@ -163,7 +163,7 @@ int MetaIA::NBUnitsToBuild() const
     return static_cast<int>(cityTilesNb - m_workerAIs.size());
 }
 
-void MetaIA::BuildUnits()
+void MetaAI::BuildUnits()
 {
     int unitNbToBuild = NBUnitsToBuild();
     if(unitNbToBuild > 0)
@@ -197,7 +197,7 @@ void MetaIA::BuildUnits()
     }
 }
 
-void MetaIA::BuildCities()
+void MetaAI::BuildCities()
 {
     for (WorkerAI& workerAI : m_workerAIs)
     {
@@ -208,7 +208,7 @@ void MetaIA::BuildCities()
     }
 }
 
-void MetaIA::Research()
+void MetaAI::Research()
 {
     for (CityAI& cityAI : m_cityAIs)
     {
