@@ -20,6 +20,13 @@ class Utils
             0 <= position.y && position.y < map.height;
     }
 
+    static bool IsInMap(const int x,const int y, const GameMap& map)
+    {
+        return 
+            0 <= x && x < map.width &&
+            0 <= y && y < map.height;
+    }
+
     static DIRECTIONS GetOppositeDirection(const DIRECTIONS dir)
     {
         switch (dir)
@@ -38,6 +45,7 @@ class Utils
         return DIRECTIONS::CENTER;
     }
 
+
     template<typename ... Args>
     static std::string FormatString( const std::string& format, Args ... args )
     {
@@ -47,5 +55,27 @@ class Utils
         std::unique_ptr<char[]> buf( new char[ size ] );
         std::snprintf( buf.get(), size, format.c_str(), args ... );
         return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
+    }
+
+    static const CityTile* GetClosestCityTile(const Position& position, const City* city, GameMap& map, Player& player) 
+    {
+        std::vector<DIRECTIONS> path = {};
+        path.reserve(10);
+
+        size_t shortestPathLengh = 999999;
+        const CityTile* closestCityTile = nullptr;
+
+        for (const CityTile& tile : city->citytiles) 
+        {
+            PathFinder::FindPath(map, position, tile.pos, player, path);
+            if (path.size() < shortestPathLengh) 
+            {
+                shortestPathLengh = path.size();
+                closestCityTile = &tile;
+            }
+            path.clear();
+        }
+
+        return closestCityTile;
     }
 };
