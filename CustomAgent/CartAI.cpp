@@ -83,7 +83,7 @@ void CartAI::BuildRoad(lux::Position start, lux::Position end)
 	destination = end;
 }
 
-std::vector<std::string> CartAI::Transfer(lux::Unit unit)
+std::vector<std::string> CartAI::Transfer(lux::Unit& unit)
 {
 	std::vector<std::string> res = {};
 	int fuel = ManagedObject->cargo.wood + ManagedObject->cargo.coal * 10 + ManagedObject->cargo.uranium * 40;

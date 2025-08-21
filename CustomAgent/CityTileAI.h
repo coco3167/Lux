@@ -1,4 +1,4 @@
-#pragma once*
+#pragma once
 #include "../lux/game_objects.hpp"
 
 #include "SubAI.h"

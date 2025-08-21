@@ -6,6 +6,9 @@
 
 #include "CityAI.h"
 
+#include "SubAI.h"
+#include "GameDatas.h"
+
 class CartAI : public SubAI<lux::Unit>
 {
 enum CartState
