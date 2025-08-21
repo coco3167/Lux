@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CustomAgent\CartAI.cpp" />
     <ClCompile Include="CustomAgent\CityAI.cpp" />
     <ClCompile Include="CustomAgent\CityTileAI.cpp" />
     <ClCompile Include="CustomAgent\GameDatas.cpp" />
@@ -216,6 +217,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CustomAgent\Annotator.hpp" />
+    <ClInclude Include="CustomAgent\CartAI.hpp" />
     <ClInclude Include="CustomAgent\SubAI.h" />
     <ClInclude Include="CustomAgent\CityAI.h" />
     <ClInclude Include="CustomAgent\CityTileAI.h" />

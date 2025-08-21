@@ -21,6 +21,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CustomAgent\CartAI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="CustomAgent\CityAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CustomAgent\Annotator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomAgent\CartAI.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CustomAgent\CityAI.h">
