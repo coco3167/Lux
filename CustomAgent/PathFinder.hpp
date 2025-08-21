@@ -1,3 +1,5 @@
+#pragma once
+
 #include <limits>
 #include <queue>
 #include <vector>
@@ -6,6 +8,7 @@
 
 #include "../lux/map.hpp"
 #include "../lux/constants.hpp"
+#include "../lux/game_objects.hpp"
 
 #include "Utils.hpp"
 #include "CustomPriorityQueue.hpp"
@@ -48,11 +51,12 @@ public:
 class PathFinder
 {
 public:
-    static bool FindPath(const GameMap& map, Position& startPosition, Position& targetPosition, std::vector<DIRECTIONS>& o_pathToTarget)
+    static bool FindPath(const GameMap& map, const Position& startPosition, const Position& targetPosition, const Player& curentPlayer, std::vector<DIRECTIONS>& o_pathToTarget)
     {
-        int cellsCount = map.height * map.width;
-        std::vector<PathfinderCell> allCells = {};
+        const size_t cellsCount = static_cast<size_t>(map.height * map.width);
+        std::vector<PathfinderCell> allCells{};
         allCells.reserve(cellsCount);
+
 
         for (int x = 0; x < map.width; ++x)
         {    
@@ -96,7 +100,7 @@ public:
 
                 PathfinderCell& neighbouringCell = allCells[PositionToArrayIndex(neighbouringPosition, map)];
                 
-                float gScoreAttempt = currentCell.GScore + ComputeCost(currentCell, neighbouringCell);
+                float gScoreAttempt = currentCell.GScore + ComputeCost(currentCell, neighbouringCell, curentPlayer);
                 if (gScoreAttempt >= neighbouringCell.GScore)
                 {
                     continue;
@@ -118,18 +122,66 @@ public:
         return false;
     }
 
+    static const CityTile* GetClosestCityTile(const Position& position, const City* city, GameMap& map, Player& player) 
+    {
+        std::vector<DIRECTIONS> path = {};
+        path.reserve(10);
+
+        size_t shortestPathLengh = 999999;
+        const CityTile* closestCityTile = nullptr;
+
+        for (const CityTile& tile : city->citytiles) 
+        {
+            PathFinder::FindPath(map, position, tile.pos, player, path);
+            if (path.size() < shortestPathLengh) 
+            {
+                shortestPathLengh = path.size();
+                closestCityTile = &tile;
+            }
+            path.clear();
+        }
+
+        return closestCityTile;
+    }
+
 private:
-    static float ComputeHeuristic(lux::Position& cellPosition, lux::Position& targetPosition)
+    static float ComputeHeuristic(const lux::Position& cellPosition, const lux::Position& targetPosition)
     {
         return cellPosition.distanceTo(targetPosition);
     }
 
-    static float ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell)
+    static float ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, const Player& currentPlayer)
     {
+        CityTile* neighbouringCityTile = neighbouringCell.Cell->citytile;
+        if (neighbouringCityTile != nullptr && neighbouringCityTile->team != currentPlayer.team)
+        {
+            return 99999999.0f; // Can't pass through a opponent's city tile
+        }
+
+        bool allyUnitInNeighbouringCell = false;
+        for (const Unit& allyUnit : currentPlayer.units) 
+        {
+            if (allyUnit.pos == neighbouringCell.Cell->pos) 
+            {
+                allyUnitInNeighbouringCell = true;
+                break;
+            }
+        }
+
+        if (allyUnitInNeighbouringCell && neighbouringCityTile == nullptr)
+        {
+            return 99999999.0f; // Can't pass through an ally outside a city
+        }
+
+        if (neighbouringCell.Cell->road > 0.0f) 
+        {
+            return 1.0f / neighbouringCell.Cell->road;
+        }
+
         return 1.0f;
     }
 
-    static int PositionToArrayIndex(lux::Position& position, const lux::GameMap& map)
+    static int PositionToArrayIndex(const lux::Position& position, const lux::GameMap& map)
     {
         return PositionToArrayIndex(position.x, position.y, map);
     }
@@ -149,5 +201,4 @@ private:
         }
         //std::reverse(o_pathToTarget.begin(), o_pathToTarget.end());
     }
-
 };
