@@ -29,6 +29,8 @@ namespace WorkerSM
 		}
 
 		}
+
+		return nullptr;
 	}
 
 	MovingState::MovingState(WorkerSMInfos& stateInfos, const Position& target)
@@ -78,6 +80,7 @@ namespace WorkerSM
 			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
 
 		}
+		return nullptr;
 	}
 
 	std::unique_ptr<SMState<WorkerSMInfos>> BuildingCityState::UpdateState(WorkerSMInfos& stateInfos)
@@ -116,5 +119,7 @@ namespace WorkerSM
 			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->pos, stateInfos.SuppliedCity, stateInfos.Datas->Map, stateInfos.Datas->Owner);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, closestTile->pos));
 		}
+		
+		return nullptr;
 	}
 }
