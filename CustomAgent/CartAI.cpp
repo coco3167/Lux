@@ -83,9 +83,8 @@ void CartAI::BuildRoad(lux::Position start, lux::Position end)
 	destination = end;
 }
 
-std::vector<std::string> CartAI::Transfer(lux::Unit unit)
+void CartAI::Transfer(lux::Unit& unit, std::vector<std::string>& actions)
 {
-	std::vector<std::string> res = {};
 	int fuel = ManagedObject->cargo.wood + ManagedObject->cargo.coal * 10 + ManagedObject->cargo.uranium * 40;
 
 	// If we have surplus, we can give some to the unit for it to survive.
@@ -93,7 +92,10 @@ std::vector<std::string> CartAI::Transfer(lux::Unit unit)
 										 : CartAI::FUEL_NEEDED_FOR_THE_NIGHT;
 
 	// We don't have enough fuel for both the cart and the unit, abort transfer.
-	if (fuel < FUEL_NEEDED_FOR_THE_NIGHT + fuelToTransfer) return;
+	if (fuel < FUEL_NEEDED_FOR_THE_NIGHT + fuelToTransfer) 
+	{
+		return;
+	}
 	
 	int cargoU = ManagedObject->cargo.uranium;
 	if (cargoU > 0)
@@ -110,8 +112,7 @@ std::vector<std::string> CartAI::Transfer(lux::Unit unit)
 			cargoU = 0;
 		}
 		fuelToTransfer -= uAmmount;
-		res.push_back(ManagedObject->transfer(ManagedObject->id, unit.id,
-			lux::ResourceType::coal, uAmmount));
+		actions.push_back(std::move(ManagedObject->transfer(ManagedObject->id, unit.id, lux::ResourceType::coal, uAmmount)));
 	}
 
 	int cargoCoal = ManagedObject->cargo.coal;
@@ -129,9 +130,13 @@ std::vector<std::string> CartAI::Transfer(lux::Unit unit)
 			cargoCoal = 0;
 		}
 		fuelToTransfer -= coalAmmount;
-		res.push_back(ManagedObject->transfer(ManagedObject->id, unit.id,
-			lux::ResourceType::coal, coalAmmount));
-		if (fuelToTransfer <= 0) return res;
+		actions.push_back(std::move(ManagedObject->transfer(ManagedObject->id, unit.id, lux::ResourceType::coal, coalAmmount)));
+
+		if (fuelToTransfer <= 0)
+		{
+			return;
+		} 
+			
 	}
 
 	int cargoWood = ManagedObject->cargo.wood;
@@ -149,11 +154,13 @@ std::vector<std::string> CartAI::Transfer(lux::Unit unit)
 			cargoWood = 0;
 		}
 		ManagedObject->cargo.wood = cargoWood;
-		res.push_back(ManagedObject->transfer(ManagedObject->id, unit.id,
-									lux::ResourceType::wood, woodAmmount));
+
+		actions.push_back(std::move(ManagedObject->transfer(ManagedObject->id, unit.id, lux::ResourceType::wood, woodAmmount)));
+
 		fuelToTransfer -= woodAmmount;
-		if (fuelToTransfer <= 0) return res;
+		if (fuelToTransfer <= 0)
+		{
+			return;
+		}
 	}
-	
-	return res;
 }

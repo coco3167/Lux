@@ -1,4 +1,4 @@
-#pragma once*
+#pragma once
 #include "../lux/game_objects.hpp"
 
 #include "SubAI.h"
@@ -6,7 +6,7 @@
 class CityTileAI : public SubAI<lux::CityTile>
 {
 private:
-    static constexpr float CART_PERCENTAGE = .1f;
+    static constexpr float CART_PERCENTAGE = 0.1f;
     static constexpr int MAX_SCORE = 10;
 
 public:

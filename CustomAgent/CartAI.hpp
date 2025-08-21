@@ -6,6 +6,9 @@
 
 #include "CityAI.h"
 
+#include "SubAI.h"
+#include "GameDatas.h"
+
 class CartAI : public SubAI<lux::Unit>
 {
 enum CartState
@@ -48,7 +51,7 @@ public:
     // TODO start to build a road from start to end
     void BuildRoad(lux::Position start, lux::Position end);
 
-    std::vector<std::string> Transfer(lux::Unit& unit);
+    void Transfer(lux::Unit& unit, std::vector<std::string>& actions);
 };
 
 

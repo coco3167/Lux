@@ -14,14 +14,15 @@ float CityAI::ResourcesQuantityNeeded(int turn)
 {
     float totalFuelNeeded = 0;
 
-    // Get all cityTiles in an unordered map for faster access
+    // Get all cityTiles in an unordered set for faster access
     m_unorderedCityTilePositions.clear();
-    for (lux::CityTile cityTile : City.citytiles)
+
+    for (lux::CityTile& cityTile : ManagedObject->citytiles)
     {
-        m_unorderedCityTilePositions.insert({cityTile.pos, cityTile});
+        m_unorderedCityTilePositions.insert(cityTile.pos);
     }
     
-    for (const lux::CityTile& cityTileAi : City.citytiles)
+    for (const lux::CityTile& cityTileAi : ManagedObject->citytiles)
     {
         float fuelNeeded = 23;
         lux::Position position = cityTileAi.pos;
@@ -40,5 +41,5 @@ float CityAI::ResourcesQuantityNeeded(int turn)
     // Turns to survive in the dark left
     int turnUsable = std::min(10,40 - turn % 40);
     
-    return totalFuelNeeded * static_cast<float>(turnUsable) - City.fuel;
+    return totalFuelNeeded * static_cast<float>(turnUsable) - ManagedObject->fuel;
 }
