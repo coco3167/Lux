@@ -1,13 +1,13 @@
 #include "CityTileAI.h"
 
-CityTileAI::CityTileAI(lux::CityTile& city) :
-	CityTile(city)
+CityTileAI::CityTileAI(lux::CityTile* tile) :
+	SubAI(tile)
 {
 }
 
 bool CityTileAI::IsAvailable() const
 {
-	return CityTile.isAvailable;
+	return ManagedObject->isAvailable;
 }
 
 // Score decrements with distance, MAX_SCORE being the score at 1 distance
@@ -20,7 +20,7 @@ int CityTileAI::UnitBuildScore(const lux::GameMap& gameMap) const
 	{
 		for (lux::DIRECTIONS direction : lux::ALL_DIRECTIONS)
 		{
-			lux::Position positionToTest = CityTile.pos.translate(direction, distance);
+			lux::Position positionToTest = ManagedObject->pos.translate(direction, distance);
 			if(positionToTest.x >= 0 && positionToTest.x < gameMap.width && positionToTest.y >= 0 && positionToTest.y <gameMap.height)
 			{
 				const lux::Cell* cellToTest = gameMap.getCellByPos(positionToTest);
@@ -39,23 +39,19 @@ int CityTileAI::UnitBuildScore(const lux::GameMap& gameMap) const
 	return score;
 }
 
-std::string CityTileAI::BuildUnit(const std::vector<UnitAI>& units) const
+std::string CityTileAI::BuildUnit(size_t workerCount, size_t cartCount) const
 {
-	int cartNb = 0;
-	for (const UnitAI& unit : units)
-	{
-		cartNb += unit.IsCart();
-	}
+	size_t unitCount = workerCount + cartCount;
 
-	if(cartNb/static_cast<float>(units.size()) < CART_PERCENTAGE)
+	if(cartCount / static_cast<float>(unitCount) < CART_PERCENTAGE)
 	{
-		return CityTile.buildCart();
+		return std::move(ManagedObject->buildCart());
 	}
 	
-	return CityTile.buildWorker();
+	return std::move(ManagedObject->buildWorker());
 }
 
 std::string CityTileAI::Research() const
 {
-	return CityTile.research();
+	return std::move(ManagedObject->research());
 }

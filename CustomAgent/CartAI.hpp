@@ -5,9 +5,8 @@
 #include "../lux/position.hpp"
 
 #include "CityAI.h"
-#include "UnitAI.h"
 
-class CartAI
+class CartAI : public SubAI<lux::Unit>
 {
 enum CartState
 {
@@ -20,8 +19,7 @@ enum CartState
 public:
     static const int FUEL_NEEDED_FOR_THE_NIGHT = 100;
 
-    lux::Unit& cart;
-    lux::GameMap& map;
+    GameDatas* m_gameDatas;
 
     CartState state;
     lux::Position destination;
@@ -30,7 +28,7 @@ public:
     
 
 public:
-    CartAI(lux::Unit& unit, lux::GameMap& map);
+    CartAI(lux::Unit* unit, GameDatas* gameDatas);
 
     void Update();
 
@@ -50,7 +48,7 @@ public:
     // TODO start to build a road from start to end
     void BuildRoad(lux::Position start, lux::Position end);
 
-    std::vector<std::string> Transfer(lux::Unit unit);
+    std::vector<std::string> Transfer(lux::Unit& unit);
 };
 
 

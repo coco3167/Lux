@@ -8,6 +8,7 @@
 #include "CityTileAI.h"
 #include "SubAI.h"
 #include "WorkerAI.h"
+#include "CartAI.hpp"
 
 class MetaAI
 {
@@ -40,7 +41,7 @@ private:
     std::vector<CityAI> m_cityAIs;
     std::vector<CityTileAI> m_cityTileAIs;
     std::vector<WorkerAI> m_workerAIs;
-    std::vector<WorkerAI> m_cartAIs;
+    std::vector<CartAI> m_cartAIs;
 
 public:
     MetaAI(GameDatas& gameDatas);

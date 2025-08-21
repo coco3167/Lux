@@ -25,9 +25,18 @@ void MetaAI::ManageAILives()
     std::vector<const City*> cities = {};
     cities.reserve(player.cities.size());
 
+    std::vector<const CityTile*> cityTiles = {};
+    cityTiles.reserve(cities.size() * 5);
+
     for (const std::pair<string, City>& pair : player.cities) 
     {
-        cities.push_back(&player.cities.at(pair.first));
+        City* city = &player.cities.at(pair.first);
+        cities.push_back(city);
+
+        for (const CityTile& tile : city->citytiles)
+        {
+            cityTiles.push_back(&tile);
+        }
     }
 
     std::vector<const Unit*> workers = {};
@@ -51,6 +60,7 @@ void MetaAI::ManageAILives()
     ManageSubAILife(m_workerAIs, workers);
     ManageSubAILife(m_cartAIs, carts);
     ManageSubAILife(m_cityAIs, cities);
+    ManageSubAILife(m_cityTileAIs, cityTiles);
 }
 
 void MetaAI::GiveOrders()
@@ -153,7 +163,7 @@ void MetaAI::MakeUnitsCollectResourcesForThemselves(WorkerAI& unit)
 // Expand
 int MetaAI::NBUnitsToBuild() const
 {
-    return static_cast<int>(m_cityTileAIs.size() - m_unitAIs.size());
+    return static_cast<int>(m_cityTileAIs.size() - m_gameDatas.Owner.units.size());
 }
 
 void MetaAI::BuildUnits()
@@ -170,10 +180,12 @@ void MetaAI::BuildUnits()
             sortedCityTiles.push_back(&cityAI);
         }
 
+        GameDatas& datas = m_gameDatas;
+
         std::sort(sortedCityTiles.begin(), sortedCityTiles.end(),
-            [](CityTileAI* a, CityTileAI* b)
+            [&datas](CityTileAI* a, CityTileAI* b)
             {
-                return a->UnitBuildScore() < b->UnitBuildScore();
+                return a->UnitBuildScore(datas.Map) < b->UnitBuildScore(datas.Map);
             });
 
         for (CityTileAI* chosenCityTile : sortedCityTiles)
@@ -185,7 +197,7 @@ void MetaAI::BuildUnits()
 
             while (chosenCityTile->IsAvailable())
             {
-                chosenCityTile->BuildUnit(); // Insert command
+                m_gameDatas.AddAction(std::move(chosenCityTile->BuildUnit(m_workerAIs.size(), m_cartAIs.size())));
                 unitNbToBuild--;
                 if(unitNbToBuild <= 0)
                 {
@@ -213,7 +225,7 @@ void MetaAI::Research()
     {
         if(cityTile.IsAvailable())
         {
-            cityTile.Research(); // Insert command
+            m_gameDatas.AddAction(std::move(cityTile.Research())); // Insert command
         }
     }
 }
@@ -222,6 +234,18 @@ template<>
 void MetaAI::EmplaceSubAI<WorkerAI, Unit>(std::vector<WorkerAI>& targetVector, Unit* managedObject)
 {
     targetVector.emplace_back(managedObject, &m_gameDatas);
+}
+
+template<>
+void MetaAI::EmplaceSubAI<CartAI, Unit>(std::vector<CartAI>& targetVector, Unit* managedObject)
+{
+    targetVector.emplace_back(managedObject, &m_gameDatas);
+}
+
+template<>
+void MetaAI::EmplaceSubAI<CityTileAI, CityTile>(std::vector<CityTileAI>& targetVector, CityTile* managedObject)
+{
+    targetVector.emplace_back(managedObject);
 }
 
 template<>

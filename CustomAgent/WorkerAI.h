@@ -12,6 +12,9 @@ class WorkerAI : public SubAI<lux::Unit>
 {
     typedef WorkerSM::WorkerSMInfos SMInfos;
 
+public:
+    static constexpr int FUEL_NEEDED_FOR_THE_NIGHT = 40;
+
 private:
     StateMachine<WorkerSM::WorkerSMInfos> m_stateMachine;
     WorkerSM::WorkerSMInfos m_smInfos;

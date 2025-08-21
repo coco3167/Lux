@@ -1,24 +1,22 @@
-#pragma once
-#include "UnitAI.h"
+#pragma once*
 #include "../lux/game_objects.hpp"
 
-class CityTileAI
+#include "SubAI.h"
+
+class CityTileAI : public SubAI<lux::CityTile>
 {
 private:
-    constexpr float CART_PERCENTAGE = .1f;
-    constexpr int MAX_SCORE = 10;
-    
-public:
-    lux::CityTile& CityTile;
+    static constexpr float CART_PERCENTAGE = .1f;
+    static constexpr int MAX_SCORE = 10;
 
 public:
-    CityTileAI(lux::CityTile& city);
+    CityTileAI(lux::CityTile* tile);
     bool IsAvailable() const;
 
     // TODO returns how much the city wants to build a unit
     int UnitBuildScore(const lux::GameMap& gameMap) const;
 
-    std::string BuildUnit(const std::vector<UnitAI>& units) const;
+    std::string BuildUnit(size_t workerCount, size_t cartCount) const;
     std::string Research() const;
 };
 

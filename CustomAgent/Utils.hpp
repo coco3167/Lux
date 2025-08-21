@@ -62,8 +62,7 @@ class Utils
 		return DIRECTIONS::CENTER;
 	}
 
-	static Position GetClosestAdjacentTile(const Position& origin,
-						const Position& target, const GameMap& map)
+	static Position GetClosestAdjacentTile(const Position& origin, const Position& target, const GameMap& map)
 	{
 		DIRECTIONS dir = target.directionTo(origin);
 		Position res = target.translate(dir, 1);

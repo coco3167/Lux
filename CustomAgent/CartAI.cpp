@@ -1,10 +1,13 @@
+#include "CartAI.hpp"
+
 #include <cmath>
 
-#include "CartAI.hpp"
+#include "WorkerAI.h"
 #include "Utils.hpp"
 
-CartAI::CartAI(lux::Unit& cart, lux::GameMap& map) :
-	cart(cart), map(map)
+CartAI::CartAI(lux::Unit* cart, GameDatas* gameDatas) :
+	SubAI(cart),
+	m_gameDatas(gameDatas)
 {
 	state = CartState::STANDBY;
 	resupplyTarget = nullptr;
@@ -52,12 +55,12 @@ bool CartAI::IsAvailable() const
 bool CartAI::DestinationReached()
 {
 	if (destination.x = -1) return false;
-	return destination == cart.pos;
+	return destination == ManagedObject->pos;
 }
 
 void CartAI::UpdateDestination()
 {
-	destination = Utils::GetClosestAdjacentTile(cart.pos, resupplyTarget->pos, map);
+	destination = Utils::GetClosestAdjacentTile(ManagedObject->pos, resupplyTarget->pos, m_gameDatas->Map);
 }
 
 void CartAI::Resupply(lux::Unit& unit)
@@ -83,16 +86,16 @@ void CartAI::BuildRoad(lux::Position start, lux::Position end)
 std::vector<std::string> CartAI::Transfer(lux::Unit unit)
 {
 	std::vector<std::string> res = {};
-	int fuel = cart.cargo.wood + cart.cargo.coal * 10 + cart.cargo.uranium * 40;
+	int fuel = ManagedObject->cargo.wood + ManagedObject->cargo.coal * 10 + ManagedObject->cargo.uranium * 40;
 
 	// If we have surplus, we can give some to the unit for it to survive.
-	int fuelToTransfer = unit.isWorker() ? UnitAI::FUEL_NEEDED_FOR_THE_NIGHT
+	int fuelToTransfer = unit.isWorker() ? WorkerAI::FUEL_NEEDED_FOR_THE_NIGHT
 										 : CartAI::FUEL_NEEDED_FOR_THE_NIGHT;
 
 	// We don't have enough fuel for both the cart and the unit, abort transfer.
 	if (fuel < FUEL_NEEDED_FOR_THE_NIGHT + fuelToTransfer) return;
 	
-	int cargoU = cart.cargo.uranium;
+	int cargoU = ManagedObject->cargo.uranium;
 	if (cargoU > 0)
 	{
 		int uAmmount;
@@ -107,11 +110,11 @@ std::vector<std::string> CartAI::Transfer(lux::Unit unit)
 			cargoU = 0;
 		}
 		fuelToTransfer -= uAmmount;
-		res.push_back(cart.transfer(cart.id, unit.id,
+		res.push_back(ManagedObject->transfer(ManagedObject->id, unit.id,
 			lux::ResourceType::coal, uAmmount));
 	}
 
-	int cargoCoal = cart.cargo.coal;
+	int cargoCoal = ManagedObject->cargo.coal;
 	if (cargoCoal > 0)
 	{
 		int coalAmmount;
@@ -126,12 +129,12 @@ std::vector<std::string> CartAI::Transfer(lux::Unit unit)
 			cargoCoal = 0;
 		}
 		fuelToTransfer -= coalAmmount;
-		res.push_back(cart.transfer(cart.id, unit.id,
+		res.push_back(ManagedObject->transfer(ManagedObject->id, unit.id,
 			lux::ResourceType::coal, coalAmmount));
 		if (fuelToTransfer <= 0) return res;
 	}
 
-	int cargoWood = cart.cargo.wood;
+	int cargoWood = ManagedObject->cargo.wood;
 	if (cargoWood > 0)
 	{
 		int woodAmmount;
@@ -145,8 +148,8 @@ std::vector<std::string> CartAI::Transfer(lux::Unit unit)
 			woodAmmount = cargoWood;
 			cargoWood = 0;
 		}
-		cart.cargo.wood = cargoWood;
-		res.push_back(cart.transfer(cart.id, unit.id,
+		ManagedObject->cargo.wood = cargoWood;
+		res.push_back(ManagedObject->transfer(ManagedObject->id, unit.id,
 									lux::ResourceType::wood, woodAmmount));
 		fuelToTransfer -= woodAmmount;
 		if (fuelToTransfer <= 0) return res;
