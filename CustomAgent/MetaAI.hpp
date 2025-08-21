@@ -5,6 +5,7 @@
 #include "../lux/game_objects.hpp"
 
 #include "CityAI.h"
+#include "CityTileAI.h"
 #include "SubAI.h"
 #include "WorkerAI.h"
 
@@ -37,6 +38,7 @@ private:
 
     // Survive
     std::vector<CityAI> m_cityAIs;
+    std::vector<CityTileAI> m_cityTileAIs;
     std::vector<WorkerAI> m_workerAIs;
     std::vector<WorkerAI> m_cartAIs;
 

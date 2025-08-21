@@ -153,14 +153,7 @@ void MetaAI::MakeUnitsCollectResourcesForThemselves(WorkerAI& unit)
 // Expand
 int MetaAI::NBUnitsToBuild() const
 {
-    size_t cityTilesNb = 0;
-
-    for (const CityAI& cityAI : m_cityAIs)
-    {
-        cityTilesNb += cityAI.ManagedObject->citytiles.size();
-    }
-
-    return static_cast<int>(cityTilesNb - m_workerAIs.size());
+    return static_cast<int>(m_cityTileAIs.size() - m_unitAIs.size());
 }
 
 void MetaAI::BuildUnits()
@@ -168,31 +161,31 @@ void MetaAI::BuildUnits()
     int unitNbToBuild = NBUnitsToBuild();
     if(unitNbToBuild > 0)
     {
-        std::vector<CityAI*> sortedCities{};
-        sortedCities.reserve(m_cityAIs.size());
+        std::vector<CityTileAI*> sortedCityTiles{};
+        sortedCityTiles.reserve(m_cityTileAIs.size());
 
         // Finds a suitable city to build unit on
-        for (CityAI& cityAI : m_cityAIs)
+        for (CityTileAI& cityAI : m_cityTileAIs)
         {
-            sortedCities.push_back(&cityAI);
+            sortedCityTiles.push_back(&cityAI);
         }
 
-        std::sort(sortedCities.begin(), sortedCities.end(),
-            [](CityAI* a, CityAI* b)
+        std::sort(sortedCityTiles.begin(), sortedCityTiles.end(),
+            [](CityTileAI* a, CityTileAI* b)
             {
                 return a->UnitBuildScore() < b->UnitBuildScore();
             });
 
-        for (CityAI* chosenCity : sortedCities)
+        for (CityTileAI* chosenCityTile : sortedCityTiles)
         {
             if(unitNbToBuild <= 0)
             {
                 break;
             }
 
-            while (chosenCity->IsAvailable())
+            while (chosenCityTile->IsAvailable())
             {
-                chosenCity->BuildUnit();
+                chosenCityTile->BuildUnit(); // Insert command
                 unitNbToBuild--;
                 if(unitNbToBuild <= 0)
                 {
@@ -216,11 +209,11 @@ void MetaAI::BuildCities()
 
 void MetaAI::Research()
 {
-    for (CityAI& cityAI : m_cityAIs)
+    for (CityTileAI& cityTile : m_cityTileAIs)
     {
-        if(cityAI.IsAvailable())
+        if(cityTile.IsAvailable())
         {
-            cityAI.Research();
+            cityTile.Research(); // Insert command
         }
     }
 }

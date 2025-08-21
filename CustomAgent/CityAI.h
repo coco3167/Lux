@@ -5,7 +5,9 @@
 
 class CityAI : public SubAI<lux::City>
 {
-
+private:
+    std::unordered_map<lux::Position, lux::CityTile> m_unorderedCityTilePositions;
+    
 public:
     CityAI(lux::City* city);
 
@@ -26,5 +28,5 @@ public:
 
     //TODO research
     void Research();
-};
 
+};
