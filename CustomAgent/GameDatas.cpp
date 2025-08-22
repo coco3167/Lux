@@ -6,7 +6,7 @@
 
 GameDatas::GameDatas(GameMap& map, Player &owner) :
     Map(map),
-    m_actions(nullptr),
+    Actions(nullptr),
     Owner(owner),
     m_cityTilesDesirability(map.height * map.width)
 {
@@ -14,19 +14,19 @@ GameDatas::GameDatas(GameMap& map, Player &owner) :
 
 void GameDatas::Update(std::vector<string>* actions)
 {
-    m_actions = actions;
+    Actions = actions;
     FillResourceTiles();
     FillCityTilesDesirability();
 }
 
 void GameDatas::AddAction(string&& action)
 {
-    if (!m_actions) 
+    if (!Actions) 
     {
         return;
     }
 
-    m_actions->push_back(std::move(action));
+    Actions->push_back(std::move(action));
 }
 
 Cell *GameDatas::GetClosestResourceCell(Position startPosition) const

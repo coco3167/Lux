@@ -11,9 +11,9 @@ class GameDatas
 public:
 	GameMap& Map;
 	Player& Owner;
+	std::vector<string>* Actions;
 
 private:
-	std::vector<string>* m_actions;
 
 	std::vector<Cell*> m_resourceTiles = std::vector<Cell*>();
 	std::vector<float> m_cityTilesDesirability = std::vector<float>();
