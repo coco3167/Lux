@@ -10,7 +10,7 @@ class GameDatas
 {
 public:
 	GameMap& Map;
-	Player& Owner;
+	Player* Owner;
 	std::vector<string>* Actions;
 
 private:
@@ -19,9 +19,9 @@ private:
 	std::vector<float> m_cityTilesDesirability = std::vector<float>();
 
 public:
-	GameDatas(GameMap& map, Player& owner);
+	GameDatas(GameMap& map);
 
-	void Update(std::vector<string>* actions);
+	void Update(std::vector<string>* actions, Player* owner);
 	void AddAction(string&& action);
 
 	Cell* GetClosestResourceCell(Position startPosition) const;

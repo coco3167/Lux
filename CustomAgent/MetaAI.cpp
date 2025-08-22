@@ -21,7 +21,7 @@ void MetaAI::Update(const int turn)
 
 void MetaAI::ManageAILives()
 {
-    Player& player = m_gameDatas.Owner;
+    Player& player = *m_gameDatas.Owner;
 
     std::vector<City*> cities = {};
     cities.reserve(player.cities.size());
@@ -98,10 +98,10 @@ void MetaAI::DrawDebug()
     m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("Turn : %i", m_turn))));
     m_gameDatas.AddAction(std::move(Annotate::sidetext(" ")));
     m_gameDatas.AddAction(std::move(Annotate::sidetext("Sub AIs Count : ")));
-    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Workers : %i - %i", m_workerAIs.size(), m_gameDatas.Owner.units.size()))));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Workers : %i - %i", m_workerAIs.size(), m_gameDatas.Owner->units.size()))));
     m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Carts : %i", m_cartAIs.size()))));
-    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Cities : %i - %i", m_cityAIs.size(), m_gameDatas.Owner.cities.size()))));
-    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - CityTiles : %i - %i", m_cityTileAIs.size(), m_gameDatas.Owner.cityTileCount))));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Cities : %i - %i", m_cityAIs.size(), m_gameDatas.Owner->cities.size()))));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - CityTiles : %i - %i", m_cityTileAIs.size(), m_gameDatas.Owner->cityTileCount))));
 
     for (WorkerAI& worker : m_workerAIs)
     {
@@ -127,7 +127,7 @@ void MetaAI::DrawDebug()
 // Survive
 std::vector<CityAI*> MetaAI::GetNeedingCity()
 {
-    // return all city tiles that need to be given resources
+    // return all cities that need to be given resources
     std::vector<CityAI*> needyCity;
     needyCity.reserve(m_cityAIs.size());
     
@@ -204,7 +204,7 @@ void MetaAI::MakeUnitsCollectResourcesForThemselves(WorkerAI& unit)
 // Expand
 int MetaAI::NBUnitsToBuild() const
 {
-    return static_cast<int>(m_cityTileAIs.size() - m_gameDatas.Owner.units.size());
+    return static_cast<int>(m_cityTileAIs.size() - m_gameDatas.Owner->units.size());
 }
 
 void MetaAI::BuildUnits()

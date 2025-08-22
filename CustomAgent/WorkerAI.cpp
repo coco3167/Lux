@@ -16,8 +16,18 @@ void WorkerAI::Update()
 
 void WorkerAI::DrawDebug(GameDatas& gameDatas)
 {
-    gameDatas.AddAction(std::move(Annotate::text(ManagedObject->pos.x, ManagedObject->pos.y, WorkerSM::WorkerSMUtils::ObjectiveToString(m_smInfos.CurrentObjective))));
+    gameDatas.AddAction(std::move(Annotate::text(ManagedObject->pos.x, ManagedObject->pos.y, WorkerSM::WorkerSMUtils::ObjectiveToString(m_smInfos.CurrentObjective), 50)));
     m_stateMachine.DrawDebug(m_smInfos, *gameDatas.Actions);
+
+    if (ManagedObject->team != gameDatas.Owner->team)
+    {
+        gameDatas.AddAction(std::move(Annotate::sidetext("INVALID TEAM")));
+    }
+
+    if (m_smInfos.SuppliedCity != nullptr && ManagedObject->team != m_smInfos.SuppliedCity->team)
+    {
+        gameDatas.AddAction(std::move(Annotate::sidetext("INVALID TEAM")));
+    }
 }
 
 bool WorkerAI::NeedResources(int turn) const

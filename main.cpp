@@ -23,7 +23,7 @@ int main()
 
   Player& player = gameState.players[gameState.id];
   GameMap& map = gameState.map;
-  GameDatas gameDatas{ map,  player};
+  GameDatas gameDatas{ map };
 
   int turn = 0;
 
@@ -42,8 +42,7 @@ int main()
     Player &player = gameState.players[gameState.id];
     Player &opponent = gameState.players[(gameState.id + 1) % 2];
 
-    gameDatas.Update(&actions);
-    GameMap &gameMap = gameState.map;
+    gameDatas.Update(&actions, &player);
 
     metaAI.Update(turn++);
 

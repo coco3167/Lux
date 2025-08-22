@@ -4,15 +4,15 @@
 
 #include "PathFinder.hpp"
 
-GameDatas::GameDatas(GameMap& map, Player &owner) :
+GameDatas::GameDatas(GameMap& map) :
     Map(map),
     Actions(nullptr),
-    Owner(owner),
+    Owner(nullptr),
     m_cityTilesDesirability(map.height * map.width)
 {
 }
 
-void GameDatas::Update(std::vector<string>* actions)
+void GameDatas::Update(std::vector<string>* actions, Player* owner)
 {
     Actions = actions;
     FillResourceTiles();
@@ -36,8 +36,8 @@ Cell *GameDatas::GetClosestResourceCell(Position startPosition) const
     for (auto it = m_resourceTiles.begin(); it != m_resourceTiles.end(); it++)
     {
         auto cell = *it;
-        if (cell->resource.type == ResourceType::coal && !Owner.researchedCoal()) continue;
-        if (cell->resource.type == ResourceType::uranium && !Owner.researchedUranium()) continue;
+        if (cell->resource.type == ResourceType::coal && !Owner->researchedCoal()) continue;
+        if (cell->resource.type == ResourceType::uranium && !Owner->researchedUranium()) continue;
         float dist = cell->pos.distanceTo(startPosition);
         if (dist < closestDist)
         {
@@ -76,7 +76,7 @@ float GameDatas::GetDistanceDesirabilityFactor(Position startPosition, Position 
     std::vector<DIRECTIONS> path = {};
     path.reserve(10);
 
-    PathFinder::FindPath(Map, startPosition, targetPosition, Owner, path);
+    PathFinder::FindPath(Map, startPosition, targetPosition, *Owner, path);
     int pathLength = path.size();
 
     return static_cast<float>(std::max(-std::log(pathLength) / 2.0f, 0.0));
@@ -120,14 +120,14 @@ void GameDatas::FillCityTilesDesirability()
                 resourceDesirability = 10.0f;
 
             case ResourceType::coal: 
-                if (!Owner.researchedCoal())
+                if (!Owner->researchedCoal())
                 {
                     continue;
                 }
                 resourceDesirability = 100.0f;
 
             case ResourceType::uranium: 
-                if (!Owner.researchedUranium())
+                if (!Owner->researchedUranium())
                 {
                     continue;
                 }
