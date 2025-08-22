@@ -32,9 +32,9 @@ public:
 		m_currentState->StartState();
 	}
 
-	virtual void DrawDebug(std::vector<std::string>& actions)
+	virtual void DrawDebug(TSMInfos& stateInfos, std::vector<std::string>& actions)
 	{
-		m_currentState->DrawDebug(actions);
+		m_currentState->DrawDebug(stateInfos, actions);
 	}
 };
 

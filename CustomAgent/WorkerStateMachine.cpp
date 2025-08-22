@@ -1,5 +1,8 @@
 #include "WorkerStateMachine.h"
 
+#include "../lux/annotate.hpp"
+#include "Annotator.hpp"
+
 namespace WorkerSM
 {
 	DefaultState::DefaultState(WorkerSMInfos& stateInfos)
@@ -83,8 +86,18 @@ namespace WorkerSM
 		return nullptr;
 	}
 
-	void MovingState::DrawDebug(std::vector<std::string>& actions)
+	void MovingState::DrawDebug(WorkerSMInfos& stateInfos, std::vector<std::string>& actions)
 	{
+		Unit* unit = stateInfos.ControlledWorker;
+
+		std::vector<DIRECTIONS> pathToTarget{};
+		pathToTarget.reserve(10);
+
+		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, pathToTarget);
+
+		Annotator::TracePath(unit->pos, pathToTarget, actions);
+
+		actions.push_back(std::move(Annotate::x(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y)));
 	}
 
 	std::unique_ptr<SMState<WorkerSMInfos>> BuildingCityState::UpdateState(WorkerSMInfos& stateInfos)

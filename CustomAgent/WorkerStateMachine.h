@@ -82,8 +82,7 @@ namespace WorkerSM
 
 		std::unique_ptr<SMState<WorkerSMInfos>> NextState(WorkerSMInfos& stateInfos);
 
-
-		virtual void DrawDebug(std::vector<std::string>& actions) override;
+		virtual void DrawDebug(WorkerSMInfos& stateInfos, std::vector<std::string>& actions) override;
 	};
 
 	class BuildingCityState : public SMState<WorkerSMInfos>
