@@ -23,7 +23,7 @@ int main()
 
   Player& player = gameState.players[gameState.id];
   GameMap& map = gameState.map;
-  GameDatas gameDatas{ map };
+  GameDatas gameDatas{ map, &player };
 
   int turn = 0;
 
