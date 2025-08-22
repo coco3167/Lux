@@ -22,6 +22,22 @@ namespace WorkerSM
 		CollectRessourceForCity,
 	};
 
+	string ObjectiveToString(Objective obj)
+	{
+		switch (obj)
+		{
+			case Objective::None:
+				return "None";
+			case Objective::BuildCity:
+				return "Build";
+			case Objective::CollectRessourceForSelf:
+				return "Res_S";
+			case Objective::CollectRessourceForCity:
+				return "Res_C";
+		}
+		return "INV";
+	}
+
 	struct WorkerSMInfos 
 	{
 		GameDatas* Datas;
@@ -61,6 +77,9 @@ namespace WorkerSM
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
 
 		std::unique_ptr<SMState<WorkerSMInfos>> NextState(WorkerSMInfos& stateInfos);
+
+
+		virtual void DrawDebug(std::vector<std::string>& actions) override;
 	};
 
 	class BuildingCityState : public SMState<WorkerSMInfos>

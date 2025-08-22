@@ -1,5 +1,7 @@
 #include "WorkerAI.h"
 
+#include "../lux/annotate.hpp"
+
 WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
     SubAI(worker),
     m_smInfos(worker, gameDatas),
@@ -10,6 +12,11 @@ WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
 void WorkerAI::Update()
 {
     m_stateMachine.Update(m_smInfos);
+}
+
+void WorkerAI::DrawDebug(GameDatas& gameDatas)
+{
+    gameDatas.AddAction(std::move(Annotate::text(ManagedObject->pos.x, ManagedObject->pos.y, WorkerSM::ObjectiveToString(m_smInfos.CurrentObjective))));
 }
 
 bool WorkerAI::NeedResources(int turn) const

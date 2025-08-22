@@ -83,6 +83,10 @@ namespace WorkerSM
 		return nullptr;
 	}
 
+	void MovingState::DrawDebug(std::vector<std::string>& actions)
+	{
+	}
+
 	std::unique_ptr<SMState<WorkerSMInfos>> BuildingCityState::UpdateState(WorkerSMInfos& stateInfos)
 	{
 		Unit* unit = stateInfos.ControlledWorker;

@@ -34,12 +34,6 @@ public:
     // TODO gets how much resources the unit needs
     float ResourcesQuantityNeeded(int turn);
 
-    // TODO returns how much the city wants to build a unit
-    int UnitBuildScore() const;
-
-    // TODO build a unit
-    void BuildUnit();
-
     //TODO research
     void Research();
 

@@ -53,6 +53,7 @@ private:
     void ManageAILives();
     void GiveOrders();
     void UpdateSubAIs();
+    void DrawDebug();
 
     std::vector<CityAI*> GetNeedingCity();
     std::vector<WorkerAI*> GetNeedingUnits();

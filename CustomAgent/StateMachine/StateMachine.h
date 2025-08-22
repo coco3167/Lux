@@ -31,5 +31,10 @@ public:
 		m_currentState = std::move(newState);
 		m_currentState->StartState();
 	}
+
+	virtual void DrawDebug(std::vector<std::string>& actions)
+	{
+		m_currentState->DrawDebug(actions);
+	}
 };
 

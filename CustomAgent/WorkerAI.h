@@ -24,6 +24,8 @@ public:
 
     void Update();
 
+    virtual void DrawDebug(GameDatas& gameDatas) override;
+
     // TODO checks if the unit needs more resources at the current turn
     bool NeedResources(int turn) const;
 

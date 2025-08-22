@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "../lux/annotate.hpp"
+
 MetaAI::MetaAI(GameDatas& gameDatas):
     m_gameDatas(gameDatas)
 {
@@ -16,6 +18,7 @@ void MetaAI::Update(const int turn)
     ManageAILives();
     GiveOrders();
     UpdateSubAIs();
+    DrawDebug();
 }
 
 void MetaAI::ManageAILives()
@@ -92,6 +95,37 @@ void MetaAI::UpdateSubAIs()
     }
 }
 
+void MetaAI::DrawDebug()
+{
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("Turn : %i", m_turn))));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(" ")));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext("Sub AIs Count : ")));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Workers : %i", m_workerAIs.size()))));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Carts : %i", m_cartAIs.size()))));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Cities : %i", m_cityAIs.size()))));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - CityTiles : %i", m_cityTileAIs.size()))));
+
+    for (WorkerAI& worker : m_workerAIs)
+    {
+        worker.DrawDebug(m_gameDatas);
+    }
+
+    for (CartAI& cart : m_cartAIs)
+    {
+        cart.DrawDebug(m_gameDatas);
+    }
+
+    for (CityAI& city : m_cityAIs)
+    {
+        city.DrawDebug(m_gameDatas);
+    }
+
+    for (CityTileAI& cityTile : m_cityTileAIs)
+    {
+        cityTile.DrawDebug(m_gameDatas);
+    }
+}
+
 // Survive
 std::vector<CityAI*> MetaAI::GetNeedingCity()
 {
@@ -114,14 +148,23 @@ std::vector<WorkerAI*> MetaAI::GetNeedingUnits()
     // return all Units that need resources
     std::vector<WorkerAI*> needyUnits;
     needyUnits.reserve(m_workerAIs.size());
-    
+
     for (WorkerAI& worker : m_workerAIs)
     {
-        if(worker.NeedResources(m_turn))
+        if (worker.NeedResources(m_turn))
         {
             needyUnits.emplace_back(&worker);
         }
     }
+    /*
+    for (CartAI& cart : m_cartAIs)
+    {
+        if (cart.NeedResources(m_turn))
+        {
+            needyUnits.emplace_back(&cart);
+        }
+    }
+    */
     return needyUnits;
 }
 
