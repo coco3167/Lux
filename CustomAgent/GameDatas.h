@@ -19,7 +19,7 @@ private:
 	std::vector<float> m_cityTilesDesirability = std::vector<float>();
 
 public:
-	GameDatas(GameMap& map);
+	GameDatas(GameMap& map, Player* owner);
 
 	void Update(std::vector<string>* actions, Player* owner);
 	void AddAction(string&& action);

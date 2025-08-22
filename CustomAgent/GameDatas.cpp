@@ -4,10 +4,10 @@
 
 #include "PathFinder.hpp"
 
-GameDatas::GameDatas(GameMap& map) :
+GameDatas::GameDatas(GameMap& map, Player* owner) :
     Map(map),
     Actions(nullptr),
-    Owner(nullptr),
+    Owner(owner),
     m_cityTilesDesirability(map.height * map.width)
 {
 }
