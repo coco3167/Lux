@@ -16,7 +16,7 @@ void WorkerAI::Update()
 
 void WorkerAI::DrawDebug(GameDatas& gameDatas)
 {
-    gameDatas.AddAction(std::move(Annotate::text(ManagedObject->pos.x, ManagedObject->pos.y, WorkerSM::ObjectiveToString(m_smInfos.CurrentObjective))));
+    gameDatas.AddAction(std::move(Annotate::text(ManagedObject->pos.x, ManagedObject->pos.y, WorkerSM::WorkerSMUtils::ObjectiveToString(m_smInfos.CurrentObjective))));
     m_stateMachine.DrawDebug(*gameDatas.Actions);
 }
 

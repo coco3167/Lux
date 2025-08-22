@@ -4,6 +4,8 @@
 #include "../lux/city.hpp"
 #include "../lux/game_objects.hpp"
 
+#include "../lux/annotate.hpp"
+
 #include "CityAI.h"
 #include "CityTileAI.h"
 #include "SubAI.h"
@@ -84,6 +86,7 @@ private:
             if (objectIterator == aiLifeStates.end()) // New sub AI
             {
                 EmplaceSubAI(existingAIs, object);
+                m_gameDatas.AddAction(Annotate::sidetext("Adding 1 sub ai"));
                 continue;
             }
 
@@ -103,10 +106,31 @@ private:
             deletedItemsCount++;
         }
     }
-
+    /*
     template<typename TSubAI, typename TManagedObject>
     void EmplaceSubAI(std::vector<TSubAI>& targetVector, TManagedObject* managedObject)
     {
+        m_gameDatas.AddAction(Annotate::sidetext("INVALID EMPLACEMENT"));
+    }
+    */
 
+    void EmplaceSubAI(std::vector<WorkerAI>& targetVector, Unit* managedObject)
+    {
+        targetVector.emplace_back(managedObject, &m_gameDatas);
+    }
+
+    void EmplaceSubAI(std::vector<CartAI>& targetVector, Unit* managedObject)
+    {
+        targetVector.emplace_back(managedObject, &m_gameDatas);
+    }
+
+    void EmplaceSubAI(std::vector<CityTileAI>& targetVector, CityTile* managedObject)
+    {
+        targetVector.emplace_back(managedObject);
+    }
+
+    void EmplaceSubAI(std::vector<CityAI>& targetVector, City* managedObject)
+    {
+        targetVector.emplace_back(managedObject);
     }
 };

@@ -2,8 +2,6 @@
 
 #include <algorithm>
 
-#include "../lux/annotate.hpp"
-
 MetaAI::MetaAI(GameDatas& gameDatas):
     m_gameDatas(gameDatas)
 {
@@ -25,10 +23,10 @@ void MetaAI::ManageAILives()
 {
     Player& player = m_gameDatas.Owner;
 
-    std::vector<const City*> cities = {};
+    std::vector<City*> cities = {};
     cities.reserve(player.cities.size());
 
-    std::vector<const CityTile*> cityTiles = {};
+    std::vector<CityTile*> cityTiles = {};
     cityTiles.reserve(cities.size() * 5);
 
     for (const std::pair<string, City>& pair : player.cities) 
@@ -36,19 +34,19 @@ void MetaAI::ManageAILives()
         City* city = &player.cities.at(pair.first);
         cities.push_back(city);
 
-        for (const CityTile& tile : city->citytiles)
+        for (CityTile& tile : city->citytiles)
         {
             cityTiles.push_back(&tile);
         }
     }
 
-    std::vector<const Unit*> workers = {};
+    std::vector<Unit*> workers = {};
     workers.reserve(player.units.size());
 
-    std::vector<const Unit*> carts = {};
+    std::vector<Unit*> carts = {};
     carts.reserve(player.units.size());
 
-    for (const Unit& unit : player.units) 
+    for (Unit& unit : player.units) 
     {
         if (unit.isWorker()) 
         {
@@ -100,10 +98,10 @@ void MetaAI::DrawDebug()
     m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("Turn : %i", m_turn))));
     m_gameDatas.AddAction(std::move(Annotate::sidetext(" ")));
     m_gameDatas.AddAction(std::move(Annotate::sidetext("Sub AIs Count : ")));
-    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Workers : %i", m_workerAIs.size()))));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Workers : %i - %i", m_workerAIs.size(), m_gameDatas.Owner.units.size()))));
     m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Carts : %i", m_cartAIs.size()))));
-    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Cities : %i", m_cityAIs.size()))));
-    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - CityTiles : %i", m_cityTileAIs.size()))));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Cities : %i - %i", m_cityAIs.size(), m_gameDatas.Owner.cities.size()))));
+    m_gameDatas.AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - CityTiles : %i - %i", m_cityTileAIs.size(), m_gameDatas.Owner.cityTileCount))));
 
     for (WorkerAI& worker : m_workerAIs)
     {
@@ -273,26 +271,3 @@ void MetaAI::Research()
     }
 }
 
-template<>
-void MetaAI::EmplaceSubAI<WorkerAI, Unit>(std::vector<WorkerAI>& targetVector, Unit* managedObject)
-{
-    targetVector.emplace_back(managedObject, &m_gameDatas);
-}
-
-template<>
-void MetaAI::EmplaceSubAI<CartAI, Unit>(std::vector<CartAI>& targetVector, Unit* managedObject)
-{
-    targetVector.emplace_back(managedObject, &m_gameDatas);
-}
-
-template<>
-void MetaAI::EmplaceSubAI<CityTileAI, CityTile>(std::vector<CityTileAI>& targetVector, CityTile* managedObject)
-{
-    targetVector.emplace_back(managedObject);
-}
-
-template<>
-void MetaAI::EmplaceSubAI<CityAI, City>(std::vector<CityAI>& targetVector, City* managedObject)
-{
-    targetVector.emplace_back(managedObject);
-}

@@ -22,21 +22,25 @@ namespace WorkerSM
 		CollectRessourceForCity,
 	};
 
-	string ObjectiveToString(Objective obj)
+	class WorkerSMUtils
 	{
-		switch (obj)
+	public:
+		static string ObjectiveToString(Objective obj)
 		{
-			case Objective::None:
-				return "None";
-			case Objective::BuildCity:
-				return "Build";
-			case Objective::CollectRessourceForSelf:
-				return "Res_S";
-			case Objective::CollectRessourceForCity:
-				return "Res_C";
+			switch (obj)
+			{
+				case Objective::None:
+					return "None";
+				case Objective::BuildCity:
+					return "Build";
+				case Objective::CollectRessourceForSelf:
+					return "Res_S";
+				case Objective::CollectRessourceForCity:
+					return "Res_C";
+			}
+			return "INV";
 		}
-		return "INV";
-	}
+	};
 
 	struct WorkerSMInfos 
 	{
