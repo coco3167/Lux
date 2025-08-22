@@ -7,7 +7,7 @@ CityTileAI::CityTileAI(lux::CityTile* tile) :
 
 bool CityTileAI::IsAvailable() const
 {
-	return ManagedObject->isAvailable;
+	return ManagedObject->canAct();
 }
 
 // Score decrements with distance, MAX_SCORE being the score at 1 distance
