@@ -8,13 +8,15 @@ GameDatas::GameDatas(GameMap& map, Player* owner) :
     Map(map),
     Actions(nullptr),
     Owner(owner),
+    m_turn(0),
     m_cityTilesDesirability(map.height * map.width)
 {
 }
 
-void GameDatas::Update(std::vector<string>* actions, Player* owner)
+void GameDatas::Update(std::vector<string>* actions, Player* owner, int turn)
 {
     Actions = actions;
+    m_turn = turn;
     FillResourceTiles();
     FillCityTilesDesirability();
 }
@@ -80,6 +82,29 @@ float GameDatas::GetDistanceDesirabilityFactor(Position startPosition, Position 
     int pathLength = path.size();
 
     return static_cast<float>(std::max(-std::log(pathLength) / 2.0f, 0.0));
+}
+
+int GameDatas::TurnsUntilNight() const
+{
+    if (IsNight())
+    {
+        return 0;
+    }
+    return 30 - GetTimeOfDay();
+}
+
+int GameDatas::TurnsUntilDay() const
+{
+    if (!IsNight())
+    {
+        return 0;
+    }
+    return 40 - GetTimeOfDay();
+}
+
+bool GameDatas::IsNight() const
+{
+    return GetTimeOfDay() > 29;
 }
 
 void GameDatas::FillResourceTiles()
@@ -157,4 +182,9 @@ void GameDatas::FillCityTilesDesirability()
             }
         }
     }
+}
+
+int GameDatas::GetTimeOfDay() const
+{
+    return m_turn % 40;
 }

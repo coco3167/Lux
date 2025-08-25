@@ -18,10 +18,12 @@ private:
 	std::vector<Cell*> m_resourceTiles = std::vector<Cell*>();
 	std::vector<float> m_cityTilesDesirability = std::vector<float>();
 
+	int m_turn;
+
 public:
 	GameDatas(GameMap& map, Player* owner);
 
-	void Update(std::vector<string>* actions, Player* owner);
+	void Update(std::vector<string>* actions, Player* owner, int turn);
 	void AddAction(string&& action);
 
 	Cell* GetClosestResourceCell(Position startPosition) const;
@@ -29,9 +31,16 @@ public:
 	Cell* GetBestCityBuildingCell(Position startPosition) const;
 	float GetDistanceDesirabilityFactor(Position startPosition, Position targetPosition) const;
 
+	int TurnsUntilNight() const;
+	int TurnsUntilDay() const;
+
+	bool IsNight() const;
+
 
 private:
 	void FillResourceTiles();
 	void FillCityTilesDesirability();
+
+	int GetTimeOfDay() const;
 };
 
