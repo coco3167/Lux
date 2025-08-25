@@ -40,6 +40,8 @@ public:
 private:
 	void FillResourceTiles();
 	void FillCityTilesDesirability();
+	void ApplyResourceDesirability();
+	void ApplyCityProximityDesirability();
 
 	int GetTimeOfDay() const;
 };

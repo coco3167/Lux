@@ -134,7 +134,12 @@ void GameDatas::FillCityTilesDesirability()
         }
     }
 
-    
+    ApplyResourceDesirability();
+    ApplyCityProximityDesirability();
+}
+
+void GameDatas::ApplyResourceDesirability()
+{
     const int weightRange = 2;
     for (const Cell* resourceTile : m_resourceTiles)
     {
@@ -175,12 +180,51 @@ void GameDatas::FillCityTilesDesirability()
 
                 if (Map.getCell(weightX, weightY)->hasResource())
                 {
+                    m_cityTilesDesirability[weightY * Map.width + weightX] = 0;
                     continue;
                 }
 
                 m_cityTilesDesirability[weightY * Map.width + weightX] += resourceDesirability;
             }
         }
+    }
+}
+
+void GameDatas::ApplyCityProximityDesirability()
+{
+    const int weightRange = 4;
+    std::vector<Position> tilesPositions{};
+    tilesPositions.reserve(Owner->cities.size() * 5);
+
+    for (std::map<string, City>::iterator it = Owner->cities.begin(); it != Owner->cities.end(); it++)
+    {
+        City* city = &it->second;
+        for (CityTile& tile : city->citytiles)
+        {
+            tilesPositions.push_back(tile.pos);
+
+            for (int dx = -weightRange; dx <= weightRange; ++dx)
+            {
+                const int yRange = weightRange - std::abs(dx);
+                for (int dy = -yRange; dy <= yRange; ++dy)
+                {
+                    const int weightX = tile.pos.x + dx;
+                    const int weightY = tile.pos.y + dy;
+
+                    if (!Utils::IsInMap(weightX, weightY, Map))
+                    {
+                        continue;
+                    }
+
+                    m_cityTilesDesirability[weightY * Map.width + weightX] /= weightRange + 2 - tile.pos.distanceTo({ weightX, weightY });
+                }
+            }
+        }
+    }
+
+    for (Position& pos : tilesPositions)
+    {
+        m_cityTilesDesirability[pos.y * Map.width + pos.x] = 0;
     }
 }
 
