@@ -21,12 +21,12 @@ void WorkerAI::DrawDebug(GameDatas& gameDatas)
 
     if (ManagedObject->team != gameDatas.Owner->team)
     {
-        gameDatas.AddAction(std::move(Annotate::sidetext("INVALID TEAM")));
+        gameDatas.AddAction(std::move(Annotate::sidetext("INVALID OWNER TEAM")));
     }
 
     if (m_smInfos.SuppliedCity != nullptr && ManagedObject->team != m_smInfos.SuppliedCity->ManagedObject->team)
     {
-        gameDatas.AddAction(std::move(Annotate::sidetext("INVALID TEAM")));
+        gameDatas.AddAction(std::move(Annotate::sidetext("INVALID CITY TEAM")));
     }
 }
 
