@@ -30,9 +30,9 @@ void MetaAI::ManageAILives()
     std::vector<CityTile*> cityTiles = {};
     cityTiles.reserve(cities.size() * 5);
 
-    for (const std::pair<string, City>& pair : player.cities) 
+    for (std::map<string, City>::iterator it = player.cities.begin(); it != player.cities.end(); it++)
     {
-        City* city = &player.cities.at(pair.first);
+        City* city = &it->second;
         cities.push_back(city);
 
         for (CityTile& tile : city->citytiles)

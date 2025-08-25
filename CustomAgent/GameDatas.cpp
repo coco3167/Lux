@@ -31,7 +31,7 @@ void GameDatas::AddAction(string&& action)
     Actions->push_back(std::move(action));
 }
 
-Cell *GameDatas::GetClosestResourceCell(Position startPosition) const
+Cell* GameDatas::GetClosestResourceCell(Position startPosition) const
 {
     Cell* closestResourceTile = nullptr;
     float closestDist = 9999999.0f;
@@ -141,22 +141,22 @@ void GameDatas::FillCityTilesDesirability()
         float resourceDesirability;
         switch (resourceTile->resource.type)
         {
-            case ResourceType::wood:
-                resourceDesirability = 10.0f;
+        case ResourceType::wood:
+            resourceDesirability = 10.0f;
 
-            case ResourceType::coal: 
-                if (!Owner->researchedCoal())
-                {
-                    continue;
-                }
-                resourceDesirability = 100.0f;
+        case ResourceType::coal:
+            if (!Owner->researchedCoal())
+            {
+                continue;
+            }
+            resourceDesirability = 100.0f;
 
-            case ResourceType::uranium: 
-                if (!Owner->researchedUranium())
-                {
-                    continue;
-                }
-                resourceDesirability = 1000.0f;
+        case ResourceType::uranium:
+            if (!Owner->researchedUranium())
+            {
+                continue;
+            }
+            resourceDesirability = 1000.0f;
         }
 
 
@@ -173,7 +173,7 @@ void GameDatas::FillCityTilesDesirability()
                     continue;
                 }
 
-                if (Map.getCell(weightX, weightY)->hasResource()) 
+                if (Map.getCell(weightX, weightY)->hasResource())
                 {
                     continue;
                 }
