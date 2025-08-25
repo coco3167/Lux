@@ -1,7 +1,7 @@
 ﻿#include "CityAI.h"
 
 CityAI::CityAI(lux::City* city) :
-    SubAI(city)
+    SubAI(city, city->cityid)
 {
 }
 

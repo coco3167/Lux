@@ -14,6 +14,7 @@ void MetaAI::Update(const int turn)
     m_turn = turn;
 
     ManageAILives();
+
     GiveOrders();
     UpdateSubAIs();
     DrawDebug();
@@ -61,7 +62,18 @@ void MetaAI::ManageAILives()
     ManageSubAILife(m_workerAIs, workers);
     ManageSubAILife(m_cartAIs, carts);
     ManageSubAILife(m_cityAIs, cities);
-    ManageSubAILife(m_cityTileAIs, cityTiles);
+    CreateCityTilesAIs(cityTiles);
+}
+
+void MetaAI::CreateCityTilesAIs(std::vector<CityTile*>& allTiles)
+{
+    m_cityTileAIs.clear();
+    m_cityTileAIs.reserve(allTiles.size());
+
+    for (CityTile* tile : allTiles)
+    {
+        m_cityTileAIs.emplace_back(tile);
+    }
 }
 
 void MetaAI::GiveOrders()
@@ -116,11 +128,6 @@ void MetaAI::DrawDebug()
     for (CityAI& city : m_cityAIs)
     {
         city.DrawDebug(m_gameDatas);
-    }
-
-    for (CityTileAI& cityTile : m_cityTileAIs)
-    {
-        cityTile.DrawDebug(m_gameDatas);
     }
 }
 

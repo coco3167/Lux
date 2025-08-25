@@ -6,7 +6,7 @@
 #include "Utils.hpp"
 
 CartAI::CartAI(lux::Unit* cart, GameDatas* gameDatas) :
-	SubAI(cart),
+	SubAI(cart, cart->id),
 	m_gameDatas(gameDatas)
 {
 	state = CartState::STANDBY;

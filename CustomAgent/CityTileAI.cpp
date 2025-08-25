@@ -1,13 +1,13 @@
 #include "CityTileAI.h"
 
 CityTileAI::CityTileAI(lux::CityTile* tile) :
-	SubAI(tile)
+	m_tile(tile)
 {
 }
 
 bool CityTileAI::IsAvailable() const
 {
-	return ManagedObject->canAct();
+	return m_tile->canAct();
 }
 
 // Score decrements with distance, MAX_SCORE being the score at 1 distance
@@ -20,7 +20,7 @@ int CityTileAI::UnitBuildScore(const lux::GameMap& gameMap) const
 	{
 		for (lux::DIRECTIONS direction : lux::ALL_DIRECTIONS)
 		{
-			lux::Position positionToTest = ManagedObject->pos.translate(direction, distance);
+			lux::Position positionToTest = m_tile->pos.translate(direction, distance);
 			if(positionToTest.x >= 0 && positionToTest.x < gameMap.width && positionToTest.y >= 0 && positionToTest.y <gameMap.height)
 			{
 				const lux::Cell* cellToTest = gameMap.getCellByPos(positionToTest);
@@ -45,13 +45,13 @@ std::string CityTileAI::BuildUnit(size_t workerCount, size_t cartCount) const
 
 	if(cartCount / static_cast<float>(unitCount) < CART_PERCENTAGE)
 	{
-		return std::move(ManagedObject->buildCart());
+		return std::move(m_tile->buildCart());
 	}
 	
-	return std::move(ManagedObject->buildWorker());
+	return std::move(m_tile->buildWorker());
 }
 
 std::string CityTileAI::Research() const
 {
-	return std::move(ManagedObject->research());
+	return std::move(m_tile->research());
 }

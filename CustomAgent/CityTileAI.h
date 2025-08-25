@@ -3,11 +3,13 @@
 
 #include "SubAI.h"
 
-class CityTileAI : public SubAI<lux::CityTile>
+class CityTileAI
 {
 private:
     static constexpr float CART_PERCENTAGE = 0.1f;
     static constexpr int MAX_SCORE = 10;
+
+    lux::CityTile* m_tile;
 
 public:
     CityTileAI(lux::CityTile* tile);

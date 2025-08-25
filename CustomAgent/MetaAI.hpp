@@ -51,8 +51,8 @@ public:
     void Update(int turn);
 
 private:
-
     void ManageAILives();
+    void CreateCityTilesAIs(std::vector<CityTile*>& allTiles);
     void GiveOrders();
     void UpdateSubAIs();
     void DrawDebug();
@@ -71,17 +71,17 @@ private:
     template<typename TSubAI, typename TManagedObject>
     void ManageSubAILife(std::vector<TSubAI>& existingAIs, std::vector<TManagedObject*>& existingObjects)
     {
-        std::unordered_map<TManagedObject*, AILifeState> aiLifeStates = {};
+        std::unordered_map<std::string, AILifeState> aiLifeStates = {};
         aiLifeStates.reserve(existingAIs.size());
 
         for (int i = 0; i < existingAIs.size(); ++i)
         {
-            aiLifeStates.insert({ existingAIs[i].ManagedObject, AILifeState{i, false} });
+            aiLifeStates.insert({ existingAIs[i].ManagedObjectID, AILifeState{i, false} });
         }
 
         for (TManagedObject* object : existingObjects)
         {
-            auto objectIterator = aiLifeStates.find(object);
+            auto objectIterator = aiLifeStates.find(GetID(object));
 
             if (objectIterator == aiLifeStates.end()) // New sub AI
             {
@@ -91,6 +91,7 @@ private:
             }
 
             objectIterator->second.ShouldLive = true; // Sub AI should be kept alive
+            existingAIs[objectIterator->second.Index].ManagedObject = object; // Relink ai to its managed object
         }
 
         // Delete dead sub AI
@@ -106,13 +107,6 @@ private:
             deletedItemsCount++;
         }
     }
-    /*
-    template<typename TSubAI, typename TManagedObject>
-    void EmplaceSubAI(std::vector<TSubAI>& targetVector, TManagedObject* managedObject)
-    {
-        m_gameDatas.AddAction(Annotate::sidetext("INVALID EMPLACEMENT"));
-    }
-    */
 
     void EmplaceSubAI(std::vector<WorkerAI>& targetVector, Unit* managedObject)
     {
@@ -132,5 +126,15 @@ private:
     void EmplaceSubAI(std::vector<CityAI>& targetVector, City* managedObject)
     {
         targetVector.emplace_back(managedObject);
+    }
+
+    string GetID(Unit* unit)
+    {
+        return unit->id;
+    }
+
+    string GetID(City* city)
+    {
+        return city->cityid;
     }
 };

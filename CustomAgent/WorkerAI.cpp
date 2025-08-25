@@ -3,7 +3,7 @@
 #include "../lux/annotate.hpp"
 
 WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
-    SubAI(worker),
+    SubAI(worker, worker->id),
     m_smInfos(worker, gameDatas),
     m_stateMachine(std::move(GetStartingState()))
 {
