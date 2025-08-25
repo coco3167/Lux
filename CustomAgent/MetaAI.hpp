@@ -37,16 +37,16 @@ private:
 
     int m_turn = 0;
 
-    GameDatas& m_gameDatas;
+    GameDatas* m_gameDatas;
 
     // Survive
     std::vector<CityAI> m_cityAIs;
     std::vector<CityTileAI> m_cityTileAIs;
-    std::vector<WorkerAI> m_workerAIs;
+    std::vector<WorkerAI> m_cartAI;
     std::vector<CartAI> m_cartAIs;
 
 public:
-    MetaAI(GameDatas& gameDatas);
+    MetaAI(GameDatas* gameDatas);
 
     void Update(int turn);
 
@@ -58,12 +58,13 @@ private:
     void DrawDebug();
 
     std::vector<CityAI*> GetNeedingCity();
-    std::vector<WorkerAI*> GetNeedingUnits();
+    std::vector<WorkerAI*> GetNeedingWorkers();
+    std::vector<CartAI*> GetNeedingCarts();
 
     //Expand
     int NBUnitsToBuild() const;
     void MakeUnitsCollectResourcesForCity(CityAI& city);
-    void MakeUnitsCollectResourcesForThemselves(WorkerAI& unit);
+    void MakeUnitsCollectResourcesForThemselves(WorkerAI& worker);
     void BuildUnits();
     void BuildCities();
     void Research();
@@ -116,11 +117,6 @@ private:
     void EmplaceSubAI(std::vector<CartAI>& targetVector, Unit* managedObject)
     {
         targetVector.emplace_back(managedObject, &m_gameDatas);
-    }
-
-    void EmplaceSubAI(std::vector<CityTileAI>& targetVector, CityTile* managedObject)
-    {
-        targetVector.emplace_back(managedObject);
     }
 
     void EmplaceSubAI(std::vector<CityAI>& targetVector, City* managedObject)

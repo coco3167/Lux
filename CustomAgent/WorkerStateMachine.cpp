@@ -59,7 +59,7 @@ namespace WorkerSM
 		std::vector<DIRECTIONS> pathToTarget{};
 		pathToTarget.reserve(10);
 
-		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, *stateInfos.Datas->Owner, pathToTarget);
+		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, pathToTarget);
 
 		if (!pathFound)
 		{
@@ -93,7 +93,7 @@ namespace WorkerSM
 		std::vector<DIRECTIONS> pathToTarget{};
 		pathToTarget.reserve(10);
 
-		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, *stateInfos.Datas->Owner, pathToTarget);
+		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, pathToTarget);
 
 		Annotator::TracePath(unit->pos, pathToTarget, actions);
 
@@ -115,6 +115,13 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> CollectingRessourcesState::UpdateState(WorkerSMInfos& stateInfos)
 	{
+		// If the city no longer needs resources
+		if (stateInfos.CurrentObjective == Objective::CollectRessourceForCity && 
+			!stateInfos.SuppliedCity->NeedResources(stateInfos.Datas->Turn))
+		{
+			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
+		}
+
 		Unit* unit = stateInfos.ControlledWorker;
 
 		if (unit->getCargoSpaceLeft() == 0)
@@ -133,7 +140,7 @@ namespace WorkerSM
 			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
 
 		case Objective::CollectRessourceForCity:
-			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->pos, stateInfos.SuppliedCity->ManagedObject, stateInfos.Datas->Map, *stateInfos.Datas->Owner);
+			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->pos, stateInfos.SuppliedCity->ManagedObject, stateInfos.Datas->Map, stateInfos.Datas->Owner);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, closestTile->pos));
 		}
 		

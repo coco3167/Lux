@@ -51,7 +51,7 @@ public:
 class PathFinder
 {
 public:
-    static bool FindPath(const GameMap& map, const Position& startPosition, const Position& targetPosition, const Player& curentPlayer, std::vector<DIRECTIONS>& o_pathToTarget)
+    static bool FindPath(const GameMap& map, const Position& startPosition, const Position& targetPosition, const Player* curentPlayer, std::vector<DIRECTIONS>& o_pathToTarget)
     {
         const size_t cellsCount = static_cast<size_t>(map.height * map.width);
         std::vector<PathfinderCell> allCells{};
@@ -122,7 +122,7 @@ public:
         return false;
     }
 
-    static const CityTile* GetClosestCityTile(const Position& position, const City* city, GameMap& map, Player& player) 
+    static const CityTile* GetClosestCityTile(const Position& position, const City* city, GameMap& map, Player* player) 
     {
         std::vector<DIRECTIONS> path = {};
         path.reserve(10);
@@ -150,16 +150,16 @@ private:
         return cellPosition.distanceTo(targetPosition);
     }
 
-    static float ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, const Player& currentPlayer)
+    static float ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, const Player* currentPlayer)
     {
         CityTile* neighbouringCityTile = neighbouringCell.Cell->citytile;
-        if (neighbouringCityTile != nullptr && neighbouringCityTile->team != currentPlayer.team)
+        if (neighbouringCityTile != nullptr && neighbouringCityTile->team != currentPlayer->team)
         {
             return 99999999.0f; // Can't pass through a opponent's city tile
         }
 
         bool allyUnitInNeighbouringCell = false;
-        for (const Unit& allyUnit : currentPlayer.units) 
+        for (const Unit& allyUnit : currentPlayer->units) 
         {
             if (allyUnit.pos == neighbouringCell.Cell->pos) 
             {

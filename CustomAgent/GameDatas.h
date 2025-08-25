@@ -12,13 +12,13 @@ public:
 	GameMap& Map;
 	Player* Owner;
 	std::vector<string>* Actions;
+	int Turn;
 
 private:
 
 	std::vector<Cell*> m_resourceTiles = std::vector<Cell*>();
 	std::vector<float> m_cityTilesDesirability = std::vector<float>();
 
-	int m_turn;
 
 public:
 	GameDatas(GameMap& map, Player* owner);
