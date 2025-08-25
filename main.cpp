@@ -27,7 +27,7 @@ int main()
 
     int turn = 0;
 
-    MetaAI metaAI{ gameDatas };
+    MetaAI metaAI{ &gameDatas };
 
     while (true)
     {

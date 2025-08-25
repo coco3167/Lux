@@ -87,7 +87,7 @@ private:
             if (objectIterator == aiLifeStates.end()) // New sub AI
             {
                 EmplaceSubAI(existingAIs, object);
-                m_gameDatas.AddAction(Annotate::sidetext("Adding 1 sub ai"));
+                m_gameDatas->AddAction(Annotate::sidetext("Adding 1 sub ai"));
                 continue;
             }
 
@@ -111,12 +111,12 @@ private:
 
     void EmplaceSubAI(std::vector<WorkerAI>& targetVector, Unit* managedObject)
     {
-        targetVector.emplace_back(managedObject, &m_gameDatas);
+        targetVector.emplace_back(managedObject, m_gameDatas);
     }
 
     void EmplaceSubAI(std::vector<CartAI>& targetVector, Unit* managedObject)
     {
-        targetVector.emplace_back(managedObject, &m_gameDatas);
+        targetVector.emplace_back(managedObject, m_gameDatas);
     }
 
     void EmplaceSubAI(std::vector<CityAI>& targetVector, City* managedObject)
