@@ -32,7 +32,14 @@ void WorkerAI::DrawDebug(GameDatas& gameDatas)
 
 bool WorkerAI::NeedResources(int turn) const
 {
-    return false;
+    if (m_smInfos.Datas->TurnsUntilNight() > 10)
+    {
+        return false;
+    }
+
+    int cargo = ManagedObject->cargo.wood + ManagedObject->cargo.coal + ManagedObject->cargo.uranium;
+    const int neededUpkeep = (int)GAME_CONSTANTS["PARAMETERS"]["LIGHT_UPKEEP"]["WORKER"] * (int)GAME_CONSTANTS["PARAMETERS"]["NIGHT_LENGTH"];
+    return cargo < neededUpkeep;
 }
 
 bool WorkerAI::IsAvailable() const
