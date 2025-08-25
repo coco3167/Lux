@@ -192,7 +192,7 @@ void GameDatas::ApplyResourceDesirability()
 
 void GameDatas::ApplyCityProximityDesirability()
 {
-    const int weightRange = 4;
+    const int weightRange = 5;
     std::vector<Position> tilesPositions{};
     tilesPositions.reserve(Owner->cities.size() * 5);
 
@@ -215,9 +215,18 @@ void GameDatas::ApplyCityProximityDesirability()
                     {
                         continue;
                     }
+                    int distanceFromCity = tile.pos.distanceTo({ weightX, weightY });
 
-                    m_cityTilesDesirability[weightY * Map.width + weightX] /= weightRange + 2 - tile.pos.distanceTo({ weightX, weightY });
-                }
+                    // The desirability is increased in the tiles adjacent to the other cityTiles and decreased further
+                    if (distanceFromCity == 1)
+                    {
+                        m_cityTilesDesirability[weightY * Map.width + weightX] += 50.0f;
+                    }
+                    else
+                    {
+                        m_cityTilesDesirability[weightY * Map.width + weightX] /= weightRange + 2 - distanceFromCity;
+                    }
+                } 
             }
         }
     }
