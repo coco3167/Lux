@@ -133,7 +133,7 @@ namespace WorkerSM
 			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
 
 		case Objective::CollectRessourceForCity:
-			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->pos, stateInfos.SuppliedCity, stateInfos.Datas->Map, *stateInfos.Datas->Owner);
+			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->pos, stateInfos.SuppliedCity->ManagedObject, stateInfos.Datas->Map, *stateInfos.Datas->Owner);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, closestTile->pos));
 		}
 		

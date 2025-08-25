@@ -1,12 +1,13 @@
 #pragma once
 #include <memory>
 
+#include "../lux/game_objects.hpp"
+#include "../lux/map.hpp"
+
 #include "StateMachine/SMState.h"
 #include "PathFinder.hpp"
 #include "GameDatas.h"
-
-#include "../lux/game_objects.hpp"
-#include "../lux/map.hpp"
+#include "CityAI.h"
 
 
 
@@ -48,7 +49,7 @@ namespace WorkerSM
 		Unit* ControlledWorker;
 		Objective CurrentObjective;
 
-		City* SuppliedCity;
+		CityAI* SuppliedCity;
 
 		Position TargetPosition;
 

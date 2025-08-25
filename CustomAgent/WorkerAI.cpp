@@ -24,7 +24,7 @@ void WorkerAI::DrawDebug(GameDatas& gameDatas)
         gameDatas.AddAction(std::move(Annotate::sidetext("INVALID TEAM")));
     }
 
-    if (m_smInfos.SuppliedCity != nullptr && ManagedObject->team != m_smInfos.SuppliedCity->team)
+    if (m_smInfos.SuppliedCity != nullptr && ManagedObject->team != m_smInfos.SuppliedCity->ManagedObject->team)
     {
         gameDatas.AddAction(std::move(Annotate::sidetext("INVALID TEAM")));
     }
@@ -48,7 +48,7 @@ void WorkerAI::CollectResources()
 void WorkerAI::CollectResources(CityAI& cityAI)
 {
     m_smInfos.CurrentObjective = WorkerSM::Objective::CollectRessourceForCity;
-    m_smInfos.SuppliedCity = cityAI.ManagedObject;
+    m_smInfos.SuppliedCity = &cityAI;
 }
 
 void WorkerAI::BuildCityTile()
