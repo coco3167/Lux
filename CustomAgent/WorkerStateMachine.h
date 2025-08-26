@@ -5,6 +5,7 @@
 #include "../lux/map.hpp"
 
 #include "StateMachine/SMState.h"
+#include "WorkerObjective.hpp"
 #include "PathFinder.hpp"
 #include "GameDatas.h"
 #include "CityAI.h"
@@ -15,13 +16,6 @@ namespace WorkerSM
 {
 	using namespace lux;
 
-	enum class Objective 
-	{
-		None,
-		BuildCity,
-		CollectRessourceForSelf,
-		CollectRessourceForCity,
-	};
 
 	class WorkerSMUtils
 	{
