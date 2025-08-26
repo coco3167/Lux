@@ -4,6 +4,8 @@
 
 #include "PathFinder.hpp"
 
+#include "WorkerAI.h"
+
 GameDatas::GameDatas(GameMap& map, Player* owner) :
     Map(map),
     Actions(nullptr),
@@ -82,6 +84,29 @@ float GameDatas::GetDistanceDesirabilityFactor(Position startPosition, Position 
     int pathLength = path.size();
 
     return static_cast<float>(std::max(-std::log(pathLength) / 2.0f, 0.0));
+}
+
+WorkerAI* GameDatas::GetClosestWorker(Position startPosition, WorkerSM::Objective desiredObjective) const
+{
+    WorkerAI* closestWorker = nullptr;
+    float closestDist = 9999999.0f;
+    for (auto it = WorkerAIs->begin(); it != WorkerAIs->end(); it++)
+    {
+        WorkerAI* worker = &*it;
+
+        if (worker->GetCurrentObjective() != desiredObjective)
+        {
+            continue;
+        }
+
+        float dist = worker->ManagedObject->pos.distanceTo(startPosition);
+        if (dist < closestDist)
+        {
+            closestDist = dist;
+            closestWorker = worker;
+        }
+    }
+    return closestWorker;
 }
 
 int GameDatas::TurnsUntilNight() const

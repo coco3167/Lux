@@ -4,7 +4,12 @@
 #include "../lux/game_objects.hpp"
 #include "../lux/map.hpp"
 
+#include "WorkerObjective.hpp"
+
 using namespace lux;
+
+class WorkerAI;
+class CartAI;
 
 class GameDatas
 {
@@ -13,6 +18,10 @@ public:
 	Player* Owner;
 	std::vector<string>* Actions;
 	int Turn;
+
+
+	std::vector<WorkerAI>* WorkerAIs;
+	std::vector<CartAI>* CartAIs;
 
 private:
 
@@ -30,6 +39,8 @@ public:
 	
 	Cell* GetBestCityBuildingCell(Position startPosition) const;
 	float GetDistanceDesirabilityFactor(Position startPosition, Position targetPosition) const;
+
+	WorkerAI* GetClosestWorker(Position startPosition, WorkerSM::Objective desiredObjective) const;
 
 	int TurnsUntilNight() const;
 	int TurnsUntilDay() const;

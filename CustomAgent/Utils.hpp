@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../lux/constants.hpp"
+#include "../lux/game_objects.hpp"
 #include <memory>
 #include <string>
 #include <stdexcept>
@@ -79,6 +80,11 @@ class Utils
 			}
 		}
 		return res;
+	}
+
+	static int GetFuel(Cargo* cargo)
+	{
+		return cargo->wood + cargo->coal * 10 + cargo->uranium * 40;
 	}
 
 	template<typename ... Args>
