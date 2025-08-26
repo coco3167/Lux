@@ -42,7 +42,7 @@ private:
     // Survive
     std::vector<CityAI> m_cityAIs;
     std::vector<CityTileAI> m_cityTileAIs;
-    std::vector<WorkerAI> m_cartAI;
+    std::vector<WorkerAI> m_workerAIs;
     std::vector<CartAI> m_cartAIs;
 
 public:

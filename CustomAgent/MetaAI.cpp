@@ -5,7 +5,8 @@
 MetaAI::MetaAI(GameDatas* gameDatas):
     m_gameDatas(gameDatas)
 {
-
+    m_gameDatas->WorkerAIs = &m_workerAIs;
+    m_gameDatas->CartAIs = &m_cartAIs;
 }
 
 // Other
@@ -59,7 +60,7 @@ void MetaAI::ManageAILives()
         }
     }
 
-    ManageSubAILife(m_cartAI, workers);
+    ManageSubAILife(m_workerAIs, workers);
     ManageSubAILife(m_cartAIs, carts);
     ManageSubAILife(m_cityAIs, cities);
     CreateCityTilesAIs(cityTiles);
@@ -99,7 +100,7 @@ void MetaAI::GiveOrders()
 
 void MetaAI::UpdateSubAIs()
 {
-    for (WorkerAI& worker : m_cartAI)
+    for (WorkerAI& worker : m_workerAIs)
     {
         worker.Update();
     }
@@ -115,12 +116,12 @@ void MetaAI::DrawDebug()
     m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("Turn : %i", m_turn))));
     m_gameDatas->AddAction(std::move(Annotate::sidetext(" ")));
     m_gameDatas->AddAction(std::move(Annotate::sidetext("Sub AIs Count : ")));
-    m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Workers : %i - %i", m_cartAI.size(), m_gameDatas->Owner->units.size()))));
+    m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Workers : %i - %i", m_workerAIs.size(), m_gameDatas->Owner->units.size()))));
     m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Carts : %i", m_cartAIs.size()))));
     m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Cities : %i - %i", m_cityAIs.size(), m_gameDatas->Owner->cities.size()))));
     m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - CityTiles : %i - %i", m_cityTileAIs.size(), m_gameDatas->Owner->cityTileCount))));
 
-    for (WorkerAI& worker : m_cartAI)
+    for (WorkerAI& worker : m_workerAIs)
     {
         worker.DrawDebug(*m_gameDatas);
     }
@@ -157,9 +158,9 @@ std::vector<WorkerAI*> MetaAI::GetNeedingWorkers()
 {
     // return all Units that need resources
     std::vector<WorkerAI*> needyWorkers;
-    needyWorkers.reserve(m_cartAI.size());
+    needyWorkers.reserve(m_workerAIs.size());
 
-    for (WorkerAI& worker : m_cartAI)
+    for (WorkerAI& worker : m_workerAIs)
     {
         if (worker.NeedResources(m_turn))
         {
@@ -190,7 +191,7 @@ void MetaAI::MakeUnitsCollectResourcesForCity(CityAI& city)
     int unitsNeeded = city.ResourcesQuantityNeeded(m_turn) / RESOURCE_PER_UNIT;
     int loop = 0;
 
-    int workersCount = static_cast<int>(m_cartAI.size());
+    int workersCount = static_cast<int>(m_workerAIs.size());
 
     while (unitsNeeded > 0)
     {
@@ -199,7 +200,7 @@ void MetaAI::MakeUnitsCollectResourcesForCity(CityAI& city)
             break;
         }
             
-        WorkerAI& unitAI = m_cartAI[loop];
+        WorkerAI& unitAI = m_workerAIs[loop];
 
         if(unitAI.IsAvailable())
         {
@@ -257,7 +258,7 @@ void MetaAI::BuildUnits()
 
             while (chosenCityTile->IsAvailable())
             {
-                m_gameDatas->AddAction(std::move(chosenCityTile->BuildUnit(m_cartAI.size(), m_cartAIs.size())));
+                m_gameDatas->AddAction(std::move(chosenCityTile->BuildUnit(m_workerAIs.size(), m_cartAIs.size())));
                 unitNbToBuild--;
                 if(unitNbToBuild <= 0)
                 {
@@ -270,7 +271,7 @@ void MetaAI::BuildUnits()
 
 void MetaAI::BuildCities()
 {
-    for (WorkerAI& workerAI : m_cartAI)
+    for (WorkerAI& workerAI : m_workerAIs)
     {
         if(workerAI.IsAvailable())
         {
