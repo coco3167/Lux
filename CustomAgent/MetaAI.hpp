@@ -12,6 +12,8 @@
 #include "WorkerAI.h"
 #include "CartAI.hpp"
 
+#include "Debug.h"
+
 class MetaAI
 {
     /*

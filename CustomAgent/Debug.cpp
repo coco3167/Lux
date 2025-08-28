@@ -2,6 +2,8 @@
 
 #include "Utils.hpp"
 
+ofstream Debug::m_debugFile = std::ofstream{"DefaultDebug.txt"};
+
 void Debug::Init(int playerTeam)
 {
 	m_debugFile = std::ofstream{ Utils::FormatString("debug_%i.txt", playerTeam).c_str() };
