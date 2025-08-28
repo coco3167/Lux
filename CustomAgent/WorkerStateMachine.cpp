@@ -5,6 +5,9 @@
 
 #include "WorkerAI.h"
 
+#include "Utils.hpp"
+#include "Debug.h"
+
 namespace WorkerSM
 {
 	DefaultState::DefaultState(WorkerSMInfos& stateInfos)
@@ -14,6 +17,8 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> DefaultState::UpdateState(WorkerSMInfos& stateInfos)
 	{
+        Debug::Log("[SM_State] Update Default state");
+        Debug::Log(WorkerSM::WorkerSMUtils::ObjectiveToString(stateInfos.CurrentObjective));
 		switch (stateInfos.CurrentObjective)
 		{
 		case Objective::None:
@@ -23,13 +28,24 @@ namespace WorkerSM
 		case Objective::CollectRessourceForCity:
 		{
 			Cell* targetCell = stateInfos.Datas->GetClosestResourceCell(stateInfos.ControlledWorker->ManagedObject->pos);
+        	Debug::Log(Utils::FormatString("[SM_State] ResourceCell (%i, %i)", targetCell->pos.x, targetCell->pos.y));
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, targetCell->pos));
 			
 		}
 
 		case Objective::BuildCity:
 		{
+        	Debug::Log("[SM_State] Search for city cell");
+
 			Cell* cityBuildTile = stateInfos.Datas->GetBestCityBuildingCell(stateInfos.ControlledWorker->ManagedObject->pos);
+			if (cityBuildTile == nullptr)
+			{
+				return nullptr;
+			}
+
+        	Debug::Log(Utils::FormatString("[SM_State] CityCell (%i, %i)", cityBuildTile->pos.x, cityBuildTile->pos.y));
+
+
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, cityBuildTile->pos));
 		}
 
@@ -50,6 +66,7 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> MovingState::UpdateState(WorkerSMInfos& stateInfos)
 	{
+        Debug::Log("[SM_State] Update Moving state");
 		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 
 		if (unit->pos == stateInfos.TargetPosition)
@@ -116,6 +133,8 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> BuildingCityState::UpdateState(WorkerSMInfos& stateInfos)
 	{
+        Debug::Log("[SM_State] Update BuildS state");
+
 		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 		if (!unit->canAct())
 		{
@@ -134,6 +153,7 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> CollectingRessourcesState::UpdateState(WorkerSMInfos& stateInfos)
 	{
+        Debug::Log("[SM_State] Update Collecting state");
 		// If the city no longer needs resources
 		if (stateInfos.CurrentObjective == Objective::CollectRessourceForCity && 
 			!stateInfos.SuppliedCity->NeedResources(stateInfos.Datas->Turn))

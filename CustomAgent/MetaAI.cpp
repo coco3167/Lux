@@ -109,11 +109,14 @@ void MetaAI::GiveOrders()
 
 void MetaAI::UpdateSubAIs()
 {
+    Debug::Log("Update Workers");
     for (WorkerAI& worker : m_workerAIs)
     {
+        Debug::Log(Utils::FormatString("Update Worker %i", worker.ManagedObject->id));
         worker.Update();
     }
 
+    Debug::Log("Update Carts");
     for (CartAI& cart : m_cartAIs)
     {
         cart.Update();

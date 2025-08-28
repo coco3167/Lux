@@ -32,6 +32,7 @@ int main()
     MetaAI metaAI{ &gameDatas };
 
     Debug::Init(player.team);
+    Debug::Log("Start");
 
     while (true)
     {
@@ -43,7 +44,7 @@ int main()
 
         /** AI Code Goes Below! **/
 
-        Debug::Log(Utils::FormatString("Turn : %i", turn - 1));
+        Debug::Log(Utils::FormatString("Turn : %i", turn));
         Debug::Log("");
 
 

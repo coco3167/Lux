@@ -3,6 +3,8 @@
 #include "../lux/annotate.hpp"
 #include "CartAI.hpp"
 
+#include "Debug.h"
+
 WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
     SubAI(worker, worker->id),
     m_smInfos(this, gameDatas),

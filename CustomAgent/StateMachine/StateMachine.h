@@ -2,6 +2,8 @@
 #include <memory>
 #include "SMState.h"
 
+#include "../Debug.h"
+
 
 template<typename TSMInfos>
 class StateMachine
@@ -18,9 +20,11 @@ public:
 
 	void Update(TSMInfos& stateInfos) 
 	{
+        Debug::Log("[SM] Update current state");
 		std::unique_ptr<SMState<TSMInfos>> requestedState = m_currentState->UpdateState(stateInfos);
 		if (requestedState) 
 		{
+        	Debug::Log("[SM] Changing state");
 			ChangeState(std::move(requestedState));
 		}
 	}
