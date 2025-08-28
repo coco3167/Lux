@@ -46,7 +46,9 @@ namespace WorkerSM
 		CityAI* SuppliedCity;
 		bool AlreadyCollectedResources;
 
+
 		Position TargetPosition;
+		PathFindingFlags PathOptions;
 
 
 		WorkerSMInfos(WorkerAI* worker, GameDatas* datas) :
@@ -55,7 +57,8 @@ namespace WorkerSM
 			CurrentObjective(Objective::None),
 			SuppliedCity(nullptr),
 			AlreadyCollectedResources(false),
-			TargetPosition(-1, -1)
+			TargetPosition(-1, -1),
+			PathOptions(PathFindingFlags::None)
 		{
 
 		}
@@ -75,7 +78,7 @@ namespace WorkerSM
 	class MovingState : public SMState<WorkerSMInfos>
 	{
 	public:
-		MovingState(WorkerSMInfos& stateInfos, const Position& target);
+		MovingState(WorkerSMInfos& stateInfos, const Position& target, PathFindingFlags pathOptions = PathFindingFlags::None);
 
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
 

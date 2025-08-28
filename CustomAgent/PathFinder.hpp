@@ -16,6 +16,12 @@
 
 using namespace lux;
 
+enum PathFindingFlags : int
+{
+    None = 0,
+    AvoidCities = 1 << 0,
+};
+
 class PathfinderCell
 {
 public:
@@ -50,8 +56,16 @@ public:
 
 class PathFinder
 {
+private:
+    static constexpr float WALL_COST = 999999999.0f;
 public:
-    static bool FindPath(const GameMap& map, const Position& startPosition, const Position& targetPosition, const Player* curentPlayer, std::vector<DIRECTIONS>& o_pathToTarget)
+    static bool FindPath(
+        const GameMap& map, 
+        const Position& startPosition, 
+        const Position& targetPosition, 
+        const Player* curentPlayer, 
+        std::vector<DIRECTIONS>& o_pathToTarget, 
+        PathFindingFlags flags = PathFindingFlags::None)
     {
         const size_t cellsCount = static_cast<size_t>(map.height * map.width);
         std::vector<PathfinderCell> allCells{};
@@ -100,7 +114,7 @@ public:
 
                 PathfinderCell& neighbouringCell = allCells[PositionToArrayIndex(neighbouringPosition, map)];
                 
-                float gScoreAttempt = currentCell.GScore + ComputeCost(currentCell, neighbouringCell, curentPlayer);
+                float gScoreAttempt = currentCell.GScore + ComputeCost(currentCell, neighbouringCell, curentPlayer, flags);
                 if (gScoreAttempt >= neighbouringCell.GScore)
                 {
                     continue;
@@ -150,12 +164,15 @@ private:
         return cellPosition.distanceTo(targetPosition);
     }
 
-    static float ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, const Player* currentPlayer)
+    static float ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, const Player* currentPlayer, PathFindingFlags flags)
     {
         CityTile* neighbouringCityTile = neighbouringCell.Cell->citytile;
-        if (neighbouringCityTile != nullptr && neighbouringCityTile->team != currentPlayer->team)
+        if (neighbouringCityTile != nullptr) 
         {
-            return 99999999.0f; // Can't pass through a opponent's city tile
+            if (Utils::HasFlag(flags, PathFindingFlags::AvoidCities) || neighbouringCityTile->team != currentPlayer->team)
+            {
+                return WALL_COST; // Can't pass through a opponent's city tile
+            }
         }
 
         bool allyUnitInNeighbouringCell = false;
@@ -170,7 +187,7 @@ private:
 
         if (allyUnitInNeighbouringCell && neighbouringCityTile == nullptr)
         {
-            return 99999999.0f; // Can't pass through an ally outside a city
+            return WALL_COST; // Can't pass through an ally outside a city
         }
 
         if (neighbouringCell.Cell->road > 0.0f) 

@@ -50,9 +50,10 @@ namespace WorkerSM
 		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x + 1, stateInfos.TargetPosition.y + 1, "ST_D", 40)));
 	}
 
-	MovingState::MovingState(WorkerSMInfos& stateInfos, const Position& target)
+	MovingState::MovingState(WorkerSMInfos& stateInfos, const Position& target, PathFindingFlags pathOptions)
 	{
 		stateInfos.TargetPosition = target;
+		stateInfos.PathOptions = pathOptions;
 	}
 
 	std::unique_ptr<SMState<WorkerSMInfos>> MovingState::UpdateState(WorkerSMInfos& stateInfos)
@@ -63,6 +64,7 @@ namespace WorkerSM
 		Debug::Log("[SM_MovingState] Check if target reached");
 		if (unit->pos == stateInfos.TargetPosition)
 		{
+		Debug::Log("[SM_MovingState] Next state");
 			return std::move(NextState(stateInfos));
 		}
 
@@ -227,7 +229,7 @@ namespace WorkerSM
 
 		Debug::Log(Utils::FormatString("[SM_State] CityCell (%i, %i)", cityBuildTile->pos.x, cityBuildTile->pos.y));
 
-		return std::unique_ptr<MovingState>(new MovingState(stateInfos, cityBuildTile->pos));
+		return std::unique_ptr<MovingState>(new MovingState(stateInfos, cityBuildTile->pos, PathFindingFlags::AvoidCities));
 	}
 
 	std::unique_ptr<SMState<WorkerSMInfos>> CommonActions::GoCollectResources(WorkerSMInfos& stateInfos)

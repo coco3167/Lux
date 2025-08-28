@@ -37,6 +37,11 @@ class Utils
             0 <= y && y < map.height;
     }
 
+	static bool HasFlag(const int value, const int flag)
+	{
+		return (value & flag) != 0;
+	}
+
     static DIRECTIONS GetOppositeDirection(const DIRECTIONS dir)
     {
         switch (dir)
