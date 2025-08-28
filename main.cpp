@@ -41,10 +41,12 @@ int main()
 
         Player& player = gameState.players[gameState.id];
         Player& opponent = gameState.players[(gameState.id + 1) % 2];
-
+        
+        actions.push_back(std::move(Annotate::sidetext("Start Update")));
         gameDatas.Update(&actions, &player, turn);
 
         metaAI.Update(turn);
+        actions.push_back(std::move(Annotate::sidetext("End Update")));
 
         turn++;
 

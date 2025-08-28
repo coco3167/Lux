@@ -5,6 +5,7 @@
 #include "../lux/position.hpp"
 
 #include "CityAI.h"
+#include "WorkerAI.h"
 
 #include "SubAI.h"
 #include "GameDatas.h"
@@ -15,7 +16,7 @@ enum CartState
 {
     STANDBY,
     BUILDING_ROAD,
-    RESUPPLYING_UNIT,
+    REQUEST_FROM_UNIT,
     RESUPPLYING_CITY
 };
 
@@ -27,7 +28,10 @@ public:
     CartState state;
     lux::Position destination;
     lux::Position origin;
-    lux::Unit* resupplyTarget;
+    WorkerAI* requestTarget;
+    CityAI* resupplyTarget;
+
+    bool m_hasDestination;
     
 
 public:
@@ -40,18 +44,23 @@ public:
 
     // TODO checks if the unit can do something
     bool IsAvailable() const;
-    
-    bool DestinationReached();
 
-    void UpdateDestination();
-
-    void Resupply(lux::Unit& unit);
-    void Resupply(lux::CityTile& city);
+    bool TryGoResupply(CityAI* city);
 
     // TODO start to build a road from start to end
     void BuildRoad(lux::Position start, lux::Position end);
 
-    void Transfer(lux::Unit& unit, std::vector<std::string>& actions);
+    void Transfer(lux::Unit& unit);
+
+private:
+    bool DestinationReached() const;
+
+    void UpdateDestination();
+
+    void Move();
+    void GoRequestFromUnit(WorkerAI* unit);
+
+    void GoResupplyClosestCityTile(CityAI* city);
 };
 
 

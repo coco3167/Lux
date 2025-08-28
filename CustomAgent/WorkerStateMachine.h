@@ -66,6 +66,8 @@ namespace WorkerSM
 		DefaultState(WorkerSMInfos& stateInfos);
 
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
+
+		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
 
 	class MovingState : public SMState<WorkerSMInfos>
@@ -77,12 +79,13 @@ namespace WorkerSM
 
 		std::unique_ptr<SMState<WorkerSMInfos>> NextState(WorkerSMInfos& stateInfos);
 
-		virtual void DrawDebug(WorkerSMInfos& stateInfos, std::vector<std::string>& actions) override;
+		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
 
 	class BuildingCityState : public SMState<WorkerSMInfos>
 	{
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
+		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
 
 	class CollectingRessourcesState : public SMState<WorkerSMInfos>
@@ -90,6 +93,7 @@ namespace WorkerSM
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
 
 		std::unique_ptr<SMState<WorkerSMInfos>> NextState(WorkerSMInfos& stateInfos);
+		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
 }
 

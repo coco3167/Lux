@@ -186,7 +186,7 @@ void GameDatas::ApplyResourceDesirability()
             {
                 continue;
             }
-            resourceDesirability = 1000.0f;
+            resourceDesirability = 500.0f;
         }
 
 

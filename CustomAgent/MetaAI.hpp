@@ -57,10 +57,6 @@ private:
     void UpdateSubAIs();
     void DrawDebug();
 
-    std::vector<CityAI*> GetNeedingCity();
-    std::vector<WorkerAI*> GetNeedingWorkers();
-    std::vector<CartAI*> GetNeedingCarts();
-
     //Expand
     int NBUnitsToBuild() const;
     void MakeUnitsCollectResourcesForCity(CityAI& city);
@@ -68,6 +64,13 @@ private:
     void BuildUnits();
     void BuildCities();
     void Research();
+
+    std::vector<CityAI*> GetNeedingCity();
+    std::vector<WorkerAI*> GetNeedingWorkers();
+    std::vector<CartAI*> GetNeedingCarts();
+
+    std::vector<WorkerAI*> GetAvailableWorkersSortedByDistance(Position startPosition);
+    std::vector<CartAI*> GetAvailableCartsSortedByDistance(Position startPosition);
 
     template<typename TSubAI, typename TManagedObject>
     void ManageSubAILife(std::vector<TSubAI>& existingAIs, std::vector<TManagedObject*>& existingObjects)

@@ -1,6 +1,7 @@
 #include "WorkerAI.h"
 
 #include "../lux/annotate.hpp"
+#include "CartAI.hpp"
 
 WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
     SubAI(worker, worker->id),
@@ -17,7 +18,7 @@ void WorkerAI::Update()
 void WorkerAI::DrawDebug(GameDatas& gameDatas)
 {
     gameDatas.AddAction(std::move(Annotate::text(ManagedObject->pos.x, ManagedObject->pos.y, WorkerSM::WorkerSMUtils::ObjectiveToString(m_smInfos.CurrentObjective), 50)));
-    m_stateMachine.DrawDebug(m_smInfos, *gameDatas.Actions);
+    m_stateMachine.DrawDebug(m_smInfos);
 
     if (ManagedObject->team != gameDatas.Owner->team)
     {
@@ -37,9 +38,7 @@ bool WorkerAI::NeedResources(int turn) const
         return false;
     }
 
-    int cargo = ManagedObject->cargo.wood + ManagedObject->cargo.coal + ManagedObject->cargo.uranium;
-    const int neededUpkeep = (int)GAME_CONSTANTS["PARAMETERS"]["LIGHT_UPKEEP"]["WORKER"] * (int)GAME_CONSTANTS["PARAMETERS"]["NIGHT_LENGTH"];
-    return cargo < neededUpkeep;
+    return GetAvailableFuel() < 0;
 }
 
 bool WorkerAI::IsAvailable() const
@@ -63,7 +62,65 @@ void WorkerAI::BuildCityTile()
     m_smInfos.CurrentObjective = WorkerSM::Objective::BuildCity;
 }
 
+bool WorkerAI::RequestResources(CartAI* target, int maxResources)
+{
+    if (NeedResources(m_smInfos.Datas->Turn))
+    {
+        return false;
+    }
+
+    int availableFuel = GetAvailableFuel();
+    int transferableResources = maxResources;
+
+    TryTransfer(target, ResourceType::uranium, availableFuel, transferableResources);
+    TryTransfer(target, ResourceType::coal, availableFuel, transferableResources);
+    TryTransfer(target, ResourceType::wood, availableFuel, transferableResources);
+
+    return true;
+}
+
+WorkerSM::Objective WorkerAI::GetCurrentObjective() const
+{
+    return m_smInfos.CurrentObjective;
+}
+
 std::unique_ptr<SMState<WorkerSM::WorkerSMInfos>> WorkerAI::GetStartingState()
 {
     return std::unique_ptr<WorkerSM::DefaultState>(new WorkerSM::DefaultState(m_smInfos));
+}
+
+int WorkerAI::GetAvailableFuel() const
+{
+    int fuel = Utils::GetFuel(&ManagedObject->cargo);
+    const int neededUpkeep = (int) GAME_CONSTANTS["PARAMETERS"]["LIGHT_UPKEEP"]["WORKER"] * (int) GAME_CONSTANTS["PARAMETERS"]["NIGHT_LENGTH"];
+    return fuel - neededUpkeep;
+}
+
+void WorkerAI::TryTransfer(CartAI* target, ResourceType type, int& availableFuel, int& transferableReources)
+{
+    int fuelPerResource;
+    int resourcesInCargo;
+
+    switch (type)
+    {
+    case ResourceType::uranium:
+        fuelPerResource = 40;
+        resourcesInCargo = ManagedObject->cargo.uranium;
+
+    case ResourceType::coal:
+        fuelPerResource = 10;
+        resourcesInCargo = ManagedObject->cargo.coal;
+
+    case ResourceType::wood:
+        fuelPerResource = 1;
+        resourcesInCargo = ManagedObject->cargo.wood;
+    }
+
+    int availableResources = std::min(availableFuel / fuelPerResource, std::min(resourcesInCargo, transferableReources));
+    if (availableResources > 0)
+    {
+        availableFuel -= availableResources * fuelPerResource;
+        transferableReources -= availableResources;
+        m_smInfos.Datas->AddAction(std::move(ManagedObject->transfer(ManagedObject->id, target->ManagedObject->id, type, availableResources)));
+    }
 }

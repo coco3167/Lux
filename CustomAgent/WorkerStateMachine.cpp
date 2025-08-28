@@ -36,6 +36,11 @@ namespace WorkerSM
 		return nullptr;
 	}
 
+	void DefaultState::DrawDebug(WorkerSMInfos& stateInfos)
+	{
+		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y - 1, "ST_D", 40)));
+	}
+
 	MovingState::MovingState(WorkerSMInfos& stateInfos, const Position& target)
 	{
 		stateInfos.TargetPosition = target;
@@ -79,14 +84,19 @@ namespace WorkerSM
 			return std::unique_ptr<BuildingCityState>(new BuildingCityState());
 
 		case Objective::CollectRessourceForSelf:
+			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
 		case Objective::CollectRessourceForCity:
+			if (stateInfos.ControlledWorker->getCargoSpaceLeft() == 0)
+			{
+				return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
+			}
 			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
 
 		}
 		return nullptr;
 	}
 
-	void MovingState::DrawDebug(WorkerSMInfos& stateInfos, std::vector<std::string>& actions)
+	void MovingState::DrawDebug(WorkerSMInfos& stateInfos)
 	{
 		Unit* unit = stateInfos.ControlledWorker;
 
@@ -95,9 +105,11 @@ namespace WorkerSM
 
 		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, pathToTarget);
 
-		Annotator::TracePath(unit->pos, pathToTarget, actions);
+		Annotator::TracePath(unit->pos, pathToTarget, *stateInfos.Datas->Actions);
 
-		actions.push_back(std::move(Annotate::x(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y)));
+		stateInfos.Datas->AddAction(std::move(Annotate::x(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y)));
+
+		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y - 1, "ST_M", 40)));
 	}
 
 	std::unique_ptr<SMState<WorkerSMInfos>> BuildingCityState::UpdateState(WorkerSMInfos& stateInfos)
@@ -111,6 +123,11 @@ namespace WorkerSM
 		stateInfos.Datas->AddAction(std::move(unit->buildCity()));
 
 		return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
+	}
+
+	void BuildingCityState::DrawDebug(WorkerSMInfos& stateInfos)
+	{
+		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y - 1, "ST_B", 40)));
 	}
 
 	std::unique_ptr<SMState<WorkerSMInfos>> CollectingRessourcesState::UpdateState(WorkerSMInfos& stateInfos)
@@ -145,5 +162,10 @@ namespace WorkerSM
 		}
 		
 		return nullptr;
+	}
+
+	void CollectingRessourcesState::DrawDebug(WorkerSMInfos& stateInfos)
+	{
+		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y - 1, "ST_C", 40)));
 	}
 }

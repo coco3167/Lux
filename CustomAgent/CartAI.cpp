@@ -2,41 +2,60 @@
 
 #include <cmath>
 
-#include "WorkerAI.h"
 #include "Utils.hpp"
+#include "WorkerAI.h"
+
+#include "../lux/annotate.hpp"
+#include "Annotator.hpp"
 
 CartAI::CartAI(lux::Unit* cart, GameDatas* gameDatas) :
 	SubAI(cart, cart->id),
-	m_gameDatas(gameDatas)
+	m_gameDatas(gameDatas),
+	m_hasDestination(false)
 {
 	state = CartState::STANDBY;
-	resupplyTarget = nullptr;
+	requestTarget = nullptr;
 }
 
 void CartAI::Update()
 {
-	if (state == RESUPPLYING_UNIT)
-		UpdateDestination();
+	UpdateDestination();
+
+	Move();
 
 	if (DestinationReached())
 	{
+		m_hasDestination = false;
+
 		switch (state)
 		{
-		case CartState::STANDBY: return;
-			// Turn around and continue to upgrade the road until further notice.
+		case CartState::STANDBY: 
+			return;
+
+		// Turn around and continue to upgrade the road until further notice.
 		case CartState::BUILDING_ROAD:
 		{
+			//origin, destination = destination, origin;
 			Position tmp = origin;
 			origin = destination;
 			destination = tmp;
+			m_hasDestination = true;
 			break;
 		}
-			
-		case CartState::RESUPPLYING_UNIT:
-			// TODO Transfer cargo
-			//string cmd = cart.transfer(cart.id, resupplyTarget.id,)
+
+		case CartState::REQUEST_FROM_UNIT:
+			if (requestTarget->RequestResources(this, ManagedObject->getCargoSpaceLeft()))
+			{
+				GoResupplyClosestCityTile(resupplyTarget);
+				break;
+			}
+			// If the worker refuses to give resources 
+			state = CartState::STANDBY;
+			break;
+
 		case CartState::RESUPPLYING_CITY:
 			// TODO Transfer cargo
+			state = CartState::STANDBY;
 			break;
 		}
 	}
@@ -49,31 +68,85 @@ bool CartAI::NeedResources(int turn) const
 
 bool CartAI::IsAvailable() const
 {
-	return false;
+	return state == CartState::STANDBY;
 }
 
-bool CartAI::DestinationReached()
+bool CartAI::DestinationReached() const
 {
-	if (destination.x = -1) return false;
+	if (destination.x == -1) return false;
 	return destination == ManagedObject->pos;
 }
 
 void CartAI::UpdateDestination()
 {
-	destination = Utils::GetClosestAdjacentTile(ManagedObject->pos, resupplyTarget->pos, m_gameDatas->Map);
+	if (state != REQUEST_FROM_UNIT)
+	{
+		return;
+	}
+
+	destination = Utils::GetClosestAdjacentTile(ManagedObject->pos, requestTarget->ManagedObject->pos, m_gameDatas->Map);
+	m_hasDestination = true;
 }
 
-void CartAI::Resupply(lux::Unit& unit)
+void CartAI::Move()
 {
-	state = RESUPPLYING_UNIT;
-	resupplyTarget = &unit;
+	if (!m_hasDestination)
+	{
+		return;
+	}
+
+	std::vector<DIRECTIONS> pathToTarget{};
+	pathToTarget.reserve(10);
+
+	bool pathFound = PathFinder::FindPath(m_gameDatas->Map, ManagedObject->pos, destination, m_gameDatas->Owner, pathToTarget);
+
+	if (!pathFound)
+	{
+		m_gameDatas->AddAction(std::move(Annotate::text(ManagedObject->pos.x, ManagedObject->pos.y, "NO PATH", 40)));
+		return;
+	}
+
+	Annotator::TracePath(ManagedObject->pos, pathToTarget, *m_gameDatas->Actions);
+
+	//m_gameDatas->AddAction(std::move(Annotate::circle(ManagedObject->pos.x, ManagedObject->pos.y)));
+	m_gameDatas->AddAction(std::move(Annotate::x(destination.x, destination.y)));
+
+	m_gameDatas->AddAction(std::move(ManagedObject->move(pathToTarget[0])));
+}
+
+void CartAI::GoRequestFromUnit(WorkerAI* unit)
+{
+	state = REQUEST_FROM_UNIT;
+	requestTarget = unit;
 	UpdateDestination();
 }
 
-void CartAI::Resupply(lux::CityTile& city)
+void CartAI::GoResupplyClosestCityTile(CityAI* city)
 {
 	state = RESUPPLYING_CITY;
-	destination = city.pos;
+	const CityTile* closestTile = PathFinder::GetClosestCityTile(ManagedObject->pos, city->ManagedObject, m_gameDatas->Map, m_gameDatas->Owner);
+	destination = closestTile->pos;
+	m_hasDestination = true;
+}
+
+bool CartAI::TryGoResupply(CityAI* city)
+{
+	if (ManagedObject->getCargoSpaceLeft() == 0)
+	{
+		WorkerAI* closestWorker = m_gameDatas->GetClosestWorker(ManagedObject->pos, WorkerSM::Objective::CollectRessourceForCity);
+		if (closestWorker == nullptr)
+		{
+			state = STANDBY;
+			return false;
+		}
+		GoRequestFromUnit(closestWorker);
+		resupplyTarget = city;
+	}
+	else
+	{
+		GoResupplyClosestCityTile(city);
+	}
+	return true;
 }
 
 void CartAI::BuildRoad(lux::Position start, lux::Position end)
@@ -81,22 +154,24 @@ void CartAI::BuildRoad(lux::Position start, lux::Position end)
 	state = BUILDING_ROAD;
 	origin = start;
 	destination = end;
+	m_hasDestination = true;
 }
 
-void CartAI::Transfer(lux::Unit& unit, std::vector<std::string>& actions)
+void CartAI::Transfer(lux::Unit& unit)
 {
-	int fuel = ManagedObject->cargo.wood + ManagedObject->cargo.coal * 10 + ManagedObject->cargo.uranium * 40;
+	int fuel = Utils::GetFuel(&ManagedObject->cargo);
 
 	// If we have surplus, we can give some to the unit for it to survive.
-	int fuelToTransfer = unit.isWorker() ? WorkerAI::FUEL_NEEDED_FOR_THE_NIGHT
-										 : CartAI::FUEL_NEEDED_FOR_THE_NIGHT;
+	int fuelToTransfer = unit.isWorker() ? 
+		WorkerAI::FUEL_NEEDED_FOR_THE_NIGHT : 
+		CartAI::FUEL_NEEDED_FOR_THE_NIGHT;
 
 	// We don't have enough fuel for both the cart and the unit, abort transfer.
-	if (fuel < FUEL_NEEDED_FOR_THE_NIGHT + fuelToTransfer) 
+	if (fuel < FUEL_NEEDED_FOR_THE_NIGHT + fuelToTransfer)
 	{
 		return;
 	}
-	
+
 	int cargoU = ManagedObject->cargo.uranium;
 	if (cargoU > 0)
 	{
@@ -112,7 +187,7 @@ void CartAI::Transfer(lux::Unit& unit, std::vector<std::string>& actions)
 			cargoU = 0;
 		}
 		fuelToTransfer -= uAmmount;
-		actions.push_back(std::move(ManagedObject->transfer(ManagedObject->id, unit.id, lux::ResourceType::coal, uAmmount)));
+		m_gameDatas->AddAction(std::move(ManagedObject->transfer(ManagedObject->id, unit.id, lux::ResourceType::coal, uAmmount)));
 	}
 
 	int cargoCoal = ManagedObject->cargo.coal;
@@ -130,13 +205,13 @@ void CartAI::Transfer(lux::Unit& unit, std::vector<std::string>& actions)
 			cargoCoal = 0;
 		}
 		fuelToTransfer -= coalAmmount;
-		actions.push_back(std::move(ManagedObject->transfer(ManagedObject->id, unit.id, lux::ResourceType::coal, coalAmmount)));
+		m_gameDatas->AddAction(std::move(ManagedObject->transfer(ManagedObject->id, unit.id, lux::ResourceType::coal, coalAmmount)));
 
 		if (fuelToTransfer <= 0)
 		{
 			return;
-		} 
-			
+		}
+
 	}
 
 	int cargoWood = ManagedObject->cargo.wood;
@@ -155,7 +230,7 @@ void CartAI::Transfer(lux::Unit& unit, std::vector<std::string>& actions)
 		}
 		ManagedObject->cargo.wood = cargoWood;
 
-		actions.push_back(std::move(ManagedObject->transfer(ManagedObject->id, unit.id, lux::ResourceType::wood, woodAmmount)));
+		m_gameDatas->AddAction(std::move(ManagedObject->transfer(ManagedObject->id, unit.id, lux::ResourceType::wood, woodAmmount)));
 
 		fuelToTransfer -= woodAmmount;
 		if (fuelToTransfer <= 0)

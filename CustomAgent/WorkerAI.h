@@ -8,6 +8,8 @@
 
 #include "CityAI.h"
 
+class CartAI;
+
 class WorkerAI : public SubAI<lux::Unit>
 {
     typedef WorkerSM::WorkerSMInfos SMInfos;
@@ -41,7 +43,15 @@ public:
     // TODO build city at the best place
     void BuildCityTile();
 
+    bool RequestResources(CartAI* target, int maxResources);
+
+    WorkerSM::Objective GetCurrentObjective() const;
+
+private:
 
     std::unique_ptr<SMState<WorkerSM::WorkerSMInfos>> GetStartingState();
+    int GetAvailableFuel() const;
+
+    void TryTransfer(CartAI* target, ResourceType type, int& availableFuel, int& transferableReources);
 };
 

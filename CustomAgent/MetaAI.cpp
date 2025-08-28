@@ -14,10 +14,14 @@ void MetaAI::Update(const int turn)
 {
     m_turn = turn;
 
+    m_gameDatas->AddAction(std::move(Annotate::sidetext("ManageLives")));
     ManageAILives();
 
+    m_gameDatas->AddAction(std::move(Annotate::sidetext("GiveOrders")));
     GiveOrders();
+    m_gameDatas->AddAction(std::move(Annotate::sidetext("Update SubAis")));
     UpdateSubAIs();
+    m_gameDatas->AddAction(std::move(Annotate::sidetext("Debug")));
     DrawDebug();
 }
 
@@ -80,8 +84,8 @@ void MetaAI::CreateCityTilesAIs(std::vector<CityTile*>& allTiles)
 void MetaAI::GiveOrders()
 {
     // Survive
-
-    for (CityAI* city : GetNeedingCity())
+    std::vector<CityAI*> needingCities = std::move(GetNeedingCity());
+    for (CityAI* city : needingCities)
     {
         MakeUnitsCollectResourcesForCity(*city);
     }
@@ -189,26 +193,36 @@ std::vector<CartAI*> MetaAI::GetNeedingCarts()
 void MetaAI::MakeUnitsCollectResourcesForCity(CityAI& city)
 {
     int unitsNeeded = city.ResourcesQuantityNeeded(m_turn) / RESOURCE_PER_UNIT;
-    int loop = 0;
+    int iWorker = 0;
+    int iCart = 0;
 
-    int workersCount = static_cast<int>(m_workerAIs.size());
+
+    // Arbitrary 
+    Position cityPosition = city.ManagedObject->citytiles[0].pos;
+
+    std::vector<WorkerAI*> closestAvailableWorkers = GetAvailableWorkersSortedByDistance(cityPosition);
+    std::vector<CartAI*> closestAvailableCarts = GetAvailableCartsSortedByDistance(cityPosition);
+
+    int workersCount = static_cast<int>(closestAvailableWorkers.size());
+    int cartsCount = static_cast<int>(closestAvailableCarts.size());
 
     while (unitsNeeded > 0)
     {
-        if(loop >= workersCount)
+        if(iWorker >= workersCount)
         {
             break;
         }
             
-        WorkerAI& unitAI = m_workerAIs[loop];
+        closestAvailableWorkers[iWorker++]->CollectResources(city);
+        unitsNeeded--;
 
-        if(unitAI.IsAvailable())
+        // Adds a cart to help the worker
+        if (iCart >= cartsCount)
         {
-            unitAI.CollectResources(city);
-            unitsNeeded--;
+            continue;
         }
 
-        loop++;
+        closestAvailableCarts[iCart++]->TryGoResupply(&city);
     }
 }
 
@@ -289,5 +303,49 @@ void MetaAI::Research()
             m_gameDatas->AddAction(std::move(cityTile.Research()));
         }
     }
+}
+
+std::vector<WorkerAI*> MetaAI::GetAvailableWorkersSortedByDistance(Position startPosition)
+{
+    std::vector<WorkerAI*> result = {};
+    result.reserve(m_workerAIs.size());
+
+    for (WorkerAI& worker : m_workerAIs)
+    {
+        if (!worker.IsAvailable())
+        {
+            continue;
+        }
+        result.push_back(&worker);
+    }
+
+    std::sort(result.begin(), result.end(),
+        [startPosition](WorkerAI* a, WorkerAI* b)
+        {
+            return a->ManagedObject->pos.distanceTo(startPosition) < b->ManagedObject->pos.distanceTo(startPosition);
+        });
+    return result;
+}
+
+std::vector<CartAI*> MetaAI::GetAvailableCartsSortedByDistance(Position startPosition)
+{
+    std::vector<CartAI*> result = {};
+    result.reserve(m_cartAIs.size());
+
+    for (CartAI& cart : m_cartAIs)
+    {
+        if (!cart.IsAvailable())
+        {
+            continue;
+        }
+        result.push_back(&cart);
+    }
+
+    std::sort(result.begin(), result.end(),
+        [startPosition](CartAI* a, CartAI* b)
+        {
+            return a->ManagedObject->pos.distanceTo(startPosition) < b->ManagedObject->pos.distanceTo(startPosition);
+        });
+    return result;
 }
 
