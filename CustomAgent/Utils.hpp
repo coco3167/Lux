@@ -15,6 +15,14 @@ class Utils
 		return value < 0.0f ? -value : value;
 	}
 
+	template<typename TFloat>
+	static TFloat Clamp(TFloat value, TFloat min, TFloat max)
+	{
+		if (value < min){ return min; }
+		if (value > max){ return max; }
+		return value;
+	}
+
     static bool IsInMap(const Position& position, const GameMap& map)
     {
         return 

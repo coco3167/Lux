@@ -6,6 +6,9 @@
 
 #include "WorkerAI.h"
 
+#include "Utils.hpp"
+#include "Debug.h"
+
 GameDatas::GameDatas(GameMap& map, Player* owner) :
     Map(map),
     Actions(nullptr),
@@ -62,7 +65,8 @@ Cell* GameDatas::GetBestCityBuildingCell(Position startPosition) const
     {
         for (int y = 0; y < Map.height; ++y)
         {
-            tileDesirability = m_cityTilesDesirability[y * Map.width + x] * GetDistanceDesirabilityFactor(startPosition, {x, y});
+            float factor = GetDistanceDesirabilityFactor(startPosition, {x, y});
+            tileDesirability = m_cityTilesDesirability[y * Map.width + x] * factor;
             if (tileDesirability > mostDesirableCityTileScore)
             {
                 mostDesirableCityTileScore = tileDesirability;
@@ -77,13 +81,13 @@ Cell* GameDatas::GetBestCityBuildingCell(Position startPosition) const
 
 float GameDatas::GetDistanceDesirabilityFactor(Position startPosition, Position targetPosition) const
 {
-    std::vector<DIRECTIONS> path = {};
-    path.reserve(10);
+    // std::vector<DIRECTIONS> path = {};
+    // path.reserve(10);
 
-    PathFinder::FindPath(Map, startPosition, targetPosition, Owner, path);
-    int pathLength = path.size();
+    // PathFinder::FindPath(Map, startPosition, targetPosition, Owner, path);
+    int pathLength = startPosition.distanceTo(targetPosition);
 
-    return static_cast<float>(std::max(-std::log(pathLength) / 2.0f, 0.0));
+    return static_cast<float>(Utils::Clamp(1.0 - std::log10(pathLength) / 2.0, 0.0001, 2.0));
 }
 
 WorkerAI* GameDatas::GetClosestWorker(Position startPosition, WorkerSM::Objective desiredObjective) const
@@ -168,25 +172,27 @@ void GameDatas::ApplyResourceDesirability()
     const int weightRange = 2;
     for (const Cell* resourceTile : m_resourceTiles)
     {
+        m_cityTilesDesirability[resourceTile->pos.y * Map.width + resourceTile->pos.x] = 0.0f;
+
         float resourceDesirability;
         switch (resourceTile->resource.type)
         {
         case ResourceType::wood:
-            resourceDesirability = 10.0f;
+            resourceDesirability = 1.1f;
 
         case ResourceType::coal:
             if (!Owner->researchedCoal())
             {
                 continue;
             }
-            resourceDesirability = 100.0f;
+            resourceDesirability = 1.3f;
 
         case ResourceType::uranium:
             if (!Owner->researchedUranium())
             {
                 continue;
             }
-            resourceDesirability = 500.0f;
+            resourceDesirability = 1.8f;
         }
 
 
@@ -203,13 +209,7 @@ void GameDatas::ApplyResourceDesirability()
                     continue;
                 }
 
-                if (Map.getCell(weightX, weightY)->hasResource())
-                {
-                    m_cityTilesDesirability[weightY * Map.width + weightX] = 0;
-                    continue;
-                }
-
-                m_cityTilesDesirability[weightY * Map.width + weightX] += resourceDesirability;
+                m_cityTilesDesirability[weightY * Map.width + weightX] *= resourceDesirability;
             }
         }
     }
@@ -245,7 +245,7 @@ void GameDatas::ApplyCityProximityDesirability()
                     // The desirability is increased in the tiles adjacent to the other cityTiles and decreased further
                     if (distanceFromCity == 1)
                     {
-                        m_cityTilesDesirability[weightY * Map.width + weightX] += 50.0f;
+                        m_cityTilesDesirability[weightY * Map.width + weightX] *= 1.3f;
                     }
                     else
                     {
@@ -258,7 +258,7 @@ void GameDatas::ApplyCityProximityDesirability()
 
     for (Position& pos : tilesPositions)
     {
-        m_cityTilesDesirability[pos.y * Map.width + pos.x] = 0;
+        m_cityTilesDesirability[pos.y * Map.width + pos.x] = -1.0f;
     }
 }
 
