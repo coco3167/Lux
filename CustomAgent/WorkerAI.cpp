@@ -5,7 +5,7 @@
 
 WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
     SubAI(worker, worker->id),
-    m_smInfos(worker, gameDatas),
+    m_smInfos(this, gameDatas),
     m_stateMachine(std::move(GetStartingState()))
 {
 }
