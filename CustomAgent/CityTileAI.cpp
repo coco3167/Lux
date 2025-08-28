@@ -42,8 +42,9 @@ int CityTileAI::UnitBuildScore(const lux::GameMap& gameMap) const
 std::string CityTileAI::BuildUnit(size_t workerCount, size_t cartCount) const
 {
 	size_t unitCount = workerCount + cartCount;
+	size_t expectedCartCount = workerCount / WORKERS_FOREACH_CART;
 
-	if(cartCount / static_cast<float>(unitCount) < CART_PERCENTAGE)
+	if(expectedCartCount > cartCount)
 	{
 		return std::move(m_tile->buildCart());
 	}

@@ -6,7 +6,7 @@
 class CityTileAI
 {
 private:
-    static constexpr float CART_PERCENTAGE = 0.1f;
+    static constexpr int WORKERS_FOREACH_CART = 5;
     static constexpr int MAX_SCORE = 10;
 
     lux::CityTile* m_tile;
