@@ -3,6 +3,10 @@
 #include <string.h>
 #include <vector>
 
+#include <iostream>
+#include <fstream>
+
+
 #include "lux/define.cpp"
 #include "lux/kit.hpp"
 
@@ -28,6 +32,8 @@ int main()
     int turn = 0;
 
     MetaAI metaAI{ &gameDatas };
+
+    ofstream outputDebugFile(Utils::FormatString("debug_%i.txt", player.team).c_str());
 
     while (true)
     {
@@ -56,13 +62,17 @@ int main()
         /** AI Code Goes Above! **/
 
         /** Do not edit! **/
+
+        outputDebugFile << "Turn : "  << turn << "\n";
         for (int i = 0; i < actions.size(); i++)
         {
             if (i != 0)
                 cout << ",";
             cout << actions[i];
+            outputDebugFile << actions[i] << "\n";
         }
         cout << endl;
+        outputDebugFile << endl;
         // end turn
         gameState.end_turn();
     }
