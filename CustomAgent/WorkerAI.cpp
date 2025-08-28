@@ -82,6 +82,11 @@ bool WorkerAI::RequestResources(CartAI* target, int maxResources)
     return true;
 }
 
+bool WorkerAI::CanBuildCity() const
+{
+    return ManagedObject->getCargoSpaceLeft() == 0;
+}
+
 WorkerSM::Objective WorkerAI::GetCurrentObjective() const
 {
     return m_smInfos.CurrentObjective;

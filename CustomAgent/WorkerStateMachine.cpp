@@ -27,26 +27,17 @@ namespace WorkerSM
 		case Objective::CollectRessourceForSelf:
 		case Objective::CollectRessourceForCity:
 		{
-			Cell* targetCell = stateInfos.Datas->GetClosestResourceCell(stateInfos.ControlledWorker->ManagedObject->pos);
-        	Debug::Log(Utils::FormatString("[SM_State] ResourceCell (%i, %i)", targetCell->pos.x, targetCell->pos.y));
-			return std::unique_ptr<MovingState>(new MovingState(stateInfos, targetCell->pos));
-			
+			return std::move(CommonActions::GoCollectResources(stateInfos));
 		}
 
 		case Objective::BuildCity:
 		{
-        	Debug::Log("[SM_State] Search for city cell");
-
-			Cell* cityBuildTile = stateInfos.Datas->GetBestCityBuildingCell(stateInfos.ControlledWorker->ManagedObject->pos);
-			if (cityBuildTile == nullptr)
+			if (!stateInfos.ControlledWorker->CanBuildCity())
 			{
-				return nullptr;
+				return std::move(CommonActions::GoCollectResources(stateInfos));
 			}
+			return std::move(CommonActions::GoBuildCity(stateInfos));
 
-        	Debug::Log(Utils::FormatString("[SM_State] CityCell (%i, %i)", cityBuildTile->pos.x, cityBuildTile->pos.y));
-
-
-			return std::unique_ptr<MovingState>(new MovingState(stateInfos, cityBuildTile->pos));
 		}
 
 		}
@@ -100,14 +91,18 @@ namespace WorkerSM
 		switch (stateInfos.CurrentObjective)
 		{
 		case Objective::BuildCity:
-			return std::unique_ptr<BuildingCityState>(new BuildingCityState());
+			if (stateInfos.ControlledWorker->CanBuildCity())
+			{
+				return std::unique_ptr<BuildingCityState>(new BuildingCityState());
+			}
+			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
 
 		case Objective::CollectRessourceForSelf:
 			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
 		case Objective::CollectRessourceForCity:
 			if (stateInfos.AlreadyCollectedResources)
 			{
-				return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
+				return std::move(CommonActions::GoStandby(stateInfos));
 			}
 			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
 
@@ -141,9 +136,20 @@ namespace WorkerSM
 			return nullptr;
 		}
 
+		if (!stateInfos.ControlledWorker->CanBuildCity())
+		{
+			return std::move(CommonActions::GoCollectResources(stateInfos));
+		}
+
+		Cell* cell = stateInfos.Datas->Map.getCell(unit->pos.x, unit->pos.y);
+		if (cell->hasResource() || cell->citytile != nullptr)
+		{
+			return std::move(CommonActions::GoStandby(stateInfos));
+		}
+
 		stateInfos.Datas->AddAction(std::move(unit->buildCity()));
 
-		return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
+		return std::move(CommonActions::GoStandby(stateInfos));
 	}
 
 	void BuildingCityState::DrawDebug(WorkerSMInfos& stateInfos)
@@ -159,7 +165,7 @@ namespace WorkerSM
 			!stateInfos.SuppliedCity->NeedResources(stateInfos.Datas->Turn))
 		{
 			stateInfos.AlreadyCollectedResources = true;
-			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
+			return std::move(CommonActions::GoStandby(stateInfos));
 		}
 
 		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
@@ -177,11 +183,16 @@ namespace WorkerSM
 		switch (stateInfos.CurrentObjective)
 		{
 		case Objective::CollectRessourceForSelf:
-			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
+			return std::move(CommonActions::GoStandby(stateInfos));
 
 		case Objective::CollectRessourceForCity:
+		{
 			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->ManagedObject->pos, stateInfos.SuppliedCity->ManagedObject, stateInfos.Datas->Map, stateInfos.Datas->Owner);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, closestTile->pos));
+		}
+
+		case Objective::BuildCity:
+			return std::move(CommonActions::GoBuildCity(stateInfos));
 		}
 		
 		return nullptr;
@@ -190,5 +201,33 @@ namespace WorkerSM
 	void CollectingRessourcesState::DrawDebug(WorkerSMInfos& stateInfos)
 	{
 		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x + 1, stateInfos.TargetPosition.y + 1, "ST_C", 40)));
+	}
+
+	std::unique_ptr<SMState<WorkerSMInfos>> CommonActions::GoStandby(WorkerSMInfos& stateInfos)
+	{
+		return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
+	}
+
+	std::unique_ptr<SMState<WorkerSMInfos>> CommonActions::GoBuildCity(WorkerSMInfos& stateInfos)
+	{
+		Debug::Log("[SM_State] Search for city cell");
+
+		Cell* cityBuildTile = stateInfos.Datas->GetBestCityBuildingCell(stateInfos.ControlledWorker->ManagedObject->pos);
+		if (cityBuildTile == nullptr)
+		{
+			Debug::LogError("No suitable tiles to build city");
+			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));;
+		}
+
+		Debug::Log(Utils::FormatString("[SM_State] CityCell (%i, %i)", cityBuildTile->pos.x, cityBuildTile->pos.y));
+
+		return std::unique_ptr<MovingState>(new MovingState(stateInfos, cityBuildTile->pos));
+	}
+
+	std::unique_ptr<SMState<WorkerSMInfos>> CommonActions::GoCollectResources(WorkerSMInfos& stateInfos)
+	{
+		Cell* targetCell = stateInfos.Datas->GetClosestResourceCell(stateInfos.ControlledWorker->ManagedObject->pos);
+		Debug::Log(Utils::FormatString("[SM_State] ResourceCell (%i, %i)", targetCell->pos.x, targetCell->pos.y));
+		return std::unique_ptr<MovingState>(new MovingState(stateInfos, targetCell->pos));
 	}
 }

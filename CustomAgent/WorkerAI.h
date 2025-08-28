@@ -44,6 +44,7 @@ public:
     void BuildCityTile();
 
     bool RequestResources(CartAI* target, int maxResources);
+    bool CanBuildCity() const;
 
     WorkerSM::Objective GetCurrentObjective() const;
 

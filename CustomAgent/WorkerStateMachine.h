@@ -97,5 +97,13 @@ namespace WorkerSM
 		std::unique_ptr<SMState<WorkerSMInfos>> NextState(WorkerSMInfos& stateInfos);
 		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
+
+	class CommonActions
+	{
+	public:
+		static std::unique_ptr<SMState<WorkerSMInfos>> GoStandby(WorkerSMInfos& stateInfos);
+		static std::unique_ptr<SMState<WorkerSMInfos>> GoBuildCity(WorkerSMInfos& stateInfos);
+		static std::unique_ptr<SMState<WorkerSMInfos>> GoCollectResources(WorkerSMInfos& stateInfos);
+	};
 }
 
