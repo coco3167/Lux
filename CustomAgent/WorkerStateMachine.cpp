@@ -17,7 +17,7 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> DefaultState::UpdateState(WorkerSMInfos& stateInfos)
 	{
-        Debug::Log("[SM_State] Update Default state");
+        Debug::Log("[SM_DefaultState] Update");
         Debug::Log(WorkerSM::WorkerSMUtils::ObjectiveToString(stateInfos.CurrentObjective));
 		switch (stateInfos.CurrentObjective)
 		{
@@ -57,20 +57,23 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> MovingState::UpdateState(WorkerSMInfos& stateInfos)
 	{
-        Debug::Log("[SM_State] Update Moving state");
+        Debug::Log("[SM_MovingState] Update");
 		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 
+		Debug::Log("[SM_MovingState] Check if target reached");
 		if (unit->pos == stateInfos.TargetPosition)
 		{
 			return std::move(NextState(stateInfos));
 		}
 
 
+		Debug::Log("[SM_MovingState] Check if canAct");
 		if (!unit->canAct())
 		{
 			return nullptr;
 		}
 
+		Debug::Log("[SM_MovingState] Compute path");
 		std::vector<DIRECTIONS> pathToTarget{};
 		pathToTarget.reserve(10);
 
@@ -78,9 +81,12 @@ namespace WorkerSM
 
 		if (!pathFound)
 		{
-			return nullptr;
+			return std::move(CommonActions::GoStandby(stateInfos));
 		}
 
+
+		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Path Length %i", pathToTarget.size()));
+		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Moving %c", pathToTarget[0]));
 		stateInfos.Datas->AddAction(std::move(unit->move(pathToTarget[0])));
 
 		return nullptr;
@@ -128,7 +134,7 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> BuildingCityState::UpdateState(WorkerSMInfos& stateInfos)
 	{
-        Debug::Log("[SM_State] Update BuildS state");
+        Debug::Log("[SM_BuildingCityState] Update");
 
 		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 		if (!unit->canAct())
@@ -159,7 +165,7 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> CollectingRessourcesState::UpdateState(WorkerSMInfos& stateInfos)
 	{
-        Debug::Log("[SM_State] Update Collecting state");
+        Debug::Log("[SM_CollectingRessourcesState] Update");
 		// If the city no longer needs resources
 		if (stateInfos.CurrentObjective == Objective::CollectRessourceForCity && 
 			!stateInfos.SuppliedCity->NeedResources(stateInfos.Datas->Turn))
