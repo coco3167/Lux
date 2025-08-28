@@ -38,7 +38,7 @@ namespace WorkerSM
 
 	void DefaultState::DrawDebug(WorkerSMInfos& stateInfos)
 	{
-		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y - 1, "ST_D", 40)));
+		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x + 1, stateInfos.TargetPosition.y + 1, "ST_D", 40)));
 	}
 
 	MovingState::MovingState(WorkerSMInfos& stateInfos, const Position& target)
@@ -109,7 +109,7 @@ namespace WorkerSM
 
 		stateInfos.Datas->AddAction(std::move(Annotate::x(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y)));
 
-		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y - 1, "ST_M", 40)));
+		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x + 1, stateInfos.TargetPosition.y + 1, "ST_M", 40)));
 	}
 
 	std::unique_ptr<SMState<WorkerSMInfos>> BuildingCityState::UpdateState(WorkerSMInfos& stateInfos)
@@ -127,7 +127,7 @@ namespace WorkerSM
 
 	void BuildingCityState::DrawDebug(WorkerSMInfos& stateInfos)
 	{
-		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y - 1, "ST_B", 40)));
+		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x + 1, stateInfos.TargetPosition.y + 1, "ST_B", 40)));
 	}
 
 	std::unique_ptr<SMState<WorkerSMInfos>> CollectingRessourcesState::UpdateState(WorkerSMInfos& stateInfos)
@@ -166,6 +166,6 @@ namespace WorkerSM
 
 	void CollectingRessourcesState::DrawDebug(WorkerSMInfos& stateInfos)
 	{
-		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y - 1, "ST_C", 40)));
+		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x + 1, stateInfos.TargetPosition.y + 1, "ST_C", 40)));
 	}
 }
