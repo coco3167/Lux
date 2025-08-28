@@ -42,6 +42,9 @@
     <ClCompile Include="CustomAgent\CityTileAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CustomAgent\Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lux\annotate.hpp">
@@ -114,6 +117,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CustomAgent\WorkerObjective.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomAgent\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

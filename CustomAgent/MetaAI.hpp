@@ -90,7 +90,7 @@ private:
             if (objectIterator == aiLifeStates.end()) // New sub AI
             {
                 EmplaceSubAI(existingAIs, object);
-                m_gameDatas->AddAction(Annotate::sidetext("Adding 1 sub ai"));
+                Debug::LogWarning("Adding 1 sub ai");
                 continue;
             }
 
@@ -106,6 +106,8 @@ private:
             {
                 continue;
             }
+
+            Debug::LogWarning("Deleted 1 sub ai");
 
             existingAIs.erase(existingAIs.begin() + lifeState.second.Index - deletedItemsCount);
             deletedItemsCount++;
@@ -124,7 +126,7 @@ private:
 
     void EmplaceSubAI(std::vector<CityAI>& targetVector, City* managedObject)
     {
-        targetVector.emplace_back(managedObject);
+        targetVector.emplace_back(managedObject, m_gameDatas);
     }
 
     string GetID(Unit* unit)

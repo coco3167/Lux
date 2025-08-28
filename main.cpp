@@ -3,9 +3,6 @@
 #include <string.h>
 #include <vector>
 
-#include <iostream>
-#include <fstream>
-
 
 #include "lux/define.cpp"
 #include "lux/kit.hpp"
@@ -15,6 +12,7 @@
 
 #include "CustomAgent/GameDatas.h"
 #include "CustomAgent/MetaAI.hpp"
+#include "CustomAgent/Debug.h"
 
 using namespace std;
 using namespace lux;
@@ -33,7 +31,7 @@ int main()
 
     MetaAI metaAI{ &gameDatas };
 
-    ofstream outputDebugFile(Utils::FormatString("debug_%i.txt", player.team).c_str());
+    Debug::Init(player.team);
 
     while (true)
     {
@@ -45,14 +43,16 @@ int main()
 
         /** AI Code Goes Below! **/
 
+        Debug::Log(Utils::FormatString("Turn : %i", turn - 1));
+        Debug::Log("");
+
+
         Player& player = gameState.players[gameState.id];
         Player& opponent = gameState.players[(gameState.id + 1) % 2];
         
-        actions.push_back(std::move(Annotate::sidetext("Start Update")));
         gameDatas.Update(&actions, &player, turn);
 
         metaAI.Update(turn);
-        actions.push_back(std::move(Annotate::sidetext("End Update")));
 
         turn++;
 
@@ -63,19 +63,23 @@ int main()
 
         /** Do not edit! **/
 
-        outputDebugFile << "Turn : "  << turn << "\n";
+        Debug::Log("");
+        Debug::Log("Actions : ");
+        Debug::Log("---------");
         for (int i = 0; i < actions.size(); i++)
         {
             if (i != 0)
                 cout << ",";
             cout << actions[i];
-            outputDebugFile << actions[i] << "\n";
+            Debug::Log(actions[i]);
         }
         cout << endl;
-        outputDebugFile << endl;
         // end turn
         gameState.end_turn();
+        Debug::Log("============================================");
+        Debug::Log("");
     }
-
+    
+    Debug::LogError("Out of the loop");
     return 0;
 }

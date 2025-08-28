@@ -21,9 +21,11 @@ class CityAI : public SubAI<lux::City>
 {
 private:
     std::unordered_set<lux::Position, PositionHash> m_unorderedCityTilePositions;
+
+    GameDatas* m_gameDatas;
     
 public:
-    CityAI(lux::City* city);
+    CityAI(lux::City* city, GameDatas* gameDatas);
 
     // TODO checks if the city needs more resources at the current turn
     bool NeedResources(int turn);

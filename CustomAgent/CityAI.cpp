@@ -1,7 +1,8 @@
 ﻿#include "CityAI.h"
 
-CityAI::CityAI(lux::City* city) :
-    SubAI(city, city->cityid)
+CityAI::CityAI(lux::City* city, GameDatas* gameDatas) :
+    SubAI(city, city->cityid), 
+    m_gameDatas(gameDatas)
 {
 }
 
@@ -12,6 +13,11 @@ bool CityAI::NeedResources(int turn)
 
 float CityAI::ResourcesQuantityNeeded(int turn)
 {
+    if (m_gameDatas->TurnsUntilNight() > 20)
+    {
+        return 0.0f;
+    }
+
     float totalFuelNeeded = 0;
 
     // Get all cityTiles in an unordered set for faster access

@@ -2,6 +2,9 @@
 
 #include <algorithm>
 
+#include "Debug.h"
+
+
 MetaAI::MetaAI(GameDatas* gameDatas):
     m_gameDatas(gameDatas)
 {
@@ -14,14 +17,16 @@ void MetaAI::Update(const int turn)
 {
     m_turn = turn;
 
-    m_gameDatas->AddAction(std::move(Annotate::sidetext("ManageLives")));
+    Debug::Log("ManageLives");
     ManageAILives();
 
-    m_gameDatas->AddAction(std::move(Annotate::sidetext("GiveOrders")));
+    Debug::Log("GiveOrders");
     GiveOrders();
-    m_gameDatas->AddAction(std::move(Annotate::sidetext("Update SubAis")));
+
+    Debug::Log("Update SubAis");
     UpdateSubAIs();
-    m_gameDatas->AddAction(std::move(Annotate::sidetext("Debug")));
+
+    Debug::Log("Debug");
     DrawDebug();
 }
 
@@ -118,7 +123,6 @@ void MetaAI::UpdateSubAIs()
 void MetaAI::DrawDebug()
 {
     m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("Turn : %i", m_turn))));
-    m_gameDatas->AddAction(std::move(Annotate::sidetext(" ")));
     m_gameDatas->AddAction(std::move(Annotate::sidetext("Sub AIs Count : ")));
     m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Workers : %i - %i", m_workerAIs.size(), m_gameDatas->Owner->units.size()))));
     m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Carts : %i", m_cartAIs.size()))));

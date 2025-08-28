@@ -12,6 +12,8 @@
 #include "annotate.hpp"
 #include "city.hpp"
 
+#include "../CustomAgent/Debug.h"
+
 namespace kit
 {
     using namespace std;
@@ -20,7 +22,10 @@ namespace kit
     {
         // exit if stdin is bad now
         if (!cin.good())
+        {
+            Debug::LogError("/!\\ Crash");
             exit(0);
+        }
 
         char str[2048], ch;
         int i = 0;
