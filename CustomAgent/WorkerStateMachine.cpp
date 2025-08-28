@@ -3,6 +3,8 @@
 #include "../lux/annotate.hpp"
 #include "Annotator.hpp"
 
+#include "WorkerAI.h"
+
 namespace WorkerSM
 {
 	DefaultState::DefaultState(WorkerSMInfos& stateInfos)
@@ -20,14 +22,14 @@ namespace WorkerSM
 		case Objective::CollectRessourceForSelf:
 		case Objective::CollectRessourceForCity:
 		{
-			Cell* targetCell = stateInfos.Datas->GetClosestResourceCell(stateInfos.ControlledWorker->pos);
+			Cell* targetCell = stateInfos.Datas->GetClosestResourceCell(stateInfos.ControlledWorker->ManagedObject->pos);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, targetCell->pos));
 			
 		}
 
 		case Objective::BuildCity:
 		{
-			Cell* cityBuildTile = stateInfos.Datas->GetBestCityBuildingCell(stateInfos.ControlledWorker->pos);
+			Cell* cityBuildTile = stateInfos.Datas->GetBestCityBuildingCell(stateInfos.ControlledWorker->ManagedObject->pos);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, cityBuildTile->pos));
 		}
 
@@ -48,7 +50,7 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> MovingState::UpdateState(WorkerSMInfos& stateInfos)
 	{
-		Unit* unit = stateInfos.ControlledWorker;
+		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 
 		if (unit->pos == stateInfos.TargetPosition)
 		{
@@ -86,7 +88,7 @@ namespace WorkerSM
 		case Objective::CollectRessourceForSelf:
 			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
 		case Objective::CollectRessourceForCity:
-			if (stateInfos.ControlledWorker->getCargoSpaceLeft() == 0)
+			if (stateInfos.AlreadyCollectedResources)
 			{
 				return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
 			}
@@ -98,7 +100,7 @@ namespace WorkerSM
 
 	void MovingState::DrawDebug(WorkerSMInfos& stateInfos)
 	{
-		Unit* unit = stateInfos.ControlledWorker;
+		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 
 		std::vector<DIRECTIONS> pathToTarget{};
 		pathToTarget.reserve(10);
@@ -114,7 +116,7 @@ namespace WorkerSM
 
 	std::unique_ptr<SMState<WorkerSMInfos>> BuildingCityState::UpdateState(WorkerSMInfos& stateInfos)
 	{
-		Unit* unit = stateInfos.ControlledWorker;
+		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 		if (!unit->canAct())
 		{
 			return nullptr;
@@ -136,10 +138,11 @@ namespace WorkerSM
 		if (stateInfos.CurrentObjective == Objective::CollectRessourceForCity && 
 			!stateInfos.SuppliedCity->NeedResources(stateInfos.Datas->Turn))
 		{
+			stateInfos.AlreadyCollectedResources = true;
 			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
 		}
 
-		Unit* unit = stateInfos.ControlledWorker;
+		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 
 		if (unit->getCargoSpaceLeft() == 0)
 		{
@@ -157,7 +160,7 @@ namespace WorkerSM
 			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));
 
 		case Objective::CollectRessourceForCity:
-			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->pos, stateInfos.SuppliedCity->ManagedObject, stateInfos.Datas->Map, stateInfos.Datas->Owner);
+			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->ManagedObject->pos, stateInfos.SuppliedCity->ManagedObject, stateInfos.Datas->Map, stateInfos.Datas->Owner);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, closestTile->pos));
 		}
 		

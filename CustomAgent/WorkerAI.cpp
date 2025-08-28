@@ -55,6 +55,7 @@ void WorkerAI::CollectResources(CityAI& cityAI)
 {
     m_smInfos.CurrentObjective = WorkerSM::Objective::CollectRessourceForCity;
     m_smInfos.SuppliedCity = &cityAI;
+    m_smInfos.AlreadyCollectedResources = false;
 }
 
 void WorkerAI::BuildCityTile()

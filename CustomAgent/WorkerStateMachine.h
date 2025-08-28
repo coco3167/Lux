@@ -10,7 +10,7 @@
 #include "GameDatas.h"
 #include "CityAI.h"
 
-
+class WorkerAI;
 
 namespace WorkerSM 
 {
@@ -40,19 +40,21 @@ namespace WorkerSM
 	struct WorkerSMInfos 
 	{
 		GameDatas* Datas;
-		Unit* ControlledWorker;
+		WorkerAI* ControlledWorker;
 		Objective CurrentObjective;
 
 		CityAI* SuppliedCity;
+		bool AlreadyCollectedResources;
 
 		Position TargetPosition;
 
 
-		WorkerSMInfos(Unit* worker, GameDatas* datas) :
+		WorkerSMInfos(WorkerAI* worker, GameDatas* datas) :
 			ControlledWorker(worker),
 			Datas(datas),
 			CurrentObjective(Objective::None),
 			SuppliedCity(nullptr),
+			AlreadyCollectedResources(false),
 			TargetPosition(-1, -1)
 		{
 
