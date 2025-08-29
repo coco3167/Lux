@@ -61,10 +61,16 @@ namespace WorkerSM
         Debug::Log("[SM_MovingState] Update");
 		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 
+		if (unit == nullptr)
+		{
+			Debug::LogError("[SM_MovingState] Worker's managedObject is null");
+			return std::move(CommonActions::GoStandby(stateInfos));
+		}
+
 		Debug::Log("[SM_MovingState] Check if target reached");
 		if (unit->pos == stateInfos.TargetPosition)
 		{
-		Debug::Log("[SM_MovingState] Next state");
+			Debug::Log("[SM_MovingState] Next state");
 			return std::move(NextState(stateInfos));
 		}
 
@@ -79,7 +85,7 @@ namespace WorkerSM
 		std::vector<DIRECTIONS> pathToTarget{};
 		pathToTarget.reserve(10);
 
-		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, pathToTarget);
+		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, pathToTarget, stateInfos.PathOptions);
 
 		if (!pathFound)
 		{
@@ -103,7 +109,7 @@ namespace WorkerSM
 			{
 				return std::unique_ptr<BuildingCityState>(new BuildingCityState());
 			}
-			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
+			return std::move(CommonActions::GoCollectResources(stateInfos));
 
 		case Objective::CollectRessourceForSelf:
 			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
