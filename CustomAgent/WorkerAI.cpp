@@ -14,6 +14,8 @@ WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
 
 void WorkerAI::Update()
 {
+    Debug::Log(Utils::FormatString("[WorkerAI] Update Worker %s", ManagedObject->id.c_str()));
+    Debug::Log(Utils::FormatString("[WorkerAI] Worker Objective : %s", WorkerSM::WorkerSMUtils::ObjectiveToString(m_smInfos.CurrentObjective).c_str()));
     m_stateMachine.Update(m_smInfos);
 }
 
@@ -24,12 +26,12 @@ void WorkerAI::DrawDebug(GameDatas& gameDatas)
 
     if (ManagedObject->team != gameDatas.Owner->team)
     {
-        gameDatas.AddAction(std::move(Annotate::sidetext("INVALID OWNER TEAM")));
+        gameDatas.AddAction(std::move(Annotate::sidetext("[WorkerAI] INVALID OWNER TEAM")));
     }
 
     if (m_smInfos.SuppliedCity != nullptr && ManagedObject->team != m_smInfos.SuppliedCity->ManagedObject->team)
     {
-        gameDatas.AddAction(std::move(Annotate::sidetext("INVALID CITY TEAM")));
+        gameDatas.AddAction(std::move(Annotate::sidetext("[WorkerAI] INVALID CITY TEAM")));
     }
 }
 
