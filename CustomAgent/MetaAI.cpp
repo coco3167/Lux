@@ -32,6 +32,10 @@ void MetaAI::Update(const int turn)
 
 void MetaAI::ManageAILives()
 {
+    ResetSubAIManagedObject(m_workerAIs);
+    ResetSubAIManagedObject(m_cartAIs);
+    ResetSubAIManagedObject(m_cityAIs);
+
     Player& player = *(m_gameDatas->Owner);
 
     std::vector<City*> cities = {};

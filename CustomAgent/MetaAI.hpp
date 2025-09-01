@@ -74,6 +74,15 @@ private:
     std::vector<WorkerAI*> GetAvailableWorkersSortedByDistance(Position startPosition);
     std::vector<CartAI*> GetAvailableCartsSortedByDistance(Position startPosition);
 
+    template<typename TSubAI>
+    void ResetSubAIManagedObject(std::vector<TSubAI>& existingAIs)
+    {
+        for (TSubAI& subAI : existingAIs)
+        {
+            subAI.ManagedObject = nullptr;
+        }
+    }
+
     template<typename TSubAI, typename TManagedObject>
     void ManageSubAILife(std::vector<TSubAI>& existingAIs, std::vector<TManagedObject*>& existingObjects)
     {
