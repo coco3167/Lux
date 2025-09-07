@@ -50,7 +50,7 @@ class PathfinderCellComparer
 public:
     constexpr bool operator()(const PathfinderCell* lhs, const PathfinderCell* rhs) const 
     {
-        return lhs->FScore < rhs->FScore;
+        return lhs->FScore > rhs->FScore;
     }
 };
 
