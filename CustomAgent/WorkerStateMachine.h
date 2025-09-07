@@ -4,6 +4,8 @@
 #include "../lux/game_objects.hpp"
 #include "../lux/map.hpp"
 
+#include "Alias.h"
+
 #include "StateMachine/SMState.h"
 #include "WorkerObjective.hpp"
 #include "PathFinder.hpp"
@@ -77,6 +79,9 @@ namespace WorkerSM
 
 	class MovingState : public SMState<WorkerSMInfos>
 	{
+	private:
+		Path m_path;
+
 	public:
 		MovingState(WorkerSMInfos& stateInfos, const Position& target, PathFindingFlags pathOptions = PathFindingFlags::None);
 

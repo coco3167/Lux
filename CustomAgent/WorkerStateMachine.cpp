@@ -52,6 +52,8 @@ namespace WorkerSM
 
 	MovingState::MovingState(WorkerSMInfos& stateInfos, const Position& target, PathFindingFlags pathOptions)
 	{
+		m_path.reserve(10);
+
 		stateInfos.TargetPosition = target;
 		stateInfos.PathOptions = pathOptions;
 	}
@@ -83,10 +85,8 @@ namespace WorkerSM
 		}
 
 		Debug::Log(Utils::FormatString("[SM_MovingState] Compute path (Path options : %i)", (int)stateInfos.PathOptions));
-		std::vector<DIRECTIONS> pathToTarget{};
-		pathToTarget.reserve(10);
 
-		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, pathToTarget, stateInfos.PathOptions);
+		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, m_path, stateInfos.PathOptions);
 
 		if (!pathFound)
 		{
@@ -94,9 +94,9 @@ namespace WorkerSM
 		}
 
 
-		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Path Length %i", pathToTarget.size()));
-		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Moving %c", pathToTarget[0]));
-		stateInfos.Datas->AddAction(std::move(unit->move(pathToTarget[0])));
+		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Path Length %i", m_path.size()));
+		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Moving %c", m_path[0]));
+		stateInfos.Datas->AddAction(std::move(unit->move(m_path[0])));
 
 		return nullptr;
 	}
@@ -129,12 +129,7 @@ namespace WorkerSM
 	{
 		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 
-		std::vector<DIRECTIONS> pathToTarget{};
-		pathToTarget.reserve(10);
-
-		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, pathToTarget);
-
-		Annotator::TracePath(unit->pos, pathToTarget, *stateInfos.Datas->Actions);
+		Annotator::TracePath(unit->pos, m_path, *stateInfos.Datas->Actions);
 
 		stateInfos.Datas->AddAction(std::move(Annotate::x(stateInfos.TargetPosition.x, stateInfos.TargetPosition.y)));
 

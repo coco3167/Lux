@@ -122,5 +122,8 @@
     <ClInclude Include="CustomAgent\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CustomAgent\Alias.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

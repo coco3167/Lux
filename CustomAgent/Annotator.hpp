@@ -3,6 +3,8 @@
 #include <vector>
 #include <string.h>
 
+#include "Alias.h"
+
 #include "../lux/constants.hpp"
 #include "../lux/position.hpp"
 
@@ -10,7 +12,7 @@ using namespace lux;
 class Annotator
 {
 public:
-    static void TracePath(const Position& startPosition, const std::vector<DIRECTIONS>& path, std::vector<string>& actions)
+    static void TracePath(const Position& startPosition, const Path& path, std::vector<string>& actions)
     {
         Position previousPosition = startPosition;
         Position nextPosition = startPosition;

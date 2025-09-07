@@ -2,7 +2,6 @@
 
 #include <limits>
 #include <queue>
-#include <vector>
 #include <array>
 #include <algorithm>
 
@@ -11,6 +10,7 @@
 #include "../lux/game_objects.hpp"
 
 #include "Utils.hpp"
+#include "Alias.h"
 #include "CustomPriorityQueue.hpp"
 
 
@@ -50,7 +50,7 @@ class PathfinderCellComparer
 public:
     constexpr bool operator()(const PathfinderCell* lhs, const PathfinderCell* rhs) const 
     {
-        return lhs->FScore > rhs->FScore;
+        return lhs->FScore < rhs->FScore;
     }
 };
 
@@ -64,9 +64,11 @@ public:
         const Position& startPosition, 
         const Position& targetPosition, 
         const Player* curentPlayer, 
-        std::vector<DIRECTIONS>& o_pathToTarget, 
+        Path& o_pathToTarget,
         PathFindingFlags flags = PathFindingFlags::None)
     {
+        o_pathToTarget.clear();
+
         const size_t cellsCount = static_cast<size_t>(map.height * map.width);
         std::vector<PathfinderCell> allCells{};
         allCells.reserve(cellsCount);
@@ -208,7 +210,7 @@ private:
         return x + y * map.width;
     }
 
-    static void ReconstructPath(PathfinderCell& targetCell, std::vector<DIRECTIONS>& o_pathToTarget)
+    static void ReconstructPath(PathfinderCell& targetCell, Path& o_pathToTarget)
     {
         PathfinderCell& cell = targetCell;
         while (cell.ComeFromDirection != DIRECTIONS::CENTER)

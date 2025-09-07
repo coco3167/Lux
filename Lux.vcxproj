@@ -217,6 +217,7 @@
     <Folder Include=".git\refs\tags\" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CustomAgent\Alias.h" />
     <ClInclude Include="CustomAgent\Annotator.hpp" />
     <ClInclude Include="CustomAgent\CartAI.hpp" />
     <ClInclude Include="CustomAgent\Debug.h" />
