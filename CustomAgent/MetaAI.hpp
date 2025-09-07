@@ -101,12 +101,14 @@ private:
             if (objectIterator == aiLifeStates.end()) // New sub AI
             {
                 EmplaceSubAI(existingAIs, object);
-                Debug::LogWarning("Adding 1 sub ai");
                 continue;
             }
 
             objectIterator->second.ShouldLive = true; // Sub AI should be kept alive
-            existingAIs[objectIterator->second.Index].ManagedObject = object; // Relink ai to its managed object
+            TSubAI* ai = &existingAIs[objectIterator->second.Index];
+            ai->ManagedObject = object; // Relink ai to its managed object
+            
+            Debug::LogWarning(Utils::FormatString("Relinking object with id \"%s\" (Ptr : %ld) to AI (Ptr : %ld)", GetID(object).c_str(), (long) object, (long)ai));
         }
 
         // Delete dead sub AI
@@ -128,16 +130,19 @@ private:
     void EmplaceSubAI(std::vector<WorkerAI>& targetVector, Unit* managedObject)
     {
         targetVector.emplace_back(managedObject, m_gameDatas);
+        Debug::LogWarning(Utils::FormatString("Creating new [Worker] in (%i, %i) (Ptr : %ld)", managedObject->pos.x, managedObject->pos.y, (long) managedObject));
     }
 
     void EmplaceSubAI(std::vector<CartAI>& targetVector, Unit* managedObject)
     {
         targetVector.emplace_back(managedObject, m_gameDatas);
+        Debug::LogWarning(Utils::FormatString("Creating new [Cart] in (%i, %i) (Ptr : %ld)", managedObject->pos.x, managedObject->pos.y, (long) managedObject));
     }
 
     void EmplaceSubAI(std::vector<CityAI>& targetVector, City* managedObject)
     {
         targetVector.emplace_back(managedObject, m_gameDatas);
+        Debug::LogWarning(Utils::FormatString("Creating new [City] in (%i, %i) (Ptr : %ld)", managedObject->citytiles[0].pos, managedObject->citytiles[0].pos, (long) managedObject));
     }
 
     string GetID(Unit* unit)

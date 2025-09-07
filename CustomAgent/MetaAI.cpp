@@ -32,9 +32,9 @@ void MetaAI::Update(const int turn)
 
 void MetaAI::ManageAILives()
 {
-    ResetSubAIManagedObject(m_workerAIs);
-    ResetSubAIManagedObject(m_cartAIs);
-    ResetSubAIManagedObject(m_cityAIs);
+    //ResetSubAIManagedObject(m_workerAIs);
+    //ResetSubAIManagedObject(m_cartAIs);
+    //ResetSubAIManagedObject(m_cityAIs);
 
     Player& player = *(m_gameDatas->Owner);
 
@@ -72,10 +72,16 @@ void MetaAI::ManageAILives()
             carts.push_back(&unit);
         }
     }
+    
+    Debug::LogWarning(Utils::FormatString("Worker vector Ptr : %ld", (long)&m_workerAIs));
+    for (WorkerAI& worker : m_workerAIs)
+    {
+        Debug::LogWarning(Utils::FormatString("Worker Ptr : %ld", (long) &worker));
+    }
 
-    ManageSubAILife(m_workerAIs, workers);
-    ManageSubAILife(m_cartAIs, carts);
-    ManageSubAILife(m_cityAIs, cities);
+    ManageSubAILife<WorkerAI, lux::Unit>(m_workerAIs, workers);
+    ManageSubAILife<CartAI, lux::Unit>(m_cartAIs, carts);
+    ManageSubAILife<CityAI, lux::City>(m_cityAIs, cities);
     CreateCityTilesAIs(cityTiles);
 }
 
@@ -114,8 +120,10 @@ void MetaAI::GiveOrders()
 void MetaAI::UpdateSubAIs()
 {
     Debug::Log("Update Workers");
+    Debug::LogWarning(Utils::FormatString("Worker vector Ptr : %ld", (long) &m_workerAIs));
     for (WorkerAI& worker : m_workerAIs)
     {
+        Debug::LogWarning(Utils::FormatString("Worker Ptr : %ld", (long) &worker));
         worker.Update();
     }
 

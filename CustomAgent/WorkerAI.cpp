@@ -14,7 +14,7 @@ WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
 
 void WorkerAI::Update()
 {
-    Debug::Log(Utils::FormatString("[WorkerAI] Update Worker %s", ManagedObject->id.c_str()));
+    Debug::Log(Utils::FormatString("[WorkerAI] Update Worker %s at adress %ld", ManagedObject->id.c_str(), (long)this));
     Debug::Log(Utils::FormatString("[WorkerAI] Worker Objective : %s", WorkerSM::WorkerSMUtils::ObjectiveToString(m_smInfos.CurrentObjective).c_str()));
     m_stateMachine.Update(m_smInfos);
 }
