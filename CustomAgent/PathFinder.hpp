@@ -9,6 +9,7 @@
 #include "../lux/constants.hpp"
 #include "../lux/game_objects.hpp"
 
+#include "Debug.h"
 #include "Utils.hpp"
 #include "Alias.h"
 #include "CustomPriorityQueue.hpp"
@@ -57,7 +58,7 @@ public:
 class PathFinder
 {
 private:
-    static constexpr float WALL_COST = 999999999.0f;
+    static constexpr float WALL_COST = 999.0f;
 public:
     static bool FindPath(
         const GameMap& map, 
@@ -94,7 +95,6 @@ public:
 
         while (!openQueue.empty())
         {
-
             PathfinderCell& currentCell = *openQueue.top();
             openQueue.pop();
 
@@ -115,6 +115,11 @@ public:
                 }
 
                 PathfinderCell& neighbouringCell = allCells[PositionToArrayIndex(neighbouringPosition, map)];
+
+                if (!CanPassThrough(currentCell, neighbouringCell, curentPlayer, flags))
+                {
+                    continue;
+                }
                 
                 float gScoreAttempt = currentCell.GScore + ComputeCost(currentCell, neighbouringCell, curentPlayer, flags);
                 if (gScoreAttempt >= neighbouringCell.GScore)
@@ -166,21 +171,22 @@ private:
         return cellPosition.distanceTo(targetPosition);
     }
 
-    static float ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, const Player* currentPlayer, PathFindingFlags flags)
+    static bool CanPassThrough(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, const Player* currentPlayer, PathFindingFlags flags)
     {
         CityTile* neighbouringCityTile = neighbouringCell.Cell->citytile;
-        if (neighbouringCityTile != nullptr) 
+        if (neighbouringCityTile != nullptr)
         {
             if (Utils::HasFlag(flags, PathFindingFlags::AvoidCities) || neighbouringCityTile->team != currentPlayer->team)
             {
-                return WALL_COST; // Can't pass through a opponent's city tile
+                Debug::LogWarning(Utils::FormatString("Cant pass through city et (%i, %i)", neighbouringCell.Cell->pos.x, neighbouringCell.Cell->pos.y));
+                return false; // Can't pass through a opponent's city tile
             }
         }
 
         bool allyUnitInNeighbouringCell = false;
-        for (const Unit& allyUnit : currentPlayer->units) 
+        for (const Unit& allyUnit : currentPlayer->units)
         {
-            if (allyUnit.pos == neighbouringCell.Cell->pos) 
+            if (allyUnit.pos == neighbouringCell.Cell->pos)
             {
                 allyUnitInNeighbouringCell = true;
                 break;
@@ -189,8 +195,13 @@ private:
 
         if (allyUnitInNeighbouringCell && neighbouringCityTile == nullptr)
         {
-            return WALL_COST; // Can't pass through an ally outside a city
+            return false; // Can't pass through an ally outside a city
         }
+        return true;
+    }
+
+    static float ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, const Player* currentPlayer, PathFindingFlags flags)
+    {
 
         if (neighbouringCell.Cell->road > 0.0f) 
         {
@@ -218,6 +229,6 @@ private:
             o_pathToTarget.push_back(Utils::GetOppositeDirection(cell.ComeFromDirection));
             cell = *cell.ComeFromCell;
         }
-        //std::reverse(o_pathToTarget.begin(), o_pathToTarget.end());
+        std::reverse(o_pathToTarget.begin(), o_pathToTarget.end());
     }
 };
