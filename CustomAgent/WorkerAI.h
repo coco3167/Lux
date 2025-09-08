@@ -1,16 +1,16 @@
 #pragma once
-#include "SubAI.h"
 
 #include "../lux/game_objects.hpp"
 
 #include "StateMachine/StateMachine.h"
 #include "WorkerStateMachine.h"
 
+#include "UnitAI.h"
 #include "CityAI.h"
 
 class CartAI;
 
-class WorkerAI : public SubAI<lux::Unit>
+class WorkerAI : public UnitAI
 {
     typedef WorkerSM::WorkerSMInfos SMInfos;
 

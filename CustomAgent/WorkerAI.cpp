@@ -6,7 +6,7 @@
 #include "Debug.h"
 
 WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
-    SubAI(worker, worker->id),
+    UnitAI(worker),
     m_smInfos(this, gameDatas),
     m_stateMachine(std::move(GetStartingState()))
 {

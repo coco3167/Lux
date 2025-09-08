@@ -82,6 +82,7 @@ namespace WorkerSM
 	{
 	private:
 		Path m_path;
+		Position m_lastPosition;
 
 	public:
 		MovingState(WorkerSMInfos& stateInfos, const Position& target, PathFindingFlags pathOptions = PathFindingFlags::None);
