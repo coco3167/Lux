@@ -75,6 +75,8 @@ Cell* GameDatas::GetBestCityBuildingCell(Position startPosition) const
         }
     }
 
+    Debug::Log(Utils::FormatString("Most Desirable CityTile x:%i y:%i | Score : %f", mostDesirableCityTile->pos.x, mostDesirableCityTile->pos.y, mostDesirableCityTileScore));
+
     return mostDesirableCityTile;
 
 }

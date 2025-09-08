@@ -48,6 +48,7 @@ namespace WorkerSM
 		CityAI* SuppliedCity;
 		bool AlreadyCollectedResources;
 
+		Position cityTargetPosition;
 
 		Position TargetPosition;
 		PathFindingFlags PathOptions;

@@ -115,7 +115,11 @@ namespace WorkerSM
 		case Objective::BuildCity:
 			if (stateInfos.ControlledWorker->CanBuildCity())
 			{
-				return std::unique_ptr<BuildingCityState>(new BuildingCityState());
+				if (stateInfos.cityTargetPosition == stateInfos.TargetPosition)
+				{
+					return std::unique_ptr<BuildingCityState>(new BuildingCityState());
+				}
+				return std::move(CommonActions::GoBuildCity(stateInfos));
 			}
 			return std::move(CommonActions::GoCollectResources(stateInfos));
 
@@ -235,6 +239,8 @@ namespace WorkerSM
 			Debug::LogError("No suitable tiles to build city");
 			return std::unique_ptr<DefaultState>(new DefaultState(stateInfos));;
 		}
+
+		stateInfos.cityTargetPosition = cityBuildTile->pos;
 
 		Debug::Log(Utils::FormatString("[SM_State] CityCell (%i, %i)", cityBuildTile->pos.x, cityBuildTile->pos.y));
 
