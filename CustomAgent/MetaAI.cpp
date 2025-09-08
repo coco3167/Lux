@@ -24,6 +24,9 @@ void MetaAI::Update(const int turn)
     Debug::Log("ManageLives");
     ManageAILives();
 
+    Debug::Log("StartTurn");
+    StartTurn();
+
     Debug::Log("GiveOrders");
     GiveOrders();
 
@@ -87,6 +90,19 @@ void MetaAI::ManageAILives()
     ManageSubAILife<CartAI, lux::Unit>(m_cartAIs, carts);
     ManageSubAILife<CityAI, lux::City>(m_cityAIs, cities);
     CreateCityTilesAIs(cityTiles);
+}
+
+void MetaAI::StartTurn()
+{
+    for (WorkerAI& worker : m_workerAIs)
+    {
+        worker.BeginTurn();
+    }
+
+    for (CartAI& cart : m_cartAIs)
+    {
+        cart.BeginTurn();
+    }
 }
 
 void MetaAI::CreateCityTilesAIs(std::vector<CityTile*>& allTiles)

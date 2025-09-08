@@ -35,7 +35,7 @@ private:
         }
     };
 
-    static constexpr int RESOURCE_PER_UNIT = 10;
+    static constexpr int RESOURCE_PER_UNIT = 100;
 
     int m_turn = 0;
 
@@ -54,6 +54,7 @@ public:
 
 private:
     void ManageAILives();
+    void StartTurn();
     void CreateCityTilesAIs(std::vector<CityTile*>& allTiles);
     void GiveOrders();
     void UpdateSubAIs();
