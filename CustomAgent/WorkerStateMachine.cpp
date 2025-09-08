@@ -50,7 +50,8 @@ namespace WorkerSM
 		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x + 1, stateInfos.TargetPosition.y + 1, "ST_D", 40)));
 	}
 
-	MovingState::MovingState(WorkerSMInfos& stateInfos, const Position& target, PathFindingFlags pathOptions)
+	MovingState::MovingState(WorkerSMInfos& stateInfos, const Position& target, PathFindingFlags pathOptions) :
+		m_lastPosition(-1, -1)
 	{
 		m_path.reserve(10);
 
@@ -93,17 +94,26 @@ namespace WorkerSM
 
 		Debug::Log(Utils::FormatString("[SM_MovingState] Compute path (Path options : %i)", (int)stateInfos.PathOptions));
 
-		bool pathFound = PathFinder::FindPath(stateInfos.Datas->Map, unit->pos, stateInfos.TargetPosition, stateInfos.Datas->Owner, m_path, stateInfos.PathOptions);
+		bool pathFound = PathFinder::FindPath(*stateInfos.Datas, unit->pos, stateInfos.TargetPosition, m_path, stateInfos.PathOptions);
 
 		if (!pathFound)
 		{
 			return std::move(CommonActions::GoStandby(stateInfos));
 		}
 
+		if (m_lastPosition == unit->pos) // The previous movement failed
+		{
+			DIRECTIONS direction = Utils::TurnDirection(m_path[0], false);
+			stateInfos.Datas->AddAction(std::move(unit->move(direction)));
+			stateInfos.ControlledWorker->PositionNextTurn = unit->pos.translate(direction, 1);
+			return nullptr;
+		}
 
 		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Path Length %i", m_path.size()));
 		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Moving %c", m_path[0]));
 		stateInfos.Datas->AddAction(std::move(unit->move(m_path[0])));
+		stateInfos.ControlledWorker->PositionNextTurn = unit->pos.translate(m_path[0], 1);
+		m_lastPosition = unit->pos;
 
 		return nullptr;
 	}
@@ -204,7 +214,7 @@ namespace WorkerSM
 
 		case Objective::CollectRessourceForCity:
 		{
-			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->ManagedObject->pos, stateInfos.SuppliedCity->ManagedObject, stateInfos.Datas->Map, stateInfos.Datas->Owner);
+			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->ManagedObject->pos, stateInfos.SuppliedCity->ManagedObject, *stateInfos.Datas);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, closestTile->pos));
 		}
 

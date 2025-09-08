@@ -160,7 +160,9 @@
     <ClCompile Include="CustomAgent\Debug.cpp" />
     <ClCompile Include="CustomAgent\GameDatas.cpp" />
     <ClCompile Include="CustomAgent\MetaAI.cpp" />
+    <ClCompile Include="CustomAgent\UnitAI.cpp" />
     <ClCompile Include="CustomAgent\WorkerAI.cpp" />
+    <ClCompile Include="CustomAgent\PathFinder.cpp" />
     <ClCompile Include="CustomAgent\WorkerStateMachine.cpp" />
     <ClCompile Include="lux\define.cpp" />
     <ClCompile Include="main.cpp" />
@@ -229,6 +231,7 @@
     <ClInclude Include="CustomAgent\PathFinder.hpp" />
     <ClInclude Include="CustomAgent\StateMachine\StateMachine.h" />
     <ClInclude Include="CustomAgent\StateMachine\SMState.h" />
+    <ClInclude Include="CustomAgent\UnitAI.h" />
     <ClInclude Include="CustomAgent\WorkerAI.h" />
     <ClInclude Include="CustomAgent\WorkerStateMachine.h" />
     <ClInclude Include="CustomAgent\Utils.hpp" />

@@ -7,10 +7,10 @@
 #include "CityAI.h"
 #include "WorkerAI.h"
 
-#include "SubAI.h"
+#include "UnitAI.h"
 #include "GameDatas.h"
 
-class CartAI : public SubAI<lux::Unit>
+class CartAI : public UnitAI
 {
 enum CartState
 {

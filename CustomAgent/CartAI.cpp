@@ -9,7 +9,7 @@
 #include "Annotator.hpp"
 
 CartAI::CartAI(lux::Unit* cart, GameDatas* gameDatas) :
-	SubAI(cart, cart->id),
+	UnitAI(cart),
 	m_gameDatas(gameDatas),
 	m_hasDestination(false)
 {
@@ -98,7 +98,7 @@ void CartAI::Move()
 	std::vector<DIRECTIONS> pathToTarget{};
 	pathToTarget.reserve(10);
 
-	bool pathFound = PathFinder::FindPath(m_gameDatas->Map, ManagedObject->pos, destination, m_gameDatas->Owner, pathToTarget);
+	bool pathFound = PathFinder::FindPath(*m_gameDatas, ManagedObject->pos, destination, pathToTarget);
 
 	if (!pathFound)
 	{
@@ -112,6 +112,8 @@ void CartAI::Move()
 	m_gameDatas->AddAction(std::move(Annotate::x(destination.x, destination.y)));
 
 	m_gameDatas->AddAction(std::move(ManagedObject->move(pathToTarget[0])));
+
+	PositionNextTurn = ManagedObject->pos.translate(pathToTarget[0], 1);
 }
 
 void CartAI::GoRequestFromUnit(WorkerAI* unit)
@@ -124,7 +126,7 @@ void CartAI::GoRequestFromUnit(WorkerAI* unit)
 void CartAI::GoResupplyClosestCityTile(CityAI* city)
 {
 	state = RESUPPLYING_CITY;
-	const CityTile* closestTile = PathFinder::GetClosestCityTile(ManagedObject->pos, city->ManagedObject, m_gameDatas->Map, m_gameDatas->Owner);
+	const CityTile* closestTile = PathFinder::GetClosestCityTile(ManagedObject->pos, city->ManagedObject, *m_gameDatas);
 	destination = closestTile->pos;
 	m_hasDestination = true;
 }
