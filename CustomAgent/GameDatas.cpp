@@ -66,7 +66,7 @@ Cell* GameDatas::GetBestCityBuildingCell(Position startPosition) const
         for (int y = 0; y < Map.height; ++y)
         {
             float factor = GetDistanceDesirabilityFactor(startPosition, {x, y});
-            tileDesirability = m_cityTilesDesirability[y * Map.width + x] * factor;
+            tileDesirability = m_cityTilesDesirability[y * Map.width + x];// * factor;
             if (tileDesirability > mostDesirableCityTileScore)
             {
                 mostDesirableCityTileScore = tileDesirability;
@@ -197,7 +197,7 @@ void GameDatas::ApplyResourceDesirability()
             resourceDesirability = 1.8f;
         }
 
-
+        /*
         for (int dx = -weightRange; dx <= weightRange; ++dx)
         {
             const int yRange = weightRange - std::abs(dx);
@@ -214,6 +214,7 @@ void GameDatas::ApplyResourceDesirability()
                 m_cityTilesDesirability[weightY * Map.width + weightX] *= resourceDesirability;
             }
         }
+            */
     }
 }
 
@@ -247,7 +248,7 @@ void GameDatas::ApplyCityProximityDesirability()
                     // The desirability is increased in the tiles adjacent to the other cityTiles and decreased further
                     if (distanceFromCity == 1)
                     {
-                        m_cityTilesDesirability[weightY * Map.width + weightX] *= 1.3f;
+                        m_cityTilesDesirability[weightY * Map.width + weightX] *= 5.0f;
                     }
                     else
                     {
@@ -260,7 +261,7 @@ void GameDatas::ApplyCityProximityDesirability()
 
     for (Position& pos : tilesPositions)
     {
-        m_cityTilesDesirability[pos.y * Map.width + pos.x] = -1.0f;
+        m_cityTilesDesirability[pos.y * Map.width + pos.x] = 0.0f;
     }
 }
 
