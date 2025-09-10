@@ -29,7 +29,9 @@ void WorkerAI::DrawDebug(GameDatas& gameDatas)
         gameDatas.AddAction(std::move(Annotate::sidetext("[WorkerAI] INVALID OWNER TEAM")));
     }
 
-    if (m_smInfos.SuppliedCity != nullptr && ManagedObject->team != m_smInfos.SuppliedCity->ManagedObject->team)
+
+    CityAI* suppliedCity = m_smInfos.GetSuppliedCity();
+    if (suppliedCity != nullptr && ManagedObject->team != suppliedCity->ManagedObject->team)
     {
         gameDatas.AddAction(std::move(Annotate::sidetext("[WorkerAI] INVALID CITY TEAM")));
     }
@@ -58,7 +60,7 @@ void WorkerAI::CollectResources()
 void WorkerAI::CollectResources(CityAI& cityAI)
 {
     m_smInfos.CurrentObjective = WorkerSM::Objective::CollectRessourceForCity;
-    m_smInfos.SuppliedCity = &cityAI;
+    m_smInfos.SuppliedCityID = cityAI.ManagedObjectID;
     m_smInfos.AlreadyCollectedResources = false;
 }
 

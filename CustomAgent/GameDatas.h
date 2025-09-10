@@ -10,6 +10,7 @@ using namespace lux;
 
 class WorkerAI;
 class CartAI;
+class CityAI;
 
 class GameDatas
 {
@@ -22,6 +23,7 @@ public:
 
 	std::vector<WorkerAI>* WorkerAIs;
 	std::vector<CartAI>* CartAIs;
+	std::vector<CityAI>* CityAIs;
 
 private:
 

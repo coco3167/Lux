@@ -78,7 +78,7 @@ private:
 
     static bool CanPassThrough(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, GameDatas& gameDatas, PathFindingFlags flags);
 
-    static float ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, const Player* currentPlayer, PathFindingFlags flags);
+    static float ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, GameDatas& gameDatas, PathFindingFlags flags);
 
     static int PositionToArrayIndex(const lux::Position& position, const lux::GameMap& map);
 

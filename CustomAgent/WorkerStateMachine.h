@@ -45,7 +45,7 @@ namespace WorkerSM
 		WorkerAI* ControlledWorker;
 		Objective CurrentObjective;
 
-		CityAI* SuppliedCity;
+		std::string SuppliedCityID;
 		bool AlreadyCollectedResources;
 
 		Position cityTargetPosition;
@@ -58,12 +58,30 @@ namespace WorkerSM
 			ControlledWorker(worker),
 			Datas(datas),
 			CurrentObjective(Objective::None),
-			SuppliedCity(nullptr),
+			SuppliedCityID(""),
 			AlreadyCollectedResources(false),
 			TargetPosition(-1, -1),
 			PathOptions(PathFindingFlags::None)
 		{
 
+		}
+
+		CityAI* GetSuppliedCity()
+		{
+			if (SuppliedCityID == "")
+			{
+				return nullptr;
+			}
+
+			for (CityAI& ai : *Datas->CityAIs)
+			{
+				if (ai.ManagedObjectID == SuppliedCityID)
+				{
+					return &ai;
+				}
+			}
+
+			return nullptr;
 		}
 	};
 

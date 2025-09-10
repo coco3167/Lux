@@ -192,11 +192,14 @@ namespace WorkerSM
 	{
         Debug::Log("[SM_CollectingRessourcesState] Update");
 		// If the city no longer needs resources
-		if (stateInfos.CurrentObjective == Objective::CollectRessourceForCity && 
-			!stateInfos.SuppliedCity->NeedResources(stateInfos.Datas->Turn))
+		if (stateInfos.CurrentObjective == Objective::CollectRessourceForCity)
 		{
-			stateInfos.AlreadyCollectedResources = true;
-			return std::move(CommonActions::GoStandby(stateInfos));
+			CityAI* suppliedCity = stateInfos.GetSuppliedCity();
+			if (suppliedCity == nullptr || !suppliedCity->NeedResources(stateInfos.Datas->Turn))
+			{
+				stateInfos.AlreadyCollectedResources = true;
+				return std::move(CommonActions::GoStandby(stateInfos));
+			}
 		}
 
 		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
@@ -218,7 +221,14 @@ namespace WorkerSM
 
 		case Objective::CollectRessourceForCity:
 		{
-			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->ManagedObject->pos, stateInfos.SuppliedCity->ManagedObject, *stateInfos.Datas);
+			CityAI* suppliedCity = stateInfos.GetSuppliedCity();
+
+			if (suppliedCity == nullptr)
+			{
+				return std::move(CommonActions::GoStandby(stateInfos));
+			}
+
+			const CityTile* closestTile = PathFinder::GetClosestCityTile(stateInfos.ControlledWorker->ManagedObject->pos, suppliedCity->ManagedObject, *stateInfos.Datas);
 			return std::unique_ptr<MovingState>(new MovingState(stateInfos, closestTile->pos));
 		}
 

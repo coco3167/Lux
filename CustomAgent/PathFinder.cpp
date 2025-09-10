@@ -60,7 +60,7 @@ bool PathFinder::FindPath(GameDatas& gameDatas, const Position& startPosition, c
                 continue;
             }
 
-            float gScoreAttempt = currentCell.GScore + ComputeCost(currentCell, neighbouringCell, gameDatas.Owner, flags);
+            float gScoreAttempt = currentCell.GScore + ComputeCost(currentCell, neighbouringCell, gameDatas, flags);
             if (gScoreAttempt >= neighbouringCell.GScore)
             {
                 continue;
@@ -119,6 +119,12 @@ bool PathFinder::CanPassThrough(const PathfinderCell& currentCell, const Pathfin
             return false; // Can't pass through a opponent's city tile
         }
     }
+    return true;
+}
+
+float PathFinder::ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, GameDatas& gameDatas, PathFindingFlags flags)
+{
+    CityTile* neighbouringCityTile = neighbouringCell.Cell->citytile;
 
     if (!Utils::HasFlag(flags, PathFindingFlags::IgnoreUnits))
     {
@@ -135,14 +141,10 @@ bool PathFinder::CanPassThrough(const PathfinderCell& currentCell, const Pathfin
 
         if (allyUnitInNeighbouringCell && neighbouringCityTile == nullptr)
         {
-            return false; // Can't pass through an ally outside a city
+            return WALL_COST; // Can't pass through an ally outside a city
         }
     }
-    return true;
-}
 
-float PathFinder::ComputeCost(const PathfinderCell& currentCell, const PathfinderCell& neighbouringCell, const Player* currentPlayer, PathFindingFlags flags)
-{
     if (neighbouringCell.Cell->road > 0.0f)
     {
         return 1.0f / neighbouringCell.Cell->road;

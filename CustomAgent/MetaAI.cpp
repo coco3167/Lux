@@ -10,6 +10,7 @@ MetaAI::MetaAI(GameDatas* gameDatas):
 {
     m_gameDatas->WorkerAIs = &m_workerAIs;
     m_gameDatas->CartAIs = &m_cartAIs;
+    m_gameDatas->CityAIs = &m_cityAIs;
 
     m_workerAIs.reserve(512);
     m_cartAIs.reserve(512);
