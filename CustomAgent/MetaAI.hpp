@@ -118,13 +118,17 @@ private:
         {
             if (lifeState.second.ShouldLive)
             {
+                Debug::LogWarning(Utils::FormatString("[MetaAI] Deleted Sub AI with ID : %s", lifeState.first.c_str()));
                 continue;
             }
 
-            Debug::LogWarning("Deleted 1 sub ai");
+            int index = lifeState.second.Index - deletedItemsCount;
+            Debug::LogWarning(Utils::FormatString("[MetaAI] Deleted Sub AI with ID : %s | at index %i/%i", lifeState.first.c_str(), index, existingAIs.size()));
 
-            existingAIs.erase(existingAIs.begin() + lifeState.second.Index - deletedItemsCount);
+            existingAIs.erase(existingAIs.begin() + index);
             deletedItemsCount++;
+
+            Debug::LogWarning("[MetaAI] Deletion successful");
         }
     }
 

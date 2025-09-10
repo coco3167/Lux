@@ -10,6 +10,12 @@ WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
     m_smInfos(this, gameDatas),
     m_stateMachine(std::move(GetStartingState()))
 {
+    Debug::Log("[WorkerAI] Ctor");
+}
+
+WorkerAI::~WorkerAI()
+{
+    Debug::Log("[WorkerAI] Dtor");
 }
 
 void WorkerAI::BeginTurn()
