@@ -26,11 +26,13 @@ private:
     struct AILifeState
     {
         int Index;
-        bool ShouldLive;
+        bool ShouldLive; 
+        std::string ID;
 
-        AILifeState(int index, bool shouldLive) :
+        AILifeState(int index, bool shouldLive, std::string id) :
             Index(index),
-            ShouldLive(shouldLive)
+            ShouldLive(shouldLive),
+            ID(std::move(id))
         {
         }
     };
@@ -87,26 +89,36 @@ private:
     template<typename TSubAI, typename TManagedObject>
     void ManageSubAILife(std::vector<TSubAI>& existingAIs, std::vector<TManagedObject*>& existingObjects)
     {
-        std::unordered_map<std::string, AILifeState> aiLifeStates = {};
-        aiLifeStates.reserve(existingAIs.size());
+        int existingObjectCount = existingAIs.size();
 
-        for (int i = 0; i < existingAIs.size(); ++i)
+        std::vector<AILifeState> aiLifeStates = {};
+        aiLifeStates.reserve(existingObjectCount);
+
+        for (int i = 0; i < existingObjectCount; ++i)
         {
-            aiLifeStates.insert({ existingAIs[i].ManagedObjectID, AILifeState{i, false} });
+            aiLifeStates.emplace_back(i, false, existingAIs[i].ManagedObjectID);
         }
 
         for (TManagedObject* object : existingObjects)
         {
-            auto objectIterator = aiLifeStates.find(GetID(object));
+            std::string objectID = GetID(object);
+            int lifeStateIndex = 0;
+            for ( ;lifeStateIndex < existingObjectCount; ++lifeStateIndex)
+            {
+                if (objectID == aiLifeStates[lifeStateIndex].ID)
+                {
+                    break;
+                }
+            }
 
-            if (objectIterator == aiLifeStates.end()) // New sub AI
+            if (lifeStateIndex == existingObjectCount) // New sub AI
             {
                 EmplaceSubAI(existingAIs, object);
                 continue;
             }
 
-            objectIterator->second.ShouldLive = true; // Sub AI should be kept alive
-            TSubAI* ai = &existingAIs[objectIterator->second.Index];
+            aiLifeStates[lifeStateIndex].ShouldLive = true; // Sub AI should be kept alive
+            TSubAI* ai = &existingAIs[aiLifeStates[lifeStateIndex].Index];
             ai->ManagedObject = object; // Relink ai to its managed object
             
             Debug::LogWarning(Utils::FormatString("Relinking object with id \"%s\" (Ptr : %ld) to AI (Ptr : %ld)", GetID(object).c_str(), (long) object, (long)ai));
@@ -114,16 +126,16 @@ private:
 
         // Delete dead sub AI
         int deletedItemsCount = 0;
-        for (auto& lifeState : aiLifeStates)
+        for (AILifeState& lifeState : aiLifeStates)
         {
-            if (lifeState.second.ShouldLive)
+            if (lifeState.ShouldLive)
             {
-                Debug::LogWarning(Utils::FormatString("[MetaAI] Deleted Sub AI with ID : %s", lifeState.first.c_str()));
+                Debug::LogWarning(Utils::FormatString("[MetaAI] Deleted Sub AI with ID : %s", lifeState.ID.c_str()));
                 continue;
             }
 
-            int index = lifeState.second.Index - deletedItemsCount;
-            Debug::LogWarning(Utils::FormatString("[MetaAI] Deleted Sub AI with ID : %s | at index %i/%i", lifeState.first.c_str(), index, existingAIs.size()));
+            int index = lifeState.Index - deletedItemsCount;
+            Debug::LogWarning(Utils::FormatString("[MetaAI] Deleted Sub AI with ID : %s | at index %i/%i", lifeState.ID.c_str(), index, existingAIs.size()));
 
             existingAIs.erase(existingAIs.begin() + index);
             deletedItemsCount++;

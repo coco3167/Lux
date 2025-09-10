@@ -72,7 +72,7 @@ Cell* GameDatas::GetBestCityBuildingCell(Position startPosition) const
         for (int y = 0; y < Map.height; ++y)
         {
             float factor = GetDistanceDesirabilityFactor(startPosition, {x, y});
-            tileDesirability = m_cityTilesDesirability[y * Map.width + x];// * factor;
+            tileDesirability = m_cityTilesDesirability[y * Map.width + x] * factor;
             if (tileDesirability > mostDesirableCityTileScore)
             {
                 mostDesirableCityTileScore = tileDesirability;

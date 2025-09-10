@@ -23,7 +23,6 @@ private:
 
 public:
     WorkerAI(lux::Unit* worker, GameDatas* gameDatas);
-    ~WorkerAI();
 
     virtual void BeginTurn() override;
 

@@ -13,11 +13,6 @@ WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
     Debug::Log("[WorkerAI] Ctor");
 }
 
-WorkerAI::~WorkerAI()
-{
-    Debug::Log("[WorkerAI] Dtor");
-}
-
 void WorkerAI::BeginTurn()
 {
     UnitAI::BeginTurn();
