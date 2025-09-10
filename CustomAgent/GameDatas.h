@@ -37,6 +37,8 @@ public:
 	void Update(std::vector<string>* actions, Player* owner, int turn);
 	void AddAction(string&& action);
 
+	void NullifyCityTileDesirability(const Position& position);
+
 	Cell* GetClosestResourceCell(Position startPosition) const;
 	
 	Cell* GetBestCityBuildingCell(Position startPosition) const;

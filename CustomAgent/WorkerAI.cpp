@@ -12,6 +12,17 @@ WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
 {
 }
 
+void WorkerAI::BeginTurn()
+{
+    UnitAI::BeginTurn();
+
+    // To prevent multiple workers from building cities at the same position
+    if (m_smInfos.CurrentObjective == WorkerSM::Objective::BuildCity)
+    {
+        m_smInfos.Datas->NullifyCityTileDesirability(m_smInfos.TargetPosition);
+    }
+}
+
 void WorkerAI::Update()
 {
     Debug::Log(Utils::FormatString("[WorkerAI] Update Worker %s at adress %ld", ManagedObject->id.c_str(), (long)this));

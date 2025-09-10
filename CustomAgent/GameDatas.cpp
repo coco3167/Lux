@@ -36,6 +36,11 @@ void GameDatas::AddAction(string&& action)
     Actions->push_back(std::move(action));
 }
 
+void GameDatas::NullifyCityTileDesirability(const Position& position)
+{
+    m_cityTilesDesirability[position.y * Map.width + position.x] = 0.0f;
+}
+
 Cell* GameDatas::GetClosestResourceCell(Position startPosition) const
 {
     Cell* closestResourceTile = nullptr;

@@ -24,6 +24,8 @@ private:
 public:
     WorkerAI(lux::Unit* worker, GameDatas* gameDatas);
 
+    virtual void BeginTurn() override;
+
     void Update();
 
     virtual void DrawDebug(GameDatas& gameDatas) override;

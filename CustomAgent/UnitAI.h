@@ -9,6 +9,6 @@ public:
 
     UnitAI(lux::Unit* unit);
 
-    void BeginTurn();
+    virtual void BeginTurn();
 };
 
