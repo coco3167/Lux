@@ -110,10 +110,8 @@ void CartAI::Move()
 
 	//m_gameDatas->AddAction(std::move(Annotate::circle(ManagedObject->pos.x, ManagedObject->pos.y)));
 	m_gameDatas->AddAction(std::move(Annotate::x(destination.x, destination.y)));
-
-	m_gameDatas->AddAction(std::move(ManagedObject->move(pathToTarget[0])));
-
-	PositionNextTurn = ManagedObject->pos.translate(pathToTarget[0], 1);
+	
+	MoveUnit(m_gameDatas, pathToTarget[0]);
 }
 
 void CartAI::GoRequestFromUnit(WorkerAI* unit)

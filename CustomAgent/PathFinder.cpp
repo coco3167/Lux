@@ -128,17 +128,8 @@ float PathFinder::ComputeCost(const PathfinderCell& currentCell, const Pathfinde
 
     if (!Utils::HasFlag(flags, PathFindingFlags::IgnoreUnits))
     {
-        bool allyUnitInNeighbouringCell = false;
-        for (const WorkerAI& allyWorker : *gameDatas.WorkerAIs)
-        {
-            if (allyWorker.PositionNextTurn == neighbouringCell.Cell->pos)
-            {
-                allyUnitInNeighbouringCell = true;
-                break;
-            }
-        }
-
-
+        bool allyUnitInNeighbouringCell = !gameDatas.PositionAvailableNextTurn(neighbouringCell.Cell->pos);
+        
         if (allyUnitInNeighbouringCell && neighbouringCityTile == nullptr)
         {
             return WALL_COST; // Can't pass through an ally outside a city

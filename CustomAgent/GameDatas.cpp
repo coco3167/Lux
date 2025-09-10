@@ -5,6 +5,7 @@
 #include "PathFinder.hpp"
 
 #include "WorkerAI.h"
+#include "CartAI.hpp"
 
 #include "Utils.hpp"
 #include "Debug.h"
@@ -141,6 +142,43 @@ int GameDatas::TurnsUntilDay() const
 bool GameDatas::IsNight() const
 {
     return GetTimeOfDay() > 29;
+}
+
+std::vector<Position> GameDatas::GetNextTurnPositions() const
+{
+    std::vector<Position> nextTurnPositions{};
+    nextTurnPositions.reserve(WorkerAIs->size() + CartAIs->size());
+
+    for (WorkerAI& worker : *WorkerAIs)
+    {
+        nextTurnPositions.push_back(worker.PositionNextTurn);
+    }
+    for (CartAI& cart : *CartAIs)
+    {
+        nextTurnPositions.push_back(cart.PositionNextTurn);
+    }
+
+    return nextTurnPositions;
+}
+
+bool GameDatas::PositionAvailableNextTurn(Position position) const
+{
+    for (WorkerAI& worker : *WorkerAIs)
+    {
+        if (worker.PositionNextTurn == position)
+        {
+            return false;
+        }
+    }
+
+    for (CartAI& cart : *CartAIs)
+    {
+        if (cart.PositionNextTurn == position)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 void GameDatas::FillResourceTiles()

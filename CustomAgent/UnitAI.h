@@ -10,5 +10,7 @@ public:
     UnitAI(lux::Unit* unit);
 
     virtual void BeginTurn();
+
+    virtual void MoveUnit(GameDatas* gameDatas, DIRECTIONS direction);
 };
 

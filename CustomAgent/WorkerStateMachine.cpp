@@ -101,18 +101,9 @@ namespace WorkerSM
 			return std::move(CommonActions::GoStandby(stateInfos));
 		}
 
-		if (m_lastPosition == unit->pos) // The previous movement failed
-		{
-			DIRECTIONS direction = Utils::TurnDirection(m_path[0], false);
-			stateInfos.Datas->AddAction(std::move(unit->move(direction)));
-			stateInfos.ControlledWorker->PositionNextTurn = unit->pos.translate(direction, 1);
-			return nullptr;
-		}
-
 		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Path Length %i", m_path.size()));
 		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Moving %c", m_path[0]));
-		stateInfos.Datas->AddAction(std::move(unit->move(m_path[0])));
-		stateInfos.ControlledWorker->PositionNextTurn = unit->pos.translate(m_path[0], 1);
+		stateInfos.ControlledWorker->MoveUnit(stateInfos.Datas, m_path[0]);
 		m_lastPosition = unit->pos;
 
 		return nullptr;

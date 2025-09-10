@@ -51,6 +51,9 @@ public:
 
 	bool IsNight() const;
 
+	std::vector<Position> GetNextTurnPositions() const;
+	bool PositionAvailableNextTurn(Position position) const;
+
 
 private:
 	void FillResourceTiles();
