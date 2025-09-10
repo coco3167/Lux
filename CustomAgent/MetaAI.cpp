@@ -87,9 +87,13 @@ void MetaAI::ManageAILives()
         Debug::LogWarning(Utils::FormatString("Worker Ptr : %ld", (long) &worker));
     }
 
+    Debug::Log("[MetaAI] Manage Worker Lives");
     ManageSubAILife<WorkerAI, lux::Unit>(m_workerAIs, workers);
+    Debug::Log("[MetaAI] Manage Carts Lives");
     ManageSubAILife<CartAI, lux::Unit>(m_cartAIs, carts);
+    Debug::Log("[MetaAI] Manage Cities Lives");
     ManageSubAILife<CityAI, lux::City>(m_cityAIs, cities);
+    Debug::Log("[MetaAI] Manage CityTiles Lives");
     CreateCityTilesAIs(cityTiles);
 }
 
