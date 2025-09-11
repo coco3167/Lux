@@ -97,7 +97,7 @@ float GameDatas::GetDistanceDesirabilityFactor(Position startPosition, Position 
     // PathFinder::FindPath(Map, startPosition, targetPosition, Owner, path);
     int pathLength = startPosition.distanceTo(targetPosition);
 
-    return static_cast<float>(Utils::Clamp(1.0 - std::log10(pathLength) / 2.0, 0.0001, 2.0));
+    return static_cast<float>(Utils::Clamp(1.0 - std::log10(pathLength) / 2.0, 0.0001, 1.0));
 }
 
 WorkerAI* GameDatas::GetClosestWorker(Position startPosition, WorkerSM::Objective desiredObjective) const
@@ -203,6 +203,8 @@ void GameDatas::FillResourceTiles()
             }
         }
     }
+
+    //Debug::LogWarning(Utils::FormatString("ResourceTile Count : %i", m_resourceTiles.size()));
 }
 
 void GameDatas::FillCityTilesDesirability()
@@ -243,20 +245,23 @@ void GameDatas::ApplyResourceDesirability()
         {
         case ResourceType::wood:
             resourceDesirability = 1.5f;
+            break;
 
         case ResourceType::coal:
             if (!Owner->researchedCoal())
             {
                 continue;
             }
-            resourceDesirability = 3.0f;
+            resourceDesirability = 2.25f;
+            break;
 
         case ResourceType::uranium:
             if (!Owner->researchedUranium())
             {
                 continue;
             }
-            resourceDesirability = 5.0f;
+            resourceDesirability = 3.5f;
+            break;
         }
 
         for (DIRECTIONS dir : ALL_DIRECTIONS)
@@ -290,7 +295,7 @@ void GameDatas::ApplyCityProximityDesirability()
                     continue;
                 }
 
-                m_cityTilesDesirability[neighbouringPosition.y * Map.width + neighbouringPosition.x] *= 2.0f;
+                m_cityTilesDesirability[neighbouringPosition.y * Map.width + neighbouringPosition.x] *= 3.0f;
             }
         }
     }
