@@ -331,6 +331,10 @@ void MetaAI::BuildUnits()
 
 void MetaAI::BuildCities()
 {
+    if (m_gameDatas->TurnsUntilNight() < 10)
+    {
+        return;
+    }
     for (int i = 0; i < m_workerAIs.size(); ++i)
     {
         if(m_workerAIs[i]->IsAvailable())

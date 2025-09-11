@@ -1,4 +1,6 @@
 ﻿#include "CityAI.h"
+#include "Utils.hpp"
+#include "Debug.h"
 
 CityAI::CityAI(lux::City* city, GameDatas* gameDatas) :
     SubAI(city, city->cityid), 
@@ -13,7 +15,7 @@ bool CityAI::NeedResources(int turn)
 
 float CityAI::ResourcesQuantityNeeded(int turn)
 {
-    if (m_gameDatas->TurnsUntilNight() > 20)
+    if (m_gameDatas->TurnsUntilNight() > 25)
     {
         return 0.0f;
     }
@@ -44,8 +46,7 @@ float CityAI::ResourcesQuantityNeeded(int turn)
         totalFuelNeeded += fuelNeeded;
     }
 
-    // Turns to survive in the dark left
-    int turnUsable = std::min(10,40 - turn % 40);
+    Debug::Log(Utils::FormatString("City Upkeep : %f", totalFuelNeeded));
     
-    return totalFuelNeeded * static_cast<float>(turnUsable) - ManagedObject->fuel;
+    return (totalFuelNeeded - ManagedObject->fuel) * 1.05f;
 }
