@@ -130,7 +130,7 @@ private:
         {
             if (lifeState.ShouldLive)
             {
-                Debug::LogWarning(Utils::FormatString("[MetaAI] Deleted Sub AI with ID : %s", lifeState.ID.c_str()));
+                Debug::LogWarning(Utils::FormatString("[MetaAI] Kept alive Sub AI with ID : %s", lifeState.ID.c_str()));
                 continue;
             }
 

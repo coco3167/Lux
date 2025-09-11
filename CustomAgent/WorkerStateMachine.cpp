@@ -69,7 +69,7 @@ namespace WorkerSM
 			Debug::LogError("[SM_MovingState] Worker's managedObject is null");
 			return std::move(CommonActions::GoStandby(stateInfos));
 		}
-		Debug::Log(Utils::FormatString("[SM_MovingState] Unit adress %ld", (long)unit));
+		Debug::Log(Utils::FormatString("[SM_MovingState] Unit adress %ld | ID %s", (long)unit, unit->id.c_str()));
 
         Debug::Log("[SM_MovingState] Get UnitPos");
 		Position unitPos = unit->pos;
