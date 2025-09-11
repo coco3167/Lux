@@ -204,7 +204,7 @@ void GameDatas::FillCityTilesDesirability()
     {
         for (int y = 0; y < Map.height; ++y)
         {
-            m_cityTilesDesirability[y * Map.width + x] = 100.0f;
+            m_cityTilesDesirability[y * Map.width + x] = GetTileBaseCityDesirability(Map.getCell(x, y));
         }
     }
 
@@ -212,13 +212,25 @@ void GameDatas::FillCityTilesDesirability()
     ApplyCityProximityDesirability();
 }
 
+float GameDatas::GetTileBaseCityDesirability(Cell* cell) const
+{
+    if (cell->hasResource())
+    {
+        return 0.0f;
+    }
+
+    if (cell->citytile != nullptr)
+    {
+        return 0.0f;
+    }
+    return 100.0f;
+}
+
 void GameDatas::ApplyResourceDesirability()
 {
-    const int weightRange = 2;
+    const int weightRange = 1;
     for (const Cell* resourceTile : m_resourceTiles)
     {
-        m_cityTilesDesirability[resourceTile->pos.y * Map.width + resourceTile->pos.x] = 0.0f;
-
         float resourceDesirability;
         switch (resourceTile->resource.type)
         {
@@ -240,7 +252,7 @@ void GameDatas::ApplyResourceDesirability()
             resourceDesirability = 1.8f;
         }
 
-        /*
+        
         for (int dx = -weightRange; dx <= weightRange; ++dx)
         {
             const int yRange = weightRange - std::abs(dx);
@@ -257,23 +269,19 @@ void GameDatas::ApplyResourceDesirability()
                 m_cityTilesDesirability[weightY * Map.width + weightX] *= resourceDesirability;
             }
         }
-            */
+         
     }
 }
 
 void GameDatas::ApplyCityProximityDesirability()
 {
     const int weightRange = 5;
-    std::vector<Position> tilesPositions{};
-    tilesPositions.reserve(Owner->cities.size() * 5);
 
     for (std::map<string, City>::iterator it = Owner->cities.begin(); it != Owner->cities.end(); it++)
     {
         City* city = &it->second;
         for (CityTile& tile : city->citytiles)
         {
-            tilesPositions.push_back(tile.pos);
-
             for (int dx = -weightRange; dx <= weightRange; ++dx)
             {
                 const int yRange = weightRange - std::abs(dx);
@@ -300,11 +308,6 @@ void GameDatas::ApplyCityProximityDesirability()
                 } 
             }
         }
-    }
-
-    for (Position& pos : tilesPositions)
-    {
-        m_cityTilesDesirability[pos.y * Map.width + pos.x] = 0.0f;
     }
 }
 

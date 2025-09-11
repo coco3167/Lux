@@ -57,6 +57,7 @@ public:
 private:
 	void FillResourceTiles();
 	void FillCityTilesDesirability();
+	float GetTileBaseCityDesirability(Cell* cell) const;
 	void ApplyResourceDesirability();
 	void ApplyCityProximityDesirability();
 
