@@ -165,6 +165,11 @@ std::vector<Position> GameDatas::GetNextTurnPositions() const
 
 bool GameDatas::PositionAvailableNextTurn(Position position) const
 {
+    if (!Utils::IsInMap(position, Map))
+    {
+        return false;
+    }
+
     for (int i = 0; i < WorkerAIs->size(); ++i)
     {
         if ((*WorkerAIs)[i]->PositionNextTurn == position)
