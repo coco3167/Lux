@@ -46,7 +46,9 @@ float CityAI::ResourcesQuantityNeeded(int turn)
         totalFuelNeeded += fuelNeeded;
     }
 
+    totalFuelNeeded *= 15.0f;
+
     Debug::Log(Utils::FormatString("City Upkeep : %f", totalFuelNeeded));
     
-    return (totalFuelNeeded - ManagedObject->fuel) * 1.05f;
+    return totalFuelNeeded - ManagedObject->fuel;
 }

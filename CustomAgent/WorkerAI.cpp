@@ -29,13 +29,6 @@ void WorkerAI::Update()
     Debug::Log(Utils::FormatString("[WorkerAI] Update Worker %s at adress %ld", ManagedObject->id.c_str(), (long)this));
     Debug::Log(Utils::FormatString("[WorkerAI] Worker Objective : %s", WorkerSM::WorkerSMUtils::ObjectiveToString(m_smInfos.CurrentObjective).c_str()));
     
-    if (m_smInfos.CurrentObjective == WorkerSM::Objective::BuildCity)
-    {
-        if (m_smInfos.Datas->TurnsUntilNight() < 10)
-        {
-            m_stateMachine.ChangeState(std::move(GetStartingState()));
-        }
-    }
     
     m_stateMachine.Update(m_smInfos);
 }
@@ -75,11 +68,13 @@ bool WorkerAI::IsAvailable() const
 
 void WorkerAI::CollectResources()
 {
+    Debug::Log(Utils::FormatString("[WorkerAI] Ordered Worker %s to collect resources", ManagedObject->id.c_str()));
     m_smInfos.CurrentObjective = WorkerSM::Objective::CollectRessourceForSelf;
 }
 
 void WorkerAI::CollectResources(CityAI& cityAI)
 {
+    Debug::Log(Utils::FormatString("[WorkerAI] Ordered Worker %s to collect resources for city %s", ManagedObject->id.c_str(), cityAI.ManagedObject->cityid.c_str()));
     m_smInfos.CurrentObjective = WorkerSM::Objective::CollectRessourceForCity;
     m_smInfos.SuppliedCityID = cityAI.ManagedObjectID;
     m_smInfos.AlreadyCollectedResources = false;
@@ -87,6 +82,7 @@ void WorkerAI::CollectResources(CityAI& cityAI)
 
 void WorkerAI::BuildCityTile()
 {
+    Debug::Log(Utils::FormatString("[WorkerAI] Ordered Worker %s to build city", ManagedObject->id.c_str()));
     m_smInfos.CurrentObjective = WorkerSM::Objective::BuildCity;
 }
 

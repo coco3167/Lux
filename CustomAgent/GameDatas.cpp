@@ -73,6 +73,8 @@ Cell* GameDatas::GetBestCityBuildingCell(Position startPosition) const
         {
             float factor = GetDistanceDesirabilityFactor(startPosition, {x, y});
             tileDesirability = m_cityTilesDesirability[y * Map.width + x] * factor;
+            //Debug::Log(Utils::FormatString("CityTile desirability x:%i y:%i | Score : %f", x, y, tileDesirability));
+
             if (tileDesirability > mostDesirableCityTileScore)
             {
                 mostDesirableCityTileScore = tileDesirability;
@@ -235,39 +237,32 @@ void GameDatas::ApplyResourceDesirability()
         switch (resourceTile->resource.type)
         {
         case ResourceType::wood:
-            resourceDesirability = 1.1f;
+            resourceDesirability = 1.5f;
 
         case ResourceType::coal:
             if (!Owner->researchedCoal())
             {
                 continue;
             }
-            resourceDesirability = 1.3f;
+            resourceDesirability = 3.0f;
 
         case ResourceType::uranium:
             if (!Owner->researchedUranium())
             {
                 continue;
             }
-            resourceDesirability = 1.8f;
+            resourceDesirability = 5.0f;
         }
 
-        
-        for (int dx = -weightRange; dx <= weightRange; ++dx)
+        for (DIRECTIONS dir : ALL_DIRECTIONS)
         {
-            const int yRange = weightRange - std::abs(dx);
-            for (int dy = -yRange; dy <= yRange; ++dy)
+            Position neighbouringPosition = resourceTile->pos.translate(dir, 1);
+            if (!Utils::IsInMap(neighbouringPosition, Map))
             {
-                const int weightX = resourceTile->pos.x + dx;
-                const int weightY = resourceTile->pos.y + dy;
-
-                if (!Utils::IsInMap(weightX, weightY, Map))
-                {
-                    continue;
-                }
-
-                m_cityTilesDesirability[weightY * Map.width + weightX] *= resourceDesirability;
+                continue;
             }
+
+            m_cityTilesDesirability[neighbouringPosition.y * Map.width + neighbouringPosition.x] *= resourceDesirability;
         }
          
     }
@@ -275,37 +270,22 @@ void GameDatas::ApplyResourceDesirability()
 
 void GameDatas::ApplyCityProximityDesirability()
 {
-    const int weightRange = 5;
+    const int weightRange = 1;
 
     for (std::map<string, City>::iterator it = Owner->cities.begin(); it != Owner->cities.end(); it++)
     {
         City* city = &it->second;
         for (CityTile& tile : city->citytiles)
         {
-            for (int dx = -weightRange; dx <= weightRange; ++dx)
+            for (DIRECTIONS dir : ALL_DIRECTIONS)
             {
-                const int yRange = weightRange - std::abs(dx);
-                for (int dy = -yRange; dy <= yRange; ++dy)
+                Position neighbouringPosition = tile.pos.translate(dir, 1);
+                if (!Utils::IsInMap(neighbouringPosition, Map))
                 {
-                    const int weightX = tile.pos.x + dx;
-                    const int weightY = tile.pos.y + dy;
+                    continue;
+                }
 
-                    if (!Utils::IsInMap(weightX, weightY, Map))
-                    {
-                        continue;
-                    }
-                    int distanceFromCity = tile.pos.distanceTo({ weightX, weightY });
-
-                    // The desirability is increased in the tiles adjacent to the other cityTiles and decreased further
-                    if (distanceFromCity == 1)
-                    {
-                        m_cityTilesDesirability[weightY * Map.width + weightX] *= 5.0f;
-                    }
-                    else
-                    {
-                        m_cityTilesDesirability[weightY * Map.width + weightX] /= weightRange + 2 - distanceFromCity;
-                    }
-                } 
+                m_cityTilesDesirability[neighbouringPosition.y * Map.width + neighbouringPosition.x] *= 2.0f;
             }
         }
     }
