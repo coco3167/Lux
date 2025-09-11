@@ -28,6 +28,15 @@ void WorkerAI::Update()
 {
     Debug::Log(Utils::FormatString("[WorkerAI] Update Worker %s at adress %ld", ManagedObject->id.c_str(), (long)this));
     Debug::Log(Utils::FormatString("[WorkerAI] Worker Objective : %s", WorkerSM::WorkerSMUtils::ObjectiveToString(m_smInfos.CurrentObjective).c_str()));
+    
+    if (m_smInfos.CurrentObjective == WorkerSM::Objective::BuildCity)
+    {
+        if (m_smInfos.Datas->TurnsUntilNight() < 10)
+        {
+            m_stateMachine.ChangeState(std::move(GetStartingState()));
+        }
+    }
+    
     m_stateMachine.Update(m_smInfos);
 }
 
