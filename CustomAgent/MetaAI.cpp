@@ -82,9 +82,10 @@ void MetaAI::ManageAILives()
     }
     
     Debug::LogWarning(Utils::FormatString("Worker vector Ptr : %ld", (long)&m_workerAIs));
-    for (WorkerAI& worker : m_workerAIs)
+
+    for (int i = 0; i < m_workerAIs.size(); ++i)
     {
-        Debug::LogWarning(Utils::FormatString("Worker Ptr : %ld", (long) &worker));
+        Debug::LogWarning(Utils::FormatString("Worker Ptr : %ld", (long)m_workerAIs[i].get()));
     }
 
     Debug::Log("[MetaAI] Manage Worker Lives");
@@ -99,14 +100,14 @@ void MetaAI::ManageAILives()
 
 void MetaAI::StartTurn()
 {
-    for (WorkerAI& worker : m_workerAIs)
+    for (int i = 0; i < m_workerAIs.size(); ++i)
     {
-        worker.BeginTurn();
+        m_workerAIs[i]->BeginTurn();
     }
 
-    for (CartAI& cart : m_cartAIs)
+    for (int i = 0; i < m_cartAIs.size(); ++i)
     {
-        cart.BeginTurn();
+        m_cartAIs[i]->BeginTurn();
     }
 }
 
@@ -146,16 +147,18 @@ void MetaAI::UpdateSubAIs()
 {
     Debug::Log("Update Workers");
     Debug::LogWarning(Utils::FormatString("Worker vector Ptr : %ld", (long) &m_workerAIs));
-    for (WorkerAI& worker : m_workerAIs)
+
+    for (int i = 0; i < m_workerAIs.size(); ++i)
     {
-        Debug::LogWarning(Utils::FormatString("Worker Ptr : %ld", (long) &worker));
-        worker.Update();
+        Debug::LogWarning(Utils::FormatString("Worker Ptr : %ld", (long)m_workerAIs[i].get()));
+        m_workerAIs[i]->Update();
     }
 
     Debug::Log("Update Carts");
-    for (CartAI& cart : m_cartAIs)
+
+    for (int i = 0; i < m_cartAIs.size(); ++i)
     {
-        cart.Update();
+        m_cartAIs[i]->Update();
     }
 }
 
@@ -168,19 +171,19 @@ void MetaAI::DrawDebug()
     m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - Cities : %i - %i", m_cityAIs.size(), m_gameDatas->Owner->cities.size()))));
     m_gameDatas->AddAction(std::move(Annotate::sidetext(Utils::FormatString("    - CityTiles : %i - %i", m_cityTileAIs.size(), m_gameDatas->Owner->cityTileCount))));
 
-    for (WorkerAI& worker : m_workerAIs)
+    for (int i = 0; i < m_workerAIs.size(); ++i)
     {
-        worker.DrawDebug(*m_gameDatas);
+        m_workerAIs[i]->DrawDebug(*m_gameDatas);
     }
 
-    for (CartAI& cart : m_cartAIs)
+    for (int i = 0; i < m_cartAIs.size(); ++i)
     {
-        cart.DrawDebug(*m_gameDatas);
+        m_cartAIs[i]->DrawDebug(*m_gameDatas);
     }
 
-    for (CityAI& city : m_cityAIs)
+    for (int i = 0; i < m_cityAIs.size(); ++i)
     {
-        city.DrawDebug(*m_gameDatas);
+        m_cityAIs[i]->DrawDebug(*m_gameDatas);
     }
 }
 
@@ -190,12 +193,12 @@ std::vector<CityAI*> MetaAI::GetNeedingCity()
     // return all cities that need to be given resources
     std::vector<CityAI*> needyCity;
     needyCity.reserve(m_cityAIs.size());
-    
-    for (CityAI& city : m_cityAIs)
+
+    for (int i = 0; i < m_cityAIs.size(); ++i)
     {
-        if(city.NeedResources(m_turn))
+        if (m_cityAIs[i]->NeedResources(m_turn))
         {
-            needyCity.push_back(&city);
+            needyCity.push_back(m_cityAIs[i].get());
         }
     }
     return needyCity;
@@ -207,11 +210,11 @@ std::vector<WorkerAI*> MetaAI::GetNeedingWorkers()
     std::vector<WorkerAI*> needyWorkers;
     needyWorkers.reserve(m_workerAIs.size());
 
-    for (WorkerAI& worker : m_workerAIs)
+    for (int i = 0; i < m_workerAIs.size(); ++i)
     {
-        if (worker.NeedResources(m_turn))
+        if (m_workerAIs[i]->NeedResources(m_turn))
         {
-            needyWorkers.push_back(&worker);
+            needyWorkers.push_back(m_workerAIs[i].get());
         }
     }
     return needyWorkers;
@@ -222,11 +225,11 @@ std::vector<CartAI*> MetaAI::GetNeedingCarts()
     std::vector<CartAI*> needyCarts;
     needyCarts.reserve(m_cartAIs.size());
 
-    for (CartAI& cart : m_cartAIs)
+    for (int i = 0; i < m_cartAIs.size(); ++i)
     {
-        if (cart.NeedResources(m_turn))
+        if (m_cartAIs[i]->NeedResources(m_turn))
         {
-            needyCarts.push_back(&cart);
+            needyCarts.push_back(m_cartAIs[i].get());
         }
     }
 
@@ -328,11 +331,11 @@ void MetaAI::BuildUnits()
 
 void MetaAI::BuildCities()
 {
-    for (WorkerAI& workerAI : m_workerAIs)
+    for (int i = 0; i < m_workerAIs.size(); ++i)
     {
-        if(workerAI.IsAvailable())
+        if(m_workerAIs[i]->IsAvailable())
         {
-            workerAI.BuildCityTile();
+            m_workerAIs[i]->BuildCityTile();
         }
     }
 }
@@ -353,13 +356,13 @@ std::vector<WorkerAI*> MetaAI::GetAvailableWorkersSortedByDistance(Position star
     std::vector<WorkerAI*> result = {};
     result.reserve(m_workerAIs.size());
 
-    for (WorkerAI& worker : m_workerAIs)
+    for (int i = 0; i < m_workerAIs.size(); ++i)
     {
-        if (!worker.IsAvailable())
+        if (!m_workerAIs[i]->IsAvailable())
         {
             continue;
         }
-        result.push_back(&worker);
+        result.push_back(m_workerAIs[i].get());
     }
 
     std::sort(result.begin(), result.end(),
@@ -375,13 +378,13 @@ std::vector<CartAI*> MetaAI::GetAvailableCartsSortedByDistance(Position startPos
     std::vector<CartAI*> result = {};
     result.reserve(m_cartAIs.size());
 
-    for (CartAI& cart : m_cartAIs)
+    for (int i = 0; i < m_cartAIs.size(); ++i)
     {
-        if (!cart.IsAvailable())
+        if (!m_cartAIs[i]->IsAvailable())
         {
             continue;
         }
-        result.push_back(&cart);
+        result.push_back(m_cartAIs[i].get());
     }
 
     std::sort(result.begin(), result.end(),

@@ -73,11 +73,12 @@ namespace WorkerSM
 				return nullptr;
 			}
 
-			for (CityAI& ai : *Datas->CityAIs)
+			for (int i = 0; i < Datas->CityAIs->size(); ++i)
 			{
-				if (ai.ManagedObjectID == SuppliedCityID)
+				CityAI* ai = (*Datas->CityAIs)[i].get();
+				if (ai->ManagedObjectID == SuppliedCityID)
 				{
-					return &ai;
+					return ai;
 				}
 			}
 

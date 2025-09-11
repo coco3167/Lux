@@ -20,10 +20,9 @@ public:
 	std::vector<string>* Actions;
 	int Turn;
 
-
-	std::vector<WorkerAI>* WorkerAIs;
-	std::vector<CartAI>* CartAIs;
-	std::vector<CityAI>* CityAIs;
+	std::vector<std::unique_ptr<WorkerAI>>* WorkerAIs;
+	std::vector<std::unique_ptr<CartAI>>* CartAIs;
+	std::vector<std::unique_ptr<CityAI>>* CityAIs;
 
 private:
 

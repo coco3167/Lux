@@ -104,7 +104,7 @@ WorkerAI* GameDatas::GetClosestWorker(Position startPosition, WorkerSM::Objectiv
     float closestDist = 9999999.0f;
     for (auto it = WorkerAIs->begin(); it != WorkerAIs->end(); it++)
     {
-        WorkerAI* worker = &*it;
+        WorkerAI* worker = it->get();
 
         if (worker->GetCurrentObjective() != desiredObjective)
         {
@@ -149,13 +149,13 @@ std::vector<Position> GameDatas::GetNextTurnPositions() const
     std::vector<Position> nextTurnPositions{};
     nextTurnPositions.reserve(WorkerAIs->size() + CartAIs->size());
 
-    for (WorkerAI& worker : *WorkerAIs)
+    for (int i = 0; i < WorkerAIs->size(); ++i)
     {
-        nextTurnPositions.push_back(worker.PositionNextTurn);
+        nextTurnPositions.push_back((*WorkerAIs)[i]->PositionNextTurn);
     }
-    for (CartAI& cart : *CartAIs)
+    for (int i = 0; i < CartAIs->size(); ++i)
     {
-        nextTurnPositions.push_back(cart.PositionNextTurn);
+        nextTurnPositions.push_back((*CartAIs)[i]->PositionNextTurn);
     }
 
     return nextTurnPositions;
@@ -163,17 +163,17 @@ std::vector<Position> GameDatas::GetNextTurnPositions() const
 
 bool GameDatas::PositionAvailableNextTurn(Position position) const
 {
-    for (WorkerAI& worker : *WorkerAIs)
+    for (int i = 0; i < WorkerAIs->size(); ++i)
     {
-        if (worker.PositionNextTurn == position)
+        if ((*WorkerAIs)[i]->PositionNextTurn == position)
         {
             return false;
         }
     }
 
-    for (CartAI& cart : *CartAIs)
+    for (int i = 0; i < CartAIs->size(); ++i)
     {
-        if (cart.PositionNextTurn == position)
+        if ((*CartAIs)[i]->PositionNextTurn == position)
         {
             return false;
         }
