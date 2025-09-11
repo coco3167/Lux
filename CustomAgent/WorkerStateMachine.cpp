@@ -195,7 +195,7 @@ namespace WorkerSM
 
 		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
 
-		if (unit->getCargoSpaceLeft() == 0)
+		if (ShouldGoNextState(stateInfos))
 		{
 			return std::move(NextState(stateInfos));
 		}
@@ -233,6 +233,25 @@ namespace WorkerSM
 	void CollectingRessourcesState::DrawDebug(WorkerSMInfos& stateInfos)
 	{
 		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x + 1, stateInfos.TargetPosition.y + 1, "ST_C", 40)));
+	}
+
+	bool CollectingRessourcesState::ShouldGoNextState(WorkerSMInfos& stateInfos)
+	{
+		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
+		switch (stateInfos.CurrentObjective)
+		{
+		case Objective::CollectRessourceForSelf:
+			return unit->getCargoSpaceLeft() < 10;
+
+		case Objective::CollectRessourceForCity:
+		{
+			return unit->getCargoSpaceLeft() < 10;
+		}
+
+		case Objective::BuildCity:
+			return unit->getCargoSpaceLeft() == 0;
+		}
+		return false;
 	}
 
 	std::unique_ptr<SMState<WorkerSMInfos>> CommonActions::GoStandby(WorkerSMInfos& stateInfos)

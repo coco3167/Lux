@@ -125,6 +125,8 @@ namespace WorkerSM
 
 		std::unique_ptr<SMState<WorkerSMInfos>> NextState(WorkerSMInfos& stateInfos);
 		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
+
+		bool ShouldGoNextState(WorkerSMInfos& stateInfos);
 	};
 
 	class CommonActions
