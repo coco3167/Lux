@@ -1,16 +1,16 @@
 #pragma once
 #include <memory>
 
-#include "../lux/game_objects.hpp"
-#include "../lux/map.hpp"
+#include "lux/game_objects.hpp"
+#include "lux/map.hpp"
 
-#include "Alias.h"
+#include "Utils/Alias.h"
 
 #include "StateMachine/SMState.h"
-#include "WorkerObjective.hpp"
-#include "PathFinder.hpp"
+#include "SubAIs/Worker/WorkerObjective.hpp"
+#include "Utils/PathFinder.hpp"
 #include "GameDatas.h"
-#include "CityAI.h"
+#include "SubAIs/City/CityAI.h"
 
 class WorkerAI;
 

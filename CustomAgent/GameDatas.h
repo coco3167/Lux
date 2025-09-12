@@ -1,10 +1,10 @@
 #pragma once
 #include <vector>
 
-#include "../lux/game_objects.hpp"
-#include "../lux/map.hpp"
+#include "lux/game_objects.hpp"
+#include "lux/map.hpp"
 
-#include "WorkerObjective.hpp"
+#include "SubAIs/Worker/WorkerObjective.hpp"
 
 using namespace lux;
 

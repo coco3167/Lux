@@ -78,6 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(ProjectDir)\CustomAgent</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -154,87 +155,36 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CustomAgent\CartAI.cpp" />
-    <ClCompile Include="CustomAgent\CityAI.cpp" />
-    <ClCompile Include="CustomAgent\CityTileAI.cpp" />
-    <ClCompile Include="CustomAgent\Debug.cpp" />
+    <ClCompile Include="CustomAgent\SubAIs\Cart\CartAI.cpp" />
+    <ClCompile Include="CustomAgent\SubAIs\City\CityAI.cpp" />
+    <ClCompile Include="CustomAgent\SubAIs\CityTile\CityTileAI.cpp" />
+    <ClCompile Include="CustomAgent\Utils\Debug\Debug.cpp" />
     <ClCompile Include="CustomAgent\GameDatas.cpp" />
     <ClCompile Include="CustomAgent\MetaAI.cpp" />
-    <ClCompile Include="CustomAgent\UnitAI.cpp" />
-    <ClCompile Include="CustomAgent\WorkerAI.cpp" />
-    <ClCompile Include="CustomAgent\PathFinder.cpp" />
-    <ClCompile Include="CustomAgent\WorkerStateMachine.cpp" />
+    <ClCompile Include="CustomAgent\SubAIs\UnitAI.cpp" />
+    <ClCompile Include="CustomAgent\SubAIs\Worker\WorkerAI.cpp" />
+    <ClCompile Include="CustomAgent\Utils\PathFinder.cpp" />
+    <ClCompile Include="CustomAgent\SubAIs\Worker\WorkerStateMachine.cpp" />
     <ClCompile Include="lux\define.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".gitignore" />
-    <Content Include=".git\config" />
-    <Content Include=".git\description" />
-    <Content Include=".git\FETCH_HEAD" />
-    <Content Include=".git\HEAD" />
-    <Content Include=".git\hooks\applypatch-msg.sample" />
-    <Content Include=".git\hooks\commit-msg.sample" />
-    <Content Include=".git\hooks\fsmonitor-watchman.sample" />
-    <Content Include=".git\hooks\post-update.sample" />
-    <Content Include=".git\hooks\pre-applypatch.sample" />
-    <Content Include=".git\hooks\pre-commit.sample" />
-    <Content Include=".git\hooks\pre-merge-commit.sample" />
-    <Content Include=".git\hooks\pre-push.sample" />
-    <Content Include=".git\hooks\pre-rebase.sample" />
-    <Content Include=".git\hooks\pre-receive.sample" />
-    <Content Include=".git\hooks\prepare-commit-msg.sample" />
-    <Content Include=".git\hooks\push-to-checkout.sample" />
-    <Content Include=".git\hooks\sendemail-validate.sample" />
-    <Content Include=".git\hooks\update.sample" />
-    <Content Include=".git\index" />
-    <Content Include=".git\info\exclude" />
-    <Content Include=".git\logs\HEAD" />
-    <Content Include=".git\logs\refs\heads\main" />
-    <Content Include=".git\logs\refs\remotes\origin\HEAD" />
-    <Content Include=".git\objects\pack\pack-a93065e14955bc2f246eef4414ed2a12719a207b.idx" />
-    <Content Include=".git\objects\pack\pack-a93065e14955bc2f246eef4414ed2a12719a207b.pack" />
-    <Content Include=".git\objects\pack\pack-a93065e14955bc2f246eef4414ed2a12719a207b.rev" />
-    <Content Include=".git\packed-refs" />
-    <Content Include=".git\refs\heads\main" />
-    <Content Include=".git\refs\remotes\origin\HEAD" />
-    <Content Include=".idea\.idea.Lux\.idea\.gitignore" />
-    <Content Include=".idea\.idea.Lux\.idea\indexLayout.xml" />
-    <Content Include=".idea\.idea.Lux\.idea\projectSettingsUpdater.xml" />
-    <Content Include=".idea\.idea.Lux\.idea\vcs.xml" />
-    <Content Include=".idea\.idea.Lux\.idea\workspace.xml" />
-    <Content Include=".idea\vcs.xml" />
-    <Content Include=".idea\workspace.xml" />
-    <Content Include="compile.sh" />
-    <Content Include="compileLux.sh" />
-    <Content Include="Dockerfile" />
-    <Content Include="Lux.vcxproj.filters" />
-    <Content Include="lux\game_constants.json" />
-    <Content Include="main.py" />
-    <Content Include="README.md" />
-    <Content Include="replay.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include=".git\objects\info\" />
-    <Folder Include=".git\refs\tags\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CustomAgent\Alias.h" />
-    <ClInclude Include="CustomAgent\Annotator.hpp" />
-    <ClInclude Include="CustomAgent\CartAI.hpp" />
-    <ClInclude Include="CustomAgent\Debug.h" />
-    <ClInclude Include="CustomAgent\SubAI.h" />
-    <ClInclude Include="CustomAgent\CityAI.h" />
-    <ClInclude Include="CustomAgent\CityTileAI.h" />
-    <ClInclude Include="CustomAgent\CustomPriorityQueue.hpp" />
+    <ClInclude Include="CustomAgent\Utils\Alias.h" />
+    <ClInclude Include="CustomAgent\Utils\Debug\Annotator.hpp" />
+    <ClInclude Include="CustomAgent\SubAIs\Cart\CartAI.hpp" />
+    <ClInclude Include="CustomAgent\Utils\Debug\Debug.h" />
+    <ClInclude Include="CustomAgent\SubAIs\SubAI.h" />
+    <ClInclude Include="CustomAgent\SubAIs\City\CityAI.h" />
+    <ClInclude Include="CustomAgent\SubAIs\CityTile\CityTileAI.h" />
+    <ClInclude Include="CustomAgent\Utils\CustomPriorityQueue.hpp" />
     <ClInclude Include="CustomAgent\GameDatas.h" />
-    <ClInclude Include="CustomAgent\PathFinder.hpp" />
+    <ClInclude Include="CustomAgent\Utils\PathFinder.hpp" />
     <ClInclude Include="CustomAgent\StateMachine\StateMachine.h" />
     <ClInclude Include="CustomAgent\StateMachine\SMState.h" />
-    <ClInclude Include="CustomAgent\UnitAI.h" />
-    <ClInclude Include="CustomAgent\WorkerAI.h" />
-    <ClInclude Include="CustomAgent\WorkerStateMachine.h" />
-    <ClInclude Include="CustomAgent\Utils.hpp" />
+    <ClInclude Include="CustomAgent\SubAIs\UnitAI.h" />
+    <ClInclude Include="CustomAgent\SubAIs\Worker\WorkerAI.h" />
+    <ClInclude Include="CustomAgent\SubAIs\Worker\WorkerStateMachine.h" />
+    <ClInclude Include="CustomAgent\Utils\Utils.hpp" />
     <ClInclude Include="CustomAgent\MetaAI.hpp" />
     <ClInclude Include="lux\annotate.hpp" />
     <ClInclude Include="lux\city.hpp" />
@@ -245,7 +195,7 @@
     <ClInclude Include="lux\map.hpp" />
     <ClInclude Include="lux\nlohmann\json.hpp" />
     <ClInclude Include="lux\position.hpp" />
-    <ClInclude Include="CustomAgent\WorkerObjective.hpp" />
+    <ClInclude Include="CustomAgent\SubAIs\Worker\WorkerObjective.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

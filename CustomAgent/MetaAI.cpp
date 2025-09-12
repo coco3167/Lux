@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "Debug.h"
+#include "Utils/Debug/Debug.h"
 
 
 MetaAI::MetaAI(GameDatas* gameDatas):

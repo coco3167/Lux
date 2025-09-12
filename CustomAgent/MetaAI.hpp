@@ -1,18 +1,18 @@
 ﻿#pragma once
 #include <vector>
 
-#include "../lux/city.hpp"
-#include "../lux/game_objects.hpp"
+#include "lux/city.hpp"
+#include "lux/game_objects.hpp"
 
-#include "../lux/annotate.hpp"
+#include "lux/annotate.hpp"
 
-#include "CartAI.hpp"
-#include "CityAI.h"
-#include "CityTileAI.h"
-#include "SubAI.h"
-#include "WorkerAI.h"
+#include "SubAIs/SubAI.h"
+#include "SubAIs/Worker/WorkerAI.h"
+#include "SubAIs/Cart/CartAI.hpp"
+#include "SubAIs/City/CityAI.h"
+#include "SubAIs/CityTile/CityTileAI.h"
 
-#include "Debug.h"
+#include "Utils/Debug/Debug.h"
 
 class MetaAI
 {

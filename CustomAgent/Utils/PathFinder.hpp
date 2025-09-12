@@ -5,13 +5,13 @@
 #include <array>
 #include <algorithm>
 
-#include "../lux/map.hpp"
-#include "../lux/constants.hpp"
-#include "../lux/game_objects.hpp"
+#include "lux/map.hpp"
+#include "lux/constants.hpp"
+#include "lux/game_objects.hpp"
 
-#include "Debug.h"
-#include "Utils.hpp"
-#include "Alias.h"
+#include "Utils/Debug/Debug.h"
+#include "Utils/Utils.hpp"
+#include "Utils/Alias.h"
 #include "GameDatas.h"
 #include "CustomPriorityQueue.hpp"
 

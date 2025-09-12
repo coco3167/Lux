@@ -21,10 +21,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CustomAgent\CartAI.cpp">
+    <ClCompile Include="CustomAgent\SubAIs\Cart\CartAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CustomAgent\CityAI.cpp">
+    <ClCompile Include="CustomAgent\SubAIs\City\CityAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CustomAgent\GameDatas.cpp">
@@ -33,22 +33,22 @@
     <ClCompile Include="CustomAgent\MetaAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CustomAgent\WorkerAI.cpp">
+    <ClCompile Include="CustomAgent\SubAIs\Worker\WorkerAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CustomAgent\WorkerStateMachine.cpp">
+    <ClCompile Include="CustomAgent\SubAIs\Worker\WorkerStateMachine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CustomAgent\CityTileAI.cpp">
+    <ClCompile Include="CustomAgent\SubAIs\CityTile\CityTileAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CustomAgent\Debug.cpp">
+    <ClCompile Include="CustomAgent\Utils\Debug\Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CustomAgent\UnitAI.cpp">
+    <ClCompile Include="CustomAgent\SubAIs\UnitAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PathFinder.cpp">
+    <ClCompile Include="CustomAgent\Utils\PathFinder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,22 +80,22 @@
     <ClInclude Include="lux\position.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\CustomPriorityQueue.hpp">
+    <ClInclude Include="CustomAgent\Utils\CustomPriorityQueue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\PathFinder.hpp">
+    <ClInclude Include="CustomAgent\Utils\PathFinder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\Utils.hpp">
+    <ClInclude Include="CustomAgent\Utils\Utils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\Annotator.hpp">
+    <ClInclude Include="CustomAgent\Utils\Debug\Annotator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\CartAI.hpp">
+    <ClInclude Include="CustomAgent\SubAIs\Cart\CartAI.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\CityAI.h">
+    <ClInclude Include="CustomAgent\SubAIs\City\CityAI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CustomAgent\StateMachine\StateMachine.h">
@@ -107,31 +107,31 @@
     <ClInclude Include="CustomAgent\GameDatas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\SubAI.h">
+    <ClInclude Include="CustomAgent\SubAIs\SubAI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\WorkerAI.h">
+    <ClInclude Include="CustomAgent\SubAIs\Worker\WorkerAI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\WorkerStateMachine.h">
+    <ClInclude Include="CustomAgent\SubAIs\Worker\WorkerStateMachine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CustomAgent\MetaAI.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\CityTileAI.h">
+    <ClInclude Include="CustomAgent\SubAIs\CityTile\CityTileAI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\WorkerObjective.hpp">
+    <ClInclude Include="CustomAgent\SubAIs\Worker\WorkerObjective.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\Debug.h">
+    <ClInclude Include="CustomAgent\Utils\Debug\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\Alias.h">
+    <ClInclude Include="CustomAgent\Utils\Alias.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomAgent\UnitAI.h">
+    <ClInclude Include="CustomAgent\SubAIs\UnitAI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

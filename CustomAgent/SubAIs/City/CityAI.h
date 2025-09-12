@@ -2,9 +2,9 @@
 #include <unordered_set>
 #include <functional>
 
-#include "SubAI.h"
+#include "SubAIs/SubAI.h"
 
-#include "../lux/game_objects.hpp"
+#include "lux/game_objects.hpp"
 
 struct PositionHash
 {

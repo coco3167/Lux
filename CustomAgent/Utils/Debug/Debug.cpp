@@ -1,6 +1,6 @@
-#include "Debug.h"
+#include "Utils/Debug/Debug.h"
 
-#include "Utils.hpp"
+#include "Utils/Utils.hpp"
 
 ofstream Debug::m_debugFile = std::ofstream{"DefaultDebug.txt"};
 

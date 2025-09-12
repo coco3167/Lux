@@ -1,7 +1,7 @@
-#include "UnitAI.h"
+#include "SubAIs/UnitAI.h"
 
-#include "Utils.hpp"
-#include "Debug.h"
+#include "Utils/Utils.hpp"
+#include "Utils/Debug/Debug.h"
 
 UnitAI::UnitAI(lux::Unit* unit) :
 	SubAI(unit, unit->id)

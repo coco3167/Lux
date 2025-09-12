@@ -1,12 +1,11 @@
-#include "CartAI.hpp"
+#include "SubAIs/Cart/CartAI.hpp"
 
 #include <cmath>
 
-#include "Utils.hpp"
-#include "WorkerAI.h"
+#include "Utils/Utils.hpp"
+#include "SubAIs/Worker/WorkerAI.h"
 
-#include "../lux/annotate.hpp"
-#include "Annotator.hpp"
+#include "Utils/Debug/Annotator.hpp"
 
 CartAI::CartAI(lux::Unit* cart, GameDatas* gameDatas) :
 	UnitAI(cart),

@@ -2,7 +2,7 @@
 #include <memory>
 #include "SMState.h"
 
-#include "../Debug.h"
+#include "Utils/Debug/Debug.h"
 
 
 template<typename TSMInfos>

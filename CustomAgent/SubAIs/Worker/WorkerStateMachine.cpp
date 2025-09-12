@@ -1,12 +1,12 @@
 #include "WorkerStateMachine.h"
 
-#include "../lux/annotate.hpp"
-#include "Annotator.hpp"
+#include "lux/annotate.hpp"
+#include "Utils/Debug/Annotator.hpp"
 
-#include "WorkerAI.h"
+#include "SubAIs/Worker/WorkerAI.h"
 
-#include "Utils.hpp"
-#include "Debug.h"
+#include "Utils/Utils.hpp"
+#include "Utils/Debug/Debug.h"
 
 namespace WorkerSM
 {

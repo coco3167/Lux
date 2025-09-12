@@ -1,9 +1,9 @@
-#include "WorkerAI.h"
+#include "SubAIs/Worker/WorkerAI.h"
 
-#include "../lux/annotate.hpp"
-#include "CartAI.hpp"
+#include "lux/annotate.hpp"
+#include "SubAIs/Cart/CartAI.hpp"
 
-#include "Debug.h"
+#include "Utils/Debug/Debug.h"
 
 WorkerAI::WorkerAI(lux::Unit* worker, GameDatas* gameDatas) :
     UnitAI(worker),

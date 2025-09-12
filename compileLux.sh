@@ -1,1 +1,1 @@
-g++ -g main.cpp $(find CustomAgent -type f -iregex ".*\.cpp")  -O3 -std=c++11 -o "main.out"
+g++ -g -I./CustomAgent -I. main.cpp $(find CustomAgent -type f -iregex ".*\.cpp")  -O3 -std=c++11 -o "main.out"  

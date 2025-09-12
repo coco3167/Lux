@@ -3,10 +3,12 @@
 #include <vector>
 #include <string.h>
 
-#include "Alias.h"
+#include "lux/annotate.hpp"
 
-#include "../lux/constants.hpp"
-#include "../lux/position.hpp"
+#include "Utils/Alias.h"
+
+#include "lux/constants.hpp"
+#include "lux/position.hpp"
 
 using namespace lux;
 class Annotator

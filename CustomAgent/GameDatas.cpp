@@ -2,13 +2,13 @@
 
 #include <algorithm>
 
-#include "PathFinder.hpp"
+#include "Utils/PathFinder.hpp"
 
-#include "WorkerAI.h"
-#include "CartAI.hpp"
+#include "SubAIs/Worker/WorkerAI.h"
+#include "SubAIs/Cart/CartAI.hpp"
 
-#include "Utils.hpp"
-#include "Debug.h"
+#include "Utils/Utils.hpp"
+#include "Utils/Debug/Debug.h"
 
 GameDatas::GameDatas(GameMap& map, Player* owner) :
     Map(map),

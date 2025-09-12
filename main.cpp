@@ -12,7 +12,7 @@
 
 #include "CustomAgent/GameDatas.h"
 #include "CustomAgent/MetaAI.hpp"
-#include "CustomAgent/Debug.h"
+#include "CustomAgent/Utils/Debug/Debug.h"
 
 using namespace std;
 using namespace lux;

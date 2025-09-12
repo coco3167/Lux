@@ -1,7 +1,7 @@
-#include "PathFinder.hpp"
+#include "Utils/PathFinder.hpp"
 
-#include "WorkerAI.h"
-#include "CartAI.hpp"
+#include "SubAIs/Worker/WorkerAI.h"
+#include "SubAIs/Cart/CartAI.hpp"
 
 bool PathFinder::FindPath(GameDatas& gameDatas, const Position& startPosition, const Position& targetPosition, Path& o_pathToTarget, PathFindingFlags flags)
 {

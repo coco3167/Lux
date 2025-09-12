@@ -1,10 +1,10 @@
 #pragma once
-
-#include "../lux/constants.hpp"
-#include "../lux/game_objects.hpp"
 #include <memory>
 #include <string>
 #include <stdexcept>
+
+#include "lux/constants.hpp"
+#include "lux/game_objects.hpp"
 
 using namespace lux;
 class Utils

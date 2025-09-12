@@ -1,13 +1,14 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "../lux/game_objects.hpp"
-#include "../lux/position.hpp"
 
-#include "CityAI.h"
-#include "WorkerAI.h"
+#include "lux/game_objects.hpp"
+#include "lux/position.hpp"
 
-#include "UnitAI.h"
+#include "SubAIs/City/CityAI.h"
+#include "SubAIs/Worker/WorkerAI.h"
+
+#include "SubAIs/UnitAI.h"
 #include "GameDatas.h"
 
 class CartAI : public UnitAI

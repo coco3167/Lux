@@ -1,6 +1,6 @@
-﻿#include "CityAI.h"
-#include "Utils.hpp"
-#include "Debug.h"
+﻿#include "SubAIs/City/CityAI.h"
+#include "Utils/Utils.hpp"
+#include "Utils/Debug/Debug.h"
 
 CityAI::CityAI(lux::City* city, GameDatas* gameDatas) :
     SubAI(city, city->cityid), 

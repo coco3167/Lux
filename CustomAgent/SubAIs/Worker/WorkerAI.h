@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../lux/game_objects.hpp"
+#include "lux/game_objects.hpp"
 
 #include "StateMachine/StateMachine.h"
 #include "WorkerStateMachine.h"
 
-#include "UnitAI.h"
-#include "CityAI.h"
+#include "SubAIs/UnitAI.h"
+#include "SubAIs/City/CityAI.h"
 
 class CartAI;
 

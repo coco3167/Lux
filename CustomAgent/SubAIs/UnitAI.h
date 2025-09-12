@@ -1,6 +1,6 @@
 #pragma once
-#include "SubAI.h"
-#include "../lux/game_objects.hpp"
+#include "SubAIs/SubAI.h"
+#include "lux/game_objects.hpp"
 
 class UnitAI : public SubAI<lux::Unit>
 {

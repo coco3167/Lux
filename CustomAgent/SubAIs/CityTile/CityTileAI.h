@@ -1,7 +1,7 @@
 #pragma once
-#include "../lux/game_objects.hpp"
+#include "lux/game_objects.hpp"
 
-#include "SubAI.h"
+#include "SubAIs/SubAI.h"
 
 class CityTileAI
 {
