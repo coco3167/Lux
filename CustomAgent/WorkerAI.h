@@ -1,14 +1,16 @@
 #pragma once
-#include "SubAI.h"
 
 #include "../lux/game_objects.hpp"
 
 #include "StateMachine/StateMachine.h"
 #include "WorkerStateMachine.h"
 
+#include "UnitAI.h"
 #include "CityAI.h"
 
-class WorkerAI : public SubAI<lux::Unit>
+class CartAI;
+
+class WorkerAI : public UnitAI
 {
     typedef WorkerSM::WorkerSMInfos SMInfos;
 
@@ -21,6 +23,8 @@ private:
 
 public:
     WorkerAI(lux::Unit* worker, GameDatas* gameDatas);
+
+    virtual void BeginTurn() override;
 
     void Update();
 
@@ -41,7 +45,16 @@ public:
     // TODO build city at the best place
     void BuildCityTile();
 
+    bool RequestResources(CartAI* target, int maxResources);
+    bool CanBuildCity() const;
+
+    WorkerSM::Objective GetCurrentObjective() const;
+
+private:
 
     std::unique_ptr<SMState<WorkerSM::WorkerSMInfos>> GetStartingState();
+    int GetAvailableFuel() const;
+
+    void TryTransfer(CartAI* target, ResourceType type, int& availableFuel, int& transferableReources);
 };
 

@@ -13,6 +13,6 @@ public:
 	virtual std::unique_ptr<SMState<TSMInfos>> UpdateState(TSMInfos& stateInfos) = 0;
 	virtual void EndState() {};
 
-	virtual void DrawDebug(TSMInfos& stateInfos, std::vector<std::string>& actions) { }
+	virtual void DrawDebug(TSMInfos& stateInfos) { }
 };
 

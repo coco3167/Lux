@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../lux/constants.hpp"
+#include "../lux/game_objects.hpp"
 #include <memory>
 #include <string>
 #include <stdexcept>
@@ -12,6 +13,14 @@ class Utils
 	static float Abs(float value)
 	{
 		return value < 0.0f ? -value : value;
+	}
+
+	template<typename TFloat>
+	static TFloat Clamp(TFloat value, TFloat min, TFloat max)
+	{
+		if (value < min){ return min; }
+		if (value > max){ return max; }
+		return value;
 	}
 
     static bool IsInMap(const Position& position, const GameMap& map)
@@ -27,6 +36,11 @@ class Utils
             0 <= x && x < map.width &&
             0 <= y && y < map.height;
     }
+
+	static bool HasFlag(const int value, const int flag)
+	{
+		return (value & flag) != 0;
+	}
 
     static DIRECTIONS GetOppositeDirection(const DIRECTIONS dir)
     {
@@ -79,6 +93,11 @@ class Utils
 			}
 		}
 		return res;
+	}
+
+	static int GetFuel(Cargo* cargo)
+	{
+		return cargo->wood + cargo->coal * 10 + cargo->uranium * 40;
 	}
 
 	template<typename ... Args>

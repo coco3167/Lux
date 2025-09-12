@@ -1,26 +1,23 @@
 #pragma once
 #include <memory>
 
-#include "StateMachine/SMState.h"
-#include "PathFinder.hpp"
-#include "GameDatas.h"
-
 #include "../lux/game_objects.hpp"
 #include "../lux/map.hpp"
 
+#include "Alias.h"
 
+#include "StateMachine/SMState.h"
+#include "WorkerObjective.hpp"
+#include "PathFinder.hpp"
+#include "GameDatas.h"
+#include "CityAI.h"
+
+class WorkerAI;
 
 namespace WorkerSM 
 {
 	using namespace lux;
 
-	enum class Objective 
-	{
-		None,
-		BuildCity,
-		CollectRessourceForSelf,
-		CollectRessourceForCity,
-	};
 
 	class WorkerSMUtils
 	{
@@ -45,22 +42,47 @@ namespace WorkerSM
 	struct WorkerSMInfos 
 	{
 		GameDatas* Datas;
-		Unit* ControlledWorker;
+		WorkerAI* ControlledWorker;
 		Objective CurrentObjective;
 
-		City* SuppliedCity;
+		std::string SuppliedCityID;
+		bool AlreadyCollectedResources;
+
+		Position cityTargetPosition;
 
 		Position TargetPosition;
+		PathFindingFlags PathOptions;
 
 
-		WorkerSMInfos(Unit* worker, GameDatas* datas) :
+		WorkerSMInfos(WorkerAI* worker, GameDatas* datas) :
 			ControlledWorker(worker),
 			Datas(datas),
 			CurrentObjective(Objective::None),
-			SuppliedCity(nullptr),
-			TargetPosition(-1, -1)
+			SuppliedCityID(""),
+			AlreadyCollectedResources(false),
+			TargetPosition(-1, -1),
+			PathOptions(PathFindingFlags::None)
 		{
 
+		}
+
+		CityAI* GetSuppliedCity()
+		{
+			if (SuppliedCityID == "")
+			{
+				return nullptr;
+			}
+
+			for (int i = 0; i < Datas->CityAIs->size(); ++i)
+			{
+				CityAI* ai = (*Datas->CityAIs)[i].get();
+				if (ai->ManagedObjectID == SuppliedCityID)
+				{
+					return ai;
+				}
+			}
+
+			return nullptr;
 		}
 	};
 
@@ -71,23 +93,30 @@ namespace WorkerSM
 		DefaultState(WorkerSMInfos& stateInfos);
 
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
+
+		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
 
 	class MovingState : public SMState<WorkerSMInfos>
 	{
+	private:
+		Path m_path;
+		Position m_lastPosition;
+
 	public:
-		MovingState(WorkerSMInfos& stateInfos, const Position& target);
+		MovingState(WorkerSMInfos& stateInfos, const Position& target, PathFindingFlags pathOptions = PathFindingFlags::None);
 
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
 
 		std::unique_ptr<SMState<WorkerSMInfos>> NextState(WorkerSMInfos& stateInfos);
 
-		virtual void DrawDebug(WorkerSMInfos& stateInfos, std::vector<std::string>& actions) override;
+		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
 
 	class BuildingCityState : public SMState<WorkerSMInfos>
 	{
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
+		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
 
 	class CollectingRessourcesState : public SMState<WorkerSMInfos>
@@ -95,6 +124,17 @@ namespace WorkerSM
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
 
 		std::unique_ptr<SMState<WorkerSMInfos>> NextState(WorkerSMInfos& stateInfos);
+		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
+
+		bool ShouldGoNextState(WorkerSMInfos& stateInfos);
+	};
+
+	class CommonActions
+	{
+	public:
+		static std::unique_ptr<SMState<WorkerSMInfos>> GoStandby(WorkerSMInfos& stateInfos);
+		static std::unique_ptr<SMState<WorkerSMInfos>> GoBuildCity(WorkerSMInfos& stateInfos);
+		static std::unique_ptr<SMState<WorkerSMInfos>> GoCollectResources(WorkerSMInfos& stateInfos);
 	};
 }
 

@@ -4,17 +4,25 @@
 
 #include "PathFinder.hpp"
 
+#include "WorkerAI.h"
+#include "CartAI.hpp"
+
+#include "Utils.hpp"
+#include "Debug.h"
+
 GameDatas::GameDatas(GameMap& map, Player* owner) :
     Map(map),
     Actions(nullptr),
     Owner(owner),
+    Turn(0),
     m_cityTilesDesirability(map.height * map.width)
 {
 }
 
-void GameDatas::Update(std::vector<string>* actions, Player* owner)
+void GameDatas::Update(std::vector<string>* actions, Player* owner, int turn)
 {
     Actions = actions;
+    Turn = turn;
     FillResourceTiles();
     FillCityTilesDesirability();
 }
@@ -29,7 +37,12 @@ void GameDatas::AddAction(string&& action)
     Actions->push_back(std::move(action));
 }
 
-Cell *GameDatas::GetClosestResourceCell(Position startPosition) const
+void GameDatas::NullifyCityTileDesirability(const Position& position)
+{
+    m_cityTilesDesirability[position.y * Map.width + position.x] = 0.0f;
+}
+
+Cell* GameDatas::GetClosestResourceCell(Position startPosition) const
 {
     Cell* closestResourceTile = nullptr;
     float closestDist = 9999999.0f;
@@ -58,7 +71,10 @@ Cell* GameDatas::GetBestCityBuildingCell(Position startPosition) const
     {
         for (int y = 0; y < Map.height; ++y)
         {
-            tileDesirability = m_cityTilesDesirability[y * Map.width + x] * GetDistanceDesirabilityFactor(startPosition, {x, y});
+            float factor = GetDistanceDesirabilityFactor(startPosition, {x, y});
+            tileDesirability = m_cityTilesDesirability[y * Map.width + x] * factor;
+            //Debug::Log(Utils::FormatString("CityTile desirability x:%i y:%i | Score : %f", x, y, tileDesirability));
+
             if (tileDesirability > mostDesirableCityTileScore)
             {
                 mostDesirableCityTileScore = tileDesirability;
@@ -67,19 +83,109 @@ Cell* GameDatas::GetBestCityBuildingCell(Position startPosition) const
         }
     }
 
+    Debug::Log(Utils::FormatString("Most Desirable CityTile x:%i y:%i | Score : %f", mostDesirableCityTile->pos.x, mostDesirableCityTile->pos.y, mostDesirableCityTileScore));
+
     return mostDesirableCityTile;
 
 }
 
 float GameDatas::GetDistanceDesirabilityFactor(Position startPosition, Position targetPosition) const
 {
-    std::vector<DIRECTIONS> path = {};
-    path.reserve(10);
+    // std::vector<DIRECTIONS> path = {};
+    // path.reserve(10);
 
-    PathFinder::FindPath(Map, startPosition, targetPosition, *Owner, path);
-    int pathLength = path.size();
+    // PathFinder::FindPath(Map, startPosition, targetPosition, Owner, path);
+    int pathLength = startPosition.distanceTo(targetPosition);
 
-    return static_cast<float>(std::max(-std::log(pathLength) / 2.0f, 0.0));
+    return static_cast<float>(Utils::Clamp(1.0 - std::log10(pathLength) / 2.0, 0.0001, 2.0));
+}
+
+WorkerAI* GameDatas::GetClosestWorker(Position startPosition, WorkerSM::Objective desiredObjective) const
+{
+    WorkerAI* closestWorker = nullptr;
+    float closestDist = 9999999.0f;
+    for (auto it = WorkerAIs->begin(); it != WorkerAIs->end(); it++)
+    {
+        WorkerAI* worker = it->get();
+
+        if (worker->GetCurrentObjective() != desiredObjective)
+        {
+            continue;
+        }
+
+        float dist = worker->ManagedObject->pos.distanceTo(startPosition);
+        if (dist < closestDist)
+        {
+            closestDist = dist;
+            closestWorker = worker;
+        }
+    }
+    return closestWorker;
+}
+
+int GameDatas::TurnsUntilNight() const
+{
+    if (IsNight())
+    {
+        return 0;
+    }
+    return 30 - GetTimeOfDay();
+}
+
+int GameDatas::TurnsUntilDay() const
+{
+    if (!IsNight())
+    {
+        return 0;
+    }
+    return 40 - GetTimeOfDay();
+}
+
+bool GameDatas::IsNight() const
+{
+    return GetTimeOfDay() > 29;
+}
+
+std::vector<Position> GameDatas::GetNextTurnPositions() const
+{
+    std::vector<Position> nextTurnPositions{};
+    nextTurnPositions.reserve(WorkerAIs->size() + CartAIs->size());
+
+    for (int i = 0; i < WorkerAIs->size(); ++i)
+    {
+        nextTurnPositions.push_back((*WorkerAIs)[i]->PositionNextTurn);
+    }
+    for (int i = 0; i < CartAIs->size(); ++i)
+    {
+        nextTurnPositions.push_back((*CartAIs)[i]->PositionNextTurn);
+    }
+
+    return nextTurnPositions;
+}
+
+bool GameDatas::PositionAvailableNextTurn(Position position) const
+{
+    if (!Utils::IsInMap(position, Map))
+    {
+        return false;
+    }
+
+    for (int i = 0; i < WorkerAIs->size(); ++i)
+    {
+        if ((*WorkerAIs)[i]->PositionNextTurn == position)
+        {
+            return false;
+        }
+    }
+
+    for (int i = 0; i < CartAIs->size(); ++i)
+    {
+        if ((*CartAIs)[i]->PositionNextTurn == position)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 void GameDatas::FillResourceTiles()
@@ -105,56 +211,92 @@ void GameDatas::FillCityTilesDesirability()
     {
         for (int y = 0; y < Map.height; ++y)
         {
-            m_cityTilesDesirability[y * Map.width + x] = 100.0f;
+            m_cityTilesDesirability[y * Map.width + x] = GetTileBaseCityDesirability(Map.getCell(x, y));
         }
     }
 
-    
-    const int weightRange = 2;
+    ApplyResourceDesirability();
+    ApplyCityProximityDesirability();
+}
+
+float GameDatas::GetTileBaseCityDesirability(Cell* cell) const
+{
+    if (cell->hasResource())
+    {
+        return 0.0f;
+    }
+
+    if (cell->citytile != nullptr)
+    {
+        return 0.0f;
+    }
+    return 100.0f;
+}
+
+void GameDatas::ApplyResourceDesirability()
+{
+    const int weightRange = 1;
     for (const Cell* resourceTile : m_resourceTiles)
     {
         float resourceDesirability;
         switch (resourceTile->resource.type)
         {
-            case ResourceType::wood:
-                resourceDesirability = 10.0f;
+        case ResourceType::wood:
+            resourceDesirability = 1.5f;
 
-            case ResourceType::coal: 
-                if (!Owner->researchedCoal())
-                {
-                    continue;
-                }
-                resourceDesirability = 100.0f;
+        case ResourceType::coal:
+            if (!Owner->researchedCoal())
+            {
+                continue;
+            }
+            resourceDesirability = 3.0f;
 
-            case ResourceType::uranium: 
-                if (!Owner->researchedUranium())
-                {
-                    continue;
-                }
-                resourceDesirability = 1000.0f;
+        case ResourceType::uranium:
+            if (!Owner->researchedUranium())
+            {
+                continue;
+            }
+            resourceDesirability = 5.0f;
         }
 
-
-        for (int dx = -weightRange; dx <= weightRange; ++dx)
+        for (DIRECTIONS dir : ALL_DIRECTIONS)
         {
-            const int yRange = weightRange - std::abs(dx);
-            for (int dy = -yRange; dy <= yRange; ++dy)
+            Position neighbouringPosition = resourceTile->pos.translate(dir, 1);
+            if (!Utils::IsInMap(neighbouringPosition, Map))
             {
-                const int weightX = resourceTile->pos.x + dx;
-                const int weightY = resourceTile->pos.y + dy;
+                continue;
+            }
 
-                if (!Utils::IsInMap(weightX, weightY, Map))
+            m_cityTilesDesirability[neighbouringPosition.y * Map.width + neighbouringPosition.x] *= resourceDesirability;
+        }
+         
+    }
+}
+
+void GameDatas::ApplyCityProximityDesirability()
+{
+    const int weightRange = 1;
+
+    for (std::map<string, City>::iterator it = Owner->cities.begin(); it != Owner->cities.end(); it++)
+    {
+        City* city = &it->second;
+        for (CityTile& tile : city->citytiles)
+        {
+            for (DIRECTIONS dir : ALL_DIRECTIONS)
+            {
+                Position neighbouringPosition = tile.pos.translate(dir, 1);
+                if (!Utils::IsInMap(neighbouringPosition, Map))
                 {
                     continue;
                 }
 
-                if (Map.getCell(weightX, weightY)->hasResource()) 
-                {
-                    continue;
-                }
-
-                m_cityTilesDesirability[weightY * Map.width + weightX] += resourceDesirability;
+                m_cityTilesDesirability[neighbouringPosition.y * Map.width + neighbouringPosition.x] *= 2.0f;
             }
         }
     }
+}
+
+int GameDatas::GetTimeOfDay() const
+{
+    return Turn % 40;
 }

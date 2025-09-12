@@ -1,7 +1,10 @@
 ﻿#include "CityAI.h"
+#include "Utils.hpp"
+#include "Debug.h"
 
-CityAI::CityAI(lux::City* city) :
-    SubAI(city)
+CityAI::CityAI(lux::City* city, GameDatas* gameDatas) :
+    SubAI(city, city->cityid), 
+    m_gameDatas(gameDatas)
 {
 }
 
@@ -12,6 +15,11 @@ bool CityAI::NeedResources(int turn)
 
 float CityAI::ResourcesQuantityNeeded(int turn)
 {
+    if (m_gameDatas->TurnsUntilNight() > 25)
+    {
+        return 0.0f;
+    }
+
     float totalFuelNeeded = 0;
 
     // Get all cityTiles in an unordered set for faster access
@@ -38,8 +46,9 @@ float CityAI::ResourcesQuantityNeeded(int turn)
         totalFuelNeeded += fuelNeeded;
     }
 
-    // Turns to survive in the dark left
-    int turnUsable = std::min(10,40 - turn % 40);
+    totalFuelNeeded *= 15.0f;
+
+    Debug::Log(Utils::FormatString("City Upkeep : %f", totalFuelNeeded));
     
-    return totalFuelNeeded * static_cast<float>(turnUsable) - ManagedObject->fuel;
+    return totalFuelNeeded - ManagedObject->fuel;
 }
