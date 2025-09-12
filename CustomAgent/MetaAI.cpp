@@ -284,7 +284,7 @@ void MetaAI::MakeUnitsCollectResourcesForThemselves(WorkerAI& worker)
 // Expand
 int MetaAI::NBUnitsToBuild() const
 {
-    return static_cast<int>(std::ceil(m_cityTileAIs.size() * 0.8f - m_gameDatas->Owner->units.size()));
+    return static_cast<int>(std::ceil(m_cityTileAIs.size() * 0.7f - m_gameDatas->Owner->units.size()));
 }
 
 void MetaAI::BuildUnits()
