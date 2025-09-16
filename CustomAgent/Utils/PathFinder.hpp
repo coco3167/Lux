@@ -62,6 +62,9 @@ class PathFinder
 private:
     static constexpr float WALL_COST = 999.0f;
 public:
+    /// <summary>
+    /// Computes the shortest path from <paramref name="startPosition"/> to <paramref name="targetPosition"/> and stores it in <paramref name="o_pathToTarget"/>
+    /// </summary>
     static bool FindPath(
         GameDatas& gameDatas,
         const Position& startPosition,
@@ -69,8 +72,10 @@ public:
         Path& o_pathToTarget,
         PathFindingFlags flags = PathFindingFlags::None);
 
-
-    static const CityTile* GetClosestCityTile(const Position& position, const City* city, GameDatas gameDatas);
+    /// <summary>
+    /// Returns the closest CityTile of the given City from the given position
+    /// </summary>
+    static const CityTile* GetClosestCityTile(const Position& position, const City* city, GameDatas& gameDatas);
 
 private:
     static float ComputeHeuristic(const lux::Position& cellPosition, const lux::Position& targetPosition);

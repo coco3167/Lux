@@ -10,6 +10,9 @@
 
 class CartAI;
 
+/// <summary>
+/// A wrapper arround a Worker to which we can give orders it will follow for multiple turns
+/// </summary>
 class WorkerAI : public UnitAI
 {
     typedef WorkerSM::WorkerSMInfos SMInfos;
@@ -33,21 +36,40 @@ public:
     // TODO checks if the unit needs more resources at the current turn
     bool NeedResources(int turn) const;
 
-    // TODO checks if the unit can do smthing
+    /// <summary>
+    /// Returns wether the managed worker can make an action this turn
+    /// </summary>
     bool IsAvailable() const;
 
-    // TODO Collect resources for themselves
+    /// <summary>
+    /// Orders the managed worker to go gather resources for itself
+    /// </summary>
     void CollectResources();
 
-    // TODO Collect resources for a city
+    /// <summary>
+    /// Orders the managed worker to go gather resources and then go back to the given city
+    /// </summary>
     void CollectResources(CityAI& cityAI);
 
-    // TODO build city at the best place
+    /// <summary>
+    /// Orders the managed worker to go build a new city tile
+    /// </summary>
     void BuildCityTile();
 
+    /// <summary>
+    /// Asks the worker to transfer resources to the given cart
+    /// </summary>
     bool RequestResources(CartAI* target, int maxResources);
+
+
+    /// <summary>
+    /// Returns wether the worker has enough resources to build a city tile
+    /// </summary>
     bool CanBuildCity() const;
 
+    /// <summary>
+    /// Returns the current objective of the worker
+    /// </summary>
     WorkerSM::Objective GetCurrentObjective() const;
 
 private:

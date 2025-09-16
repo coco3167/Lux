@@ -81,7 +81,7 @@ bool PathFinder::FindPath(GameDatas& gameDatas, const Position& startPosition, c
     return false;
 }
 
-const CityTile* PathFinder::GetClosestCityTile(const Position& position, const City* city, GameDatas gameDatas)
+const CityTile* PathFinder::GetClosestCityTile(const Position& position, const City* city, GameDatas& gameDatas)
 {
     std::vector<DIRECTIONS> path = {};
     path.reserve(10);
@@ -136,6 +136,7 @@ float PathFinder::ComputeCost(const PathfinderCell& currentCell, const Pathfinde
         }
     }
 
+    // The cost decreases on the roads
     if (neighbouringCell.Cell->road > 0.0f)
     {
         return 1.0f / neighbouringCell.Cell->road;

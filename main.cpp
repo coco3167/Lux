@@ -51,16 +51,9 @@ int main()
         Player& player = gameState.players[gameState.id];
         Player& opponent = gameState.players[(gameState.id + 1) % 2];
         
-        try
-        {
-            gameDatas.Update(&actions, &player, turn);
+        gameDatas.Update(&actions, &player, turn);
 
-            metaAI.Update(turn);
-        }
-        catch (exception e)
-        {
-            Debug::LogError(e.what());
-        }
+        metaAI.Update(turn);
 
         turn++;
 

@@ -11,6 +11,10 @@
 #include "lux/position.hpp"
 
 using namespace lux;
+
+/// <summary>
+/// Helper class to extend the lux's annotate options
+/// </summary>
 class Annotator
 {
 public:

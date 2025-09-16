@@ -19,13 +19,14 @@ namespace WorkerSM
 	{
         Debug::Log("[SM_DefaultState] Update");
         Debug::Log(WorkerSM::WorkerSMUtils::ObjectiveToString(stateInfos.CurrentObjective));
+		// Does nothing but try to change state depending on the current objective
 		switch (stateInfos.CurrentObjective)
 		{
 		case Objective::None:
 			return nullptr;
 
-		case Objective::CollectRessourceForSelf:
-		case Objective::CollectRessourceForCity:
+		case Objective::CollectResourceForSelf:
+		case Objective::CollectResourceForCity:
 		{
 			return std::move(CommonActions::GoCollectResources(stateInfos));
 		}
@@ -69,24 +70,16 @@ namespace WorkerSM
 			Debug::LogError("[SM_MovingState] Worker's managedObject is null");
 			return std::move(CommonActions::GoStandby(stateInfos));
 		}
-		Debug::Log(Utils::FormatString("[SM_MovingState] Unit adress %ld | ID %s", (long)unit, unit->id.c_str()));
 
-        Debug::Log("[SM_MovingState] Get UnitPos");
 		Position unitPos = unit->pos;
-        Debug::Log(Utils::FormatString("[SM_MovingState] Get UnitPos (%i, %i)", unitPos.x, unitPos.y));
-        Debug::Log("[SM_MovingState] Get TargetPos");
 		Position targetPos = stateInfos.TargetPosition;
-        Debug::Log(Utils::FormatString("[SM_MovingState] Get TargetPos (%i, %i)", targetPos.x, targetPos.y));
 
-		Debug::Log(Utils::FormatString("[SM_MovingState] Check if target reached (%i, %i) == (%i, %i)", unit->pos.x, unit->pos.y, stateInfos.TargetPosition.x, stateInfos.TargetPosition.y));
 		if (unit->pos == stateInfos.TargetPosition)
 		{
 			Debug::Log("[SM_MovingState] Next state");
 			return std::move(NextState(stateInfos));
 		}
 
-
-		Debug::Log("[SM_MovingState] Check if canAct");
 		if (!unit->canAct())
 		{
 			return nullptr;
@@ -102,7 +95,6 @@ namespace WorkerSM
 		}
 
 		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Path Length %i", m_path.size()));
-		Debug::LogWarning(Utils::FormatString("[SM_MovingState] Moving %c", m_path[0]));
 		stateInfos.ControlledWorker->MoveUnit(stateInfos.Datas, m_path[0]);
 		m_lastPosition = unit->pos;
 
@@ -124,14 +116,14 @@ namespace WorkerSM
 			}
 			return std::move(CommonActions::GoCollectResources(stateInfos));
 
-		case Objective::CollectRessourceForSelf:
-			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
-		case Objective::CollectRessourceForCity:
+		case Objective::CollectResourceForSelf:
+			return std::unique_ptr<CollectingResourcesState>(new CollectingResourcesState());
+		case Objective::CollectResourceForCity:
 			if (stateInfos.AlreadyCollectedResources)
 			{
 				return std::move(CommonActions::GoStandby(stateInfos));
 			}
-			return std::unique_ptr<CollectingRessourcesState>(new CollectingRessourcesState());
+			return std::unique_ptr<CollectingResourcesState>(new CollectingResourcesState());
 
 		}
 		return nullptr;
@@ -179,11 +171,11 @@ namespace WorkerSM
 		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x + 1, stateInfos.TargetPosition.y + 1, "ST_B", 40)));
 	}
 
-	std::unique_ptr<SMState<WorkerSMInfos>> CollectingRessourcesState::UpdateState(WorkerSMInfos& stateInfos)
+	std::unique_ptr<SMState<WorkerSMInfos>> CollectingResourcesState::UpdateState(WorkerSMInfos& stateInfos)
 	{
-        Debug::Log("[SM_CollectingRessourcesState] Update");
+        Debug::Log("[SM_CollectingResourcesState] Update");
 		// If the city no longer needs resources
-		if (stateInfos.CurrentObjective == Objective::CollectRessourceForCity)
+		if (stateInfos.CurrentObjective == Objective::CollectResourceForCity)
 		{
 			CityAI* suppliedCity = stateInfos.GetSuppliedCity();
 			if (suppliedCity == nullptr || !suppliedCity->NeedResources(stateInfos.Datas->Turn))
@@ -203,17 +195,18 @@ namespace WorkerSM
 		return nullptr;
 	}
 
-	std::unique_ptr<SMState<WorkerSMInfos>> CollectingRessourcesState::NextState(WorkerSMInfos& stateInfos)
+	std::unique_ptr<SMState<WorkerSMInfos>> CollectingResourcesState::NextState(WorkerSMInfos& stateInfos)
 	{
 		switch (stateInfos.CurrentObjective)
 		{
-		case Objective::CollectRessourceForSelf:
+		case Objective::CollectResourceForSelf:
 			return std::move(CommonActions::GoStandby(stateInfos));
 
-		case Objective::CollectRessourceForCity:
+		case Objective::CollectResourceForCity:
 		{
 			CityAI* suppliedCity = stateInfos.GetSuppliedCity();
 
+			// Go standby if the supplied city has been destroyed
 			if (suppliedCity == nullptr)
 			{
 				return std::move(CommonActions::GoStandby(stateInfos));
@@ -230,20 +223,22 @@ namespace WorkerSM
 		return nullptr;
 	}
 
-	void CollectingRessourcesState::DrawDebug(WorkerSMInfos& stateInfos)
+	void CollectingResourcesState::DrawDebug(WorkerSMInfos& stateInfos)
 	{
 		stateInfos.Datas->AddAction(std::move(Annotate::text(stateInfos.TargetPosition.x + 1, stateInfos.TargetPosition.y + 1, "ST_C", 40)));
 	}
 
-	bool CollectingRessourcesState::ShouldGoNextState(WorkerSMInfos& stateInfos)
+	bool CollectingResourcesState::ShouldGoNextState(WorkerSMInfos& stateInfos)
 	{
 		Unit* unit = stateInfos.ControlledWorker->ManagedObject;
+
+		// Depending on the objective, the amount of resource needed to switch state changes
 		switch (stateInfos.CurrentObjective)
 		{
-		case Objective::CollectRessourceForSelf:
+		case Objective::CollectResourceForSelf:
 			return unit->getCargoSpaceLeft() < 10;
 
-		case Objective::CollectRessourceForCity:
+		case Objective::CollectResourceForCity:
 		{
 			return unit->getCargoSpaceLeft() < 10;
 		}

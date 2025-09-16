@@ -15,6 +15,7 @@ bool CityAI::NeedResources(int turn)
 
 float CityAI::ResourcesQuantityNeeded(int turn)
 {
+    // At the very beginning of the day, the city dont request ressources to allow workers to go build cities early
     if (m_gameDatas->TurnsUntilNight() > 25)
     {
         return 0.0f;
@@ -46,6 +47,7 @@ float CityAI::ResourcesQuantityNeeded(int turn)
         totalFuelNeeded += fuelNeeded;
     }
 
+    // The city must survive 10 turns of night + a little extra
     totalFuelNeeded *= 15.0f;
 
     Debug::Log(Utils::FormatString("City Upkeep : %f", totalFuelNeeded));

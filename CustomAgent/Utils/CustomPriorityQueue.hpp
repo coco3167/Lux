@@ -1,6 +1,7 @@
 #pragma once
 
 #include <queue>
+
 template<
     class T,
     class Container = std::vector<T>,

@@ -22,6 +22,7 @@ void UnitAI::MoveUnit(GameDatas* gameDatas, DIRECTIONS direction)
 	Debug::LogWarning("[UnitAI][MoveUnit] CheckAvailability");
 	while (!gameDatas->PositionAvailableNextTurn(targetPosition) && directionCount < 4)
 	{
+		// Turns the direction anticlockwise if the target position is not available to avoid getting stuck
 		Debug::LogWarning("[UnitAI][MoveUnit] Turn direction");
 		direction = Utils::TurnDirection(direction, false);
 		targetPosition = ManagedObject->pos.translate(direction, 1);

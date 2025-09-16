@@ -132,7 +132,7 @@ bool CartAI::TryGoResupply(CityAI* city)
 {
 	if (ManagedObject->getCargoSpaceLeft() == 0)
 	{
-		WorkerAI* closestWorker = m_gameDatas->GetClosestWorker(ManagedObject->pos, WorkerSM::Objective::CollectRessourceForCity);
+		WorkerAI* closestWorker = m_gameDatas->GetClosestWorker(ManagedObject->pos, WorkerSM::Objective::CollectResourceForCity);
 		if (closestWorker == nullptr)
 		{
 			state = STANDBY;

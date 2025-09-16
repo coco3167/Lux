@@ -4,6 +4,9 @@
 #include <iostream>
 #include <fstream>
 
+/// <summary>
+/// Debug class to log messages in a log file
+/// </summary>
 class Debug
 {
 private:

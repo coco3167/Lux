@@ -69,13 +69,13 @@ bool WorkerAI::IsAvailable() const
 void WorkerAI::CollectResources()
 {
     Debug::Log(Utils::FormatString("[WorkerAI] Ordered Worker %s to collect resources", ManagedObject->id.c_str()));
-    m_smInfos.CurrentObjective = WorkerSM::Objective::CollectRessourceForSelf;
+    m_smInfos.CurrentObjective = WorkerSM::Objective::CollectResourceForSelf;
 }
 
 void WorkerAI::CollectResources(CityAI& cityAI)
 {
     Debug::Log(Utils::FormatString("[WorkerAI] Ordered Worker %s to collect resources for city %s", ManagedObject->id.c_str(), cityAI.ManagedObject->cityid.c_str()));
-    m_smInfos.CurrentObjective = WorkerSM::Objective::CollectRessourceForCity;
+    m_smInfos.CurrentObjective = WorkerSM::Objective::CollectResourceForCity;
     m_smInfos.SuppliedCityID = cityAI.ManagedObjectID;
     m_smInfos.AlreadyCollectedResources = false;
 }

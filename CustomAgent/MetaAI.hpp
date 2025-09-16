@@ -14,6 +14,9 @@
 
 #include "Utils/Debug/Debug.h"
 
+/// <summary>
+/// The main AI that manages the SubAIs' lifetime, give them orders, updates them and so on 
+/// </summary>
 class MetaAI
 {
 	/*

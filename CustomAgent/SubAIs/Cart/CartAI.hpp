@@ -11,6 +11,9 @@
 #include "SubAIs/UnitAI.h"
 #include "GameDatas.h"
 
+/// <summary>
+/// A wrapper arround a Cart to which we can give orders it will follow for multiple turns
+/// </summary>
 class CartAI : public UnitAI
 {
 enum CartState
@@ -40,15 +43,24 @@ public:
 
     void Update();
 
-    // TODO checks if the unit needs more resources at the current turn
+    /// <summary>
+    /// Checks wether the cart needs more resources at the current turn
+    /// </summary>
     bool NeedResources(int turn) const;
 
-    // TODO checks if the unit can do something
+    /// <summary>
+    /// Returns wether the managed cart can make an action this turn
+    /// </summary>
     bool IsAvailable() const;
 
+    /// <summary>
+    /// Orders the cart to go get resources from the closest worker that collects resources for a city and to bring them to the given city
+    /// </summary>
     bool TryGoResupply(CityAI* city);
 
-    // TODO start to build a road from start to end
+    /// <summary>
+    /// Orders the cart to make back and forth between the two given positions to build a road
+    /// </summary>
     void BuildRoad(lux::Position start, lux::Position end);
 
     void Transfer(lux::Unit& unit);

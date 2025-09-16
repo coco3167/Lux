@@ -27,16 +27,14 @@ private:
 public:
     CityAI(lux::City* city, GameDatas* gameDatas);
 
-    // TODO checks if the city needs more resources at the current turn
+    /// <summary>
+    /// Checks wether the city needs more resources at the current turn
+    /// </summary>
     bool NeedResources(int turn);
 
-    // TODO checks if has available cityTiles
-    bool IsAvailable() const;
-
-    // TODO gets how much resources the unit needs
+    /// <summary>
+    /// Returns the amount of resources the city needs at the given turn
+    /// </summary>
     float ResourcesQuantityNeeded(int turn);
-
-    //TODO research
-    void Research();
 
 };

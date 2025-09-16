@@ -4,7 +4,9 @@
 
 #include "GameDatas.h"
 
-
+/// <summary>
+/// Base class for wrappers arround lux objects that holds their ID
+/// </summary>
 template<typename TObject>
 class SubAI
 {

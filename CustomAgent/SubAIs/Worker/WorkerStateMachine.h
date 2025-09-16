@@ -30,15 +30,18 @@ namespace WorkerSM
 					return "None";
 				case Objective::BuildCity:
 					return "Build";
-				case Objective::CollectRessourceForSelf:
+				case Objective::CollectResourceForSelf:
 					return "Res_S";
-				case Objective::CollectRessourceForCity:
+				case Objective::CollectResourceForCity:
 					return "Res_C";
 			}
 			return "INV";
 		}
 	};
 
+	/// <summary>
+	/// A collection of all the datas the Worker's state machine will need
+	/// </summary>
 	struct WorkerSMInfos 
 	{
 		GameDatas* Datas;
@@ -66,6 +69,9 @@ namespace WorkerSM
 
 		}
 
+		/// <summary>
+		/// Return the CityAI associated with the stored SuppliedCityID if it's still alive, nullptr otherwise
+		/// </summary>
 		CityAI* GetSuppliedCity()
 		{
 			if (SuppliedCityID == "")
@@ -86,6 +92,9 @@ namespace WorkerSM
 		}
 	};
 
+	/// <summary>
+	/// The default state of worker in which it doesn't do anything but try to change state depending on its objective
+	/// </summary>
 	class DefaultState : public SMState<WorkerSMInfos>
 	{
 	public:
@@ -97,6 +106,9 @@ namespace WorkerSM
 		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
 
+	/// <summary>
+	/// The state in which the worker is when moving to an other location
+	/// </summary>
 	class MovingState : public SMState<WorkerSMInfos>
 	{
 	private:
@@ -113,13 +125,19 @@ namespace WorkerSM
 		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
 
+	/// <summary>
+	/// The state in which the worker is when building a city
+	/// </summary>
 	class BuildingCityState : public SMState<WorkerSMInfos>
 	{
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
 		virtual void DrawDebug(WorkerSMInfos& stateInfos) override;
 	};
 
-	class CollectingRessourcesState : public SMState<WorkerSMInfos>
+	/// <summary>
+	/// The state in which the worker is when gathering resources  
+	/// </summary>
+	class CollectingResourcesState : public SMState<WorkerSMInfos>
 	{
 		virtual std::unique_ptr<SMState<WorkerSMInfos>> UpdateState(WorkerSMInfos& stateInfos) override;
 
@@ -128,12 +146,24 @@ namespace WorkerSM
 
 		bool ShouldGoNextState(WorkerSMInfos& stateInfos);
 	};
-
+	
+	/// <summary>
+	/// Helper class with common actions the worker can make
+	/// </summary>
 	class CommonActions
 	{
 	public:
+		/// <summary>
+		/// Puts the worker in a standby mode, awaiting new orders from the MetaAI
+		/// </summary>
 		static std::unique_ptr<SMState<WorkerSMInfos>> GoStandby(WorkerSMInfos& stateInfos);
+		/// <summary>
+		/// Tells the worker to pick a tile to build a city tile on if it has enough resources, or to go gather resources otherwise
+		/// </summary>
 		static std::unique_ptr<SMState<WorkerSMInfos>> GoBuildCity(WorkerSMInfos& stateInfos);
+		/// <summary>
+		/// Tells the worker to go to the closest resource tile to gather resources 
+		/// </summary>
 		static std::unique_ptr<SMState<WorkerSMInfos>> GoCollectResources(WorkerSMInfos& stateInfos);
 	};
 }
