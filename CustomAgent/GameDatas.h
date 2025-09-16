@@ -67,9 +67,19 @@ public:
 	/// </summary>
 	WorkerAI* GetClosestWorker(Position startPosition, WorkerSM::Objective desiredObjective) const;
 
+	/// <summary>
+	/// Returns the number of days until the next night turn (returns 0 during the night)
+	/// </summary>
 	int TurnsUntilNight() const;
+
+	/// <summary>
+	/// Returns the number of days until the next day turn (returns 0 during the day)
+	/// </summary>
 	int TurnsUntilDay() const;
 
+	/// <summary>
+	/// Returns wether the current turn is a night turn
+	/// </summary>
 	bool IsNight() const;
 
 	/// <summary>

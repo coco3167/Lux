@@ -42,6 +42,11 @@ private:
 
 	static constexpr int RESOURCE_PER_UNIT = 100;
 
+	/// <summary>
+	/// The proportion of city tiles that will create a unit. This can be used to speed up or down the AI expansion 
+	/// </summary>
+	static constexpr float UNIT_EXPANSION_FACTOR = 0.7f;
+
 	int m_turn = 0;
 
 	GameDatas* m_gameDatas;
@@ -58,27 +63,82 @@ public:
 	void Update(int turn);
 
 private:
+
+	/// <summary>
+	/// Creates and kill the subAIs if needed and relink all SubAIs to their managed object because they are destroyed for some reason
+	/// </summary>
 	void ManageAILives();
+
 	void StartTurn();
+
+	/// <summary>
+	/// Recreates all the CityTileAIs because there is no good way to keep a reference to the cityTiles across multiple turn
+	/// </summary>
 	void CreateCityTilesAIs(std::vector<CityTile*>& allTiles);
+
+	/// <summary>
+	/// Give orders to all available SubAIs
+	/// </summary>
 	void GiveOrders();
+
 	void UpdateSubAIs();
+
 	void DrawDebug();
 
-	//Expand
-	int NBUnitsToBuild() const;
+#pragma region Survive
+	/// <summary>
+	/// Instruct available worker to gather resources for the given city
+	/// </summary>
 	void MakeUnitsCollectResourcesForCity(CityAI& city);
+	/// <summary>
+	/// Instruct available worker to gather resources for themselves
+	/// </summary>
 	void MakeUnitsCollectResourcesForThemselves(WorkerAI& worker);
-	void BuildUnits();
-	void BuildCities();
-	void Research();
+#pragma endregion
 
+#pragma region Expand
+
+	int NBUnitsToBuild() const;
+
+	/// <summary>
+	/// Instruct available cities to build new units
+	/// </summary>
+	void BuildUnits();
+
+	/// <summary>
+	/// Instruct available workers to build new city tiles
+	/// </summary>
+	void BuildCities();
+
+	/// <summary>
+	/// Instruct available cityTiles to research
+	/// </summary>
+	void Research();
+#pragma endregion
+
+#pragma region Utils
+	/// <summary>
+	/// Returns all the cities that need resources
+	/// </summary>
 	std::vector<CityAI*> GetNeedingCity();
+	/// <summary>
+	/// Returns all the workers that need resources
+	/// </summary>
 	std::vector<WorkerAI*> GetNeedingWorkers();
+	/// <summary>
+	/// Returns all the carts that need resources
+	/// </summary>
 	std::vector<CartAI*> GetNeedingCarts();
 
+	/// <summary>
+	/// Returns all the available workers sorted by their Manhattan distance to the given position
+	/// </summary>
 	std::vector<WorkerAI*> GetAvailableWorkersSortedByDistance(Position startPosition);
+	/// <summary>
+	/// Returns all the available carts sorted by their Manhattan distance to the given position
+	/// </summary>
 	std::vector<CartAI*> GetAvailableCartsSortedByDistance(Position startPosition);
+#pragma endregion
 
 	template<typename TSubAI>
 	void ResetSubAIManagedObject(std::vector<TSubAI>& existingAIs)
@@ -89,6 +149,13 @@ private:
 		}
 	}
 
+	/// <summary>
+	/// Cre
+	/// </summary>
+	/// <typeparam name="TSubAI"></typeparam>
+	/// <typeparam name="TManagedObject"></typeparam>
+	/// <param name="existingAIs"></param>
+	/// <param name="existingObjects"></param>
 	template<typename TSubAI, typename TManagedObject>
 	void ManageSubAILife(std::vector<std::unique_ptr<TSubAI>>& existingAIs, std::vector<TManagedObject*>& existingObjects)
 	{
@@ -114,7 +181,7 @@ private:
 				}
 			}
 
-			if (lifeStateIndex == existingObjectCount) // New sub AI
+			if (lifeStateIndex == existingObjectCount) // If the object does not have a SubAI, creates one
 			{
 				EmplaceSubAI(existingAIs, object);
 				continue;

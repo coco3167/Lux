@@ -42,17 +42,17 @@ public:
     bool IsAvailable() const;
 
     /// <summary>
-    /// Orders the managed worker to go gather resources for itself
+    /// Instruct the managed worker to go gather resources for itself
     /// </summary>
     void CollectResources();
 
     /// <summary>
-    /// Orders the managed worker to go gather resources and then go back to the given city
+    /// Instruct the managed worker to go gather resources and then go back to the given city
     /// </summary>
     void CollectResources(CityAI& cityAI);
 
     /// <summary>
-    /// Orders the managed worker to go build a new city tile
+    /// Instruct the managed worker to go build a new city tile
     /// </summary>
     void BuildCityTile();
 

@@ -284,7 +284,7 @@ void MetaAI::MakeUnitsCollectResourcesForThemselves(WorkerAI& worker)
 // Expand
 int MetaAI::NBUnitsToBuild() const
 {
-    return static_cast<int>(std::ceil(m_cityTileAIs.size() * 0.7f - m_gameDatas->Owner->units.size()));
+    return static_cast<int>(std::ceil(m_cityTileAIs.size() * UNIT_EXPANSION_FACTOR - m_gameDatas->Owner->units.size()));
 }
 
 void MetaAI::BuildUnits()
@@ -346,6 +346,12 @@ void MetaAI::BuildCities()
 
 void MetaAI::Research()
 {
+    // No need to create new research points if the uranium is already researched
+    if (m_gameDatas->Owner->researchedUranium()) 
+    {
+        return;
+    }
+
     for (CityTileAI& cityTile : m_cityTileAIs)
     {
         if(cityTile.IsAvailable())

@@ -54,12 +54,12 @@ public:
     bool IsAvailable() const;
 
     /// <summary>
-    /// Orders the cart to go get resources from the closest worker that collects resources for a city and to bring them to the given city
+    /// Instruct the cart to go get resources from the closest worker that collects resources for a city and to bring them to the given city
     /// </summary>
     bool TryGoResupply(CityAI* city);
 
     /// <summary>
-    /// Orders the cart to make back and forth between the two given positions to build a road
+    /// Instruct the cart to make back and forth between the two given positions to build a road
     /// </summary>
     void BuildRoad(lux::Position start, lux::Position end);
 
