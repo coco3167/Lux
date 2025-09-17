@@ -81,11 +81,11 @@ void MetaAI::ManageAILives()
         }
     }
     
-    Debug::LogWarning(Utils::FormatString("Worker vector Ptr : %ld", (long)&m_workerAIs));
+    Debug::LogWarning(Utils::FormatString("Worker vector Ptr : %u", Utils::GetPtrRepr(&m_workerAIs)));
 
     for (int i = 0; i < m_workerAIs.size(); ++i)
     {
-        Debug::LogWarning(Utils::FormatString("Worker Ptr : %ld", (long)m_workerAIs[i].get()));
+        Debug::LogWarning(Utils::FormatString("Worker Ptr : %u", Utils::GetPtrRepr(m_workerAIs[i].get())));
     }
 
     Debug::Log("[MetaAI] Manage Worker Lives");
@@ -146,11 +146,11 @@ void MetaAI::GiveOrders()
 void MetaAI::UpdateSubAIs()
 {
     Debug::Log("Update Workers");
-    Debug::LogWarning(Utils::FormatString("Worker vector Ptr : %ld", (long) &m_workerAIs));
+    Debug::LogWarning(Utils::FormatString("Worker vector Ptr : %u", Utils::GetPtrRepr(&m_workerAIs)));
 
     for (int i = 0; i < m_workerAIs.size(); ++i)
     {
-        Debug::LogWarning(Utils::FormatString("Worker Ptr : %ld", (long)m_workerAIs[i].get()));
+        Debug::LogWarning(Utils::FormatString("Worker Ptr : %u", Utils::GetPtrRepr(m_workerAIs[i].get())));
         m_workerAIs[i]->Update();
     }
 

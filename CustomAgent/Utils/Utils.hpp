@@ -110,4 +110,9 @@ class Utils
 		std::snprintf( buf.get(), size, format.c_str(), args ... );
 		return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
 	}
+
+	static std::uintptr_t GetPtrRepr(void* pointer)
+	{
+		return reinterpret_cast<std::uintptr_t>(pointer);
+	}
 };

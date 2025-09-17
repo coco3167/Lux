@@ -191,7 +191,7 @@ private:
 			TSubAI* ai = existingAIs[aiLifeStates[lifeStateIndex].Index].get();
 			ai->ManagedObject = object; // Relink ai to its managed object
 
-			Debug::LogWarning(Utils::FormatString("Relinking object with id \"%s\" (Ptr : %ld) to AI (Ptr : %ld)", GetID(object).c_str(), (long) object, (long) ai));
+			Debug::LogWarning(Utils::FormatString("Relinking object with id \"%s\" (Ptr : %u) to AI (Ptr : %u)", GetID(object).c_str(), Utils::GetPtrRepr(object), Utils::GetPtrRepr(ai)));
 		}
 
 		// Delete dead sub AI
@@ -217,19 +217,19 @@ private:
 	void EmplaceSubAI(std::vector<std::unique_ptr<WorkerAI>>& targetVector, Unit* managedObject)
 	{
 		targetVector.emplace_back(new WorkerAI(managedObject, m_gameDatas));
-		Debug::LogWarning(Utils::FormatString("Creating new [Worker] in (%i, %i) (Ptr : %ld)", managedObject->pos.x, managedObject->pos.y, (long) managedObject));
+		Debug::LogWarning(Utils::FormatString("Creating new [Worker] in (%i, %i) (Ptr : %u)", managedObject->pos.x, managedObject->pos.y, Utils::GetPtrRepr(managedObject)));
 	}
 
 	void EmplaceSubAI(std::vector<std::unique_ptr<CartAI>>& targetVector, Unit* managedObject)
 	{
 		targetVector.emplace_back(new CartAI(managedObject, m_gameDatas));
-		Debug::LogWarning(Utils::FormatString("Creating new [Cart] in (%i, %i) (Ptr : %ld)", managedObject->pos.x, managedObject->pos.y, (long) managedObject));
+		Debug::LogWarning(Utils::FormatString("Creating new [Cart] in (%i, %i) (Ptr : %u)", managedObject->pos.x, managedObject->pos.y, Utils::GetPtrRepr(managedObject)));
 	}
 
 	void EmplaceSubAI(std::vector<std::unique_ptr<CityAI>>& targetVector, City* managedObject)
 	{
 		targetVector.emplace_back(new CityAI(managedObject, m_gameDatas));
-		Debug::LogWarning(Utils::FormatString("Creating new [City] in (%i, %i) (Ptr : %ld)", managedObject->citytiles[0].pos, managedObject->citytiles[0].pos, (long) managedObject));
+		Debug::LogWarning(Utils::FormatString("Creating new [City] in (%i, %i) (Ptr : %u)", managedObject->citytiles[0].pos, managedObject->citytiles[0].pos, Utils::GetPtrRepr(managedObject)));
 	}
 
 	string GetID(Unit* unit)
